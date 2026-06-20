@@ -1151,6 +1151,14 @@
         function getSKU(color, size) {
     const colorCode = color === 'Vert Militaire' ? 'VERT MILITAIRE' : "VERT D'EAU";
     return 'PRD4TRKN-' + colorCode + '-' + size;
+        function generateOrderID() {
+    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+    let id = 'ORD-';
+    for (let i = 0; i < 8; i++) {
+        id += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return id;
+}    
 }
 
         // ─────────────────────────────────────────────────────────────
@@ -1822,8 +1830,8 @@ const message = `
             }
 
             // ─── GOOGLE SHEETS PAYLOAD ───
-            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxLCaYhhsXGOrx2-07QncSbohx7EDie2EquWy0jLwrcjb1gsepOp1675oRKd3HlzV5e/exec';
-
+            const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJIjiGynS0XRmKStXAcrn28xZK2dw_59_FzWCrPZ1cy9EI2EF5qLabL9kOgHVjyPyB/exec';
+            const orderId = generateOrderID();
             const payload = {
     date:           dateStr,
     nom:            customerName,
