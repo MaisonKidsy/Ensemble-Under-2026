@@ -1154,12 +1154,7 @@
 }
 
 function generateOrderID() {
-    const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-    let id = 'ORD-';
-    for (let i = 0; i < 8; i++) {
-        id += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    return id;
+    return '#' + Math.floor(100000 + Math.random() * 900000);
 }
 
         // ─────────────────────────────────────────────────────────────
@@ -1833,7 +1828,8 @@ const message = `
             // ─── GOOGLE SHEETS PAYLOAD ───
             const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzJIjiGynS0XRmKStXAcrn28xZK2dw_59_FzWCrPZ1cy9EI2EF5qLabL9kOgHVjyPyB/exec';
             const orderId = generateOrderID();
-            const payload = {
+const payload = {
+    order_id:       orderId,
     date:           dateStr,
     nom:            customerName,
     phone:          customerPhone,
