@@ -1151,14 +1151,15 @@
         function getSKU(color, size) {
     const colorCode = color === 'Vert Militaire' ? 'VERT MILITAIRE' : "VERT D'EAU";
     return 'PRD4TRKN-' + colorCode + '-' + size;
-        function generateOrderID() {
+}
+
+function generateOrderID() {
     const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
     let id = 'ORD-';
     for (let i = 0; i < 8; i++) {
         id += chars.charAt(Math.floor(Math.random() * chars.length));
     }
     return id;
-}    
 }
 
         // ─────────────────────────────────────────────────────────────
