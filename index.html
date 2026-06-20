@@ -442,11 +442,14 @@
         }
 
         .delivery-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-top: 4px;
-        }
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
+    margin-top: 4px;
+    max-width: 300px;
+    margin-left: auto;
+    margin-right: auto;
+}
         .delivery-card {
             border: 2px solid var(--light-gray);
             border-radius: 14px;
@@ -830,7 +833,7 @@
         <div class="container">
             <div class="form-header">
                 <h2>🛒 <span>أكمل طلب Ensemble été 2026 الآن</span></h2>
-                <p>الدفع عند الاستلام — توصيل لجميع الولايات — مجاني عند شراء 2 أو أكثر</p>
+                <p>الدفع عند الاستلام — توصيل للمنزل لجميع الولايات — مجاني عند شراء 2 أو أكثر</p>
             </div>
 
             <form class="cod-form" id="orderForm" novalidate>
@@ -987,16 +990,10 @@
                             <input type="radio" name="deliveryType" value="home" checked />
                             <span class="check-mark"></span>
                             <span class="delivery-icon">🏠</span>
-                            <span class="delivery-name">توصيل للمنزل</span>
+                            <span class="delivery-name">التوصيل للمنزل</span>
                             <span class="delivery-price" id="homePriceLabel">+ <strong id="homePriceVal">0</strong> دج</span>
                         </label>
-                        <label class="delivery-card" id="cardDesk">
-                            <input type="radio" name="deliveryType" value="desk" />
-                            <span class="check-mark"></span>
-                            <span class="delivery-icon">📦</span>
-                            <span class="delivery-name">التوصيل للمكتب</span>
-                            <span class="delivery-price" id="deskPriceLabel">+ <strong id="deskPriceVal">0</strong> دج</span>
-                        </label>
+                        
                     </div>
                 </div>
 
@@ -1129,7 +1126,6 @@
         let currentDeliveryPrice = 0;
         let deliveryType = 'home';
         let homePrice = 0;
-        let deskPrice = 0;
         let selectedColor = 'Vert Militaire';
         let selectedSize = 'M';
 
@@ -1517,36 +1513,20 @@ function generateOrderID() {
         // ─────────────────────────────────────────────────────────────
 
         function updateUI() {
-            document.getElementById('homePriceVal').textContent = homePrice;
-            document.getElementById('deskPriceVal').textContent = deskPrice;
-
-            const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
-
-            if (deliveryType === 'home') {
-                currentDeliveryPrice = homePrice;
-                document.getElementById('cardHome').classList.add('active');
-                document.getElementById('cardDesk').classList.remove('active');
-                document.getElementById('cardHome').querySelector('input[type="radio"]').checked = true;
-            } else {
-                currentDeliveryPrice = deskPrice;
-                document.getElementById('cardDesk').classList.add('active');
-                document.getElementById('cardHome').classList.remove('active');
-                document.getElementById('cardDesk').querySelector('input[type="radio"]').checked = true;
-            }
+            currentDeliveryPrice = homePrice;
+document.getElementById('homePriceVal').textContent = homePrice;
+document.getElementById('cardHome').classList.add('active');
+document.getElementById('cardHome').querySelector('input[type="radio"]').checked = true;
 
             document.getElementById('qtyDisplay').textContent = currentQty;
 
             const homeLabel = document.getElementById('homePriceLabel');
-            const deskLabel = document.getElementById('deskPriceLabel');
-            if (currentQty >= 2) {
-                homeLabel.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
-                deskLabel.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
-            } else {
-                homeLabel.innerHTML = '+ <strong id="homePriceVal">' + homePrice + '</strong> دج';
-                deskLabel.innerHTML = '+ <strong id="deskPriceVal">' + deskPrice + '</strong> دج';
-                document.getElementById('homePriceVal').textContent = homePrice;
-                document.getElementById('deskPriceVal').textContent = deskPrice;
-            }
+if (currentQty >= 2) {
+    homeLabel.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
+} else {
+    homeLabel.innerHTML = '+ <strong id="homePriceVal">' + homePrice + '</strong> دج';
+    document.getElementById('homePriceVal').textContent = homePrice;
+}
 
             renderTotalPrice();
         }
@@ -1671,17 +1651,8 @@ function generateOrderID() {
             deliveryType = 'home';
             updateUI();
         });
-        document.getElementById('cardDesk').addEventListener('click', function(e) {
-            if (e.target.tagName === 'INPUT') return;
-            deliveryType = 'desk';
-            updateUI();
-        });
-        document.querySelectorAll('input[name="deliveryType"]').forEach(r => {
-            r.addEventListener('change', function() {
-                deliveryType = this.value;
-                updateUI();
-            });
-        });
+        
+        
 
         function changeQty(delta) {
             const newQty = Math.max(1, Math.min(10, currentQty + delta));
@@ -1893,7 +1864,6 @@ prix_total:     total,
             currentQty = 1;
             currentDeliveryPrice = 0;
             homePrice = 0;
-            deskPrice = 0;
             deliveryType = 'home';
             selectedColor = 'Vert Militaire';
             selectedSize = 'M';
