@@ -1149,18 +1149,31 @@
             return '#' + Math.floor(100000 + Math.random() * 900000);
         }
 
+                // ─────────────────────────────────────────────────────────────
+        //  REAL PRODUCT PHOTOS — loaded dynamically from manifest
+        //  Name your real photos: 1.jpg, 2.webp, 3.jpeg, 4.png, etc.
         // ─────────────────────────────────────────────────────────────
-        //  CAROUSEL — FIXED: proper array with commas, no duplicates
-        //  Using Cloudinary f_auto,q_auto for fast loading
-        // ─────────────────────────────────────────────────────────────
-        const CLOUDINARY_IMAGES = [
-    'carousel1.jpg',
-    'carousel2.jpg',
-    'carousel3.jpg',
-    'carousel4.jpg',
-    'carousel5.jpg',
-    'carousel6.jpg'
-];
+        let CLOUDINARY_IMAGES = [];
+
+        async function loadRealPhotos() {
+            try {
+                const res = await fetch('real-photos.json');
+                if (!res.ok) throw new Error('Manifest not found');
+                const files = await res.json();
+                // Keep only image files and sort numerically (1, 2, 10… not 1, 10, 2)
+                CLOUDINARY_IMAGES = files
+                    .filter(f => /\.(jpe?g|png|webp|gif|avif|jfif)$/i.test(f))
+                    .sort((a, b) => {
+                        const nA = parseInt(a.match(/^(\d+)/)?.[1] || 0, 10);
+                        const nB = parseInt(b.match(/^(\d+)/)?.[1] || 0, 10);
+                        return nA - nB;
+                    });
+            } catch (err) {
+                console.error('Failed to load real product photos:', err);
+                CLOUDINARY_IMAGES = [];
+            }
+            initCarousel();
+        }
 
         let currentSlide = 0;
         let carouselTrackEl, carouselDotsEl, carouselCounterEl;
@@ -1649,9 +1662,9 @@
             };
         }
 
-        // Init
+                // Init
         updateUI();
-        initCarousel();
+        loadRealPhotos();   // fetches manifest, then builds carousel
     </script>
 </body>
 </html>
