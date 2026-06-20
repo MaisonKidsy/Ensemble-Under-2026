@@ -21,6 +21,20 @@
     <noscript><img height="1" width="1" style="display:none"
     src="https://www.facebook.com/tr?id=1179330273909023&ev=PageView&noscript=1"
     /></noscript>
+        
+    <!-- TikTok Pixel Code Start -->
+    <script>
+    !function (w, d, t) {
+      w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
+    var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
+    ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
+
+
+      ttq.load('D7D3T93C77U8VHIRV1P0');
+      ttq.page();
+    }(window, document, 'ttq');
+    </script>
+    <!-- TikTok Pixel Code End -->
 
     <meta property="og:title" content="Ensemble Été 2026 Homme | Tenue Complète Coton Premium — Livraison Gratuite 2+ | Paiement à la Livraison Algérie" />
     <meta property="og:description" content="🔥 Ensemble été 2026 homme tendance Algérie — t-shirt + short coton respirant, coupe moderne, couleurs uniques Vert Militaire & Vert d'Eau. Tenue légère anti-transpiration pour chaleur extrême 45°C. Idéal plage, sport, travail, maison, sorties. Livraison à domicile express toutes wilayas — Alger, Oran, Constantine, Annaba, Sétif, Blida, Boumerdès + 48 wilayas. Paiement comptant à la livraison (COD). Offre limitée : 1 pièce 2900 DA | 2 pièces = livraison GRATUITE. Stock limité — commandez maintenant !" />
@@ -1044,7 +1058,75 @@
             });
         }
 
+                // ═══════════════════════════════════════════════════════════
+        //  TIKTOK PIXEL — mirrors Meta Pixel exactly (2900 DZD/unit)
+        // ═══════════════════════════════════════════════════════════
+        const TTQ_PRODUCT_ID     = 'ENSEMBLE_ETE_2026';
+        const TTQ_PRODUCT_NAME   = "Ensemble Été 2026 Homme — T-shirt + Short Coton Premium";
+        const TTQ_CURRENCY       = 'DZD';
+        const TTQ_PRICE_PER_UNIT = 2900;   // ← SAME AS META
+
+        // SHA-256 helper (required by TikTok for PII hashing on client side)
+        async function sha256(str) {
+            const buf  = new TextEncoder().encode(str);
+            const hash = await crypto.subtle.digest('SHA-256', buf);
+            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function ttqTrackViewContent() {
+            ttq.track('ViewContent', {
+                contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
+                value: TTQ_PRICE_PER_UNIT,
+                currency: TTQ_CURRENCY
+            });
+        }
+
+        function ttqTrackAddToCart(quantity) {
+            ttq.track('AddToCart', {
+                contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
+                value: TTQ_PRICE_PER_UNIT * quantity,
+                currency: TTQ_CURRENCY
+            });
+        }
+
+        function ttqTrackInitiateCheckout(quantity, deliveryPrice) {
+            ttq.track('InitiateCheckout', {
+                contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
+                value: (TTQ_PRICE_PER_UNIT * quantity) + deliveryPrice,
+                currency: TTQ_CURRENCY
+            });
+        }
+
+        function ttqTrackPlaceAnOrder(quantity, deliveryPrice) {
+            ttq.track('PlaceAnOrder', {
+                contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
+                value: (TTQ_PRICE_PER_UNIT * quantity) + deliveryPrice,
+                currency: TTQ_CURRENCY
+            });
+        }
+
+        function ttqTrackPurchase(quantity, deliveryPrice, customerPhone, customerWilaya) {
+            ttq.track('Purchase', {
+                contents: [{
+                    content_id: TTQ_PRODUCT_ID,
+                    content_type: 'product',
+                    content_name: TTQ_PRODUCT_NAME,
+                    content_category: 'Vêtements Homme > Ensembles > Été',
+                    price: TTQ_PRICE_PER_UNIT,
+                    num_items: quantity,
+                    brand: 'MaisonKidsy'
+                }],
+                value: (TTQ_PRICE_PER_UNIT * quantity) + deliveryPrice,
+                currency: TTQ_CURRENCY,
+                status: 'submitted'
+            });
+        }
+
+        // Fire TikTok ViewContent on page load
+        ttqTrackViewContent();
+
         // ─── PRODUCT LOGIC ───
+        const PRODUCT_BASE = 5900;
         const PRODUCT_BASE = 5900;
         let currentQty = 1;
         let currentDeliveryPrice = 0;
@@ -1371,11 +1453,12 @@
             deliveryType = 'home'; updateUI();
         });
 
-        function changeQty(delta) {
+         function changeQty(delta) {
             const newQty = Math.max(1, Math.min(10, currentQty + delta));
             if (newQty !== currentQty) {
                 currentQty = newQty;
-                trackAddToCart(currentQty);
+                trackAddToCart(currentQty);      // Meta
+                ttqTrackAddToCart(currentQty);   // TikTok ← ADD THIS LINE
                 updateUI();
             }
         }
@@ -1433,7 +1516,13 @@
             btn.disabled = true;
             btn.innerHTML = '<span>⏳ جارٍ إرسال الطلب...</span>';
 
-            trackInitiateCheckout(currentQty, currentDeliveryPrice);
+             trackInitiateCheckout(currentQty, currentDeliveryPrice);
+
+            // ─── TIKTOK: InitiateCheckout + Identify ───
+            const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
+            ttqTrackInitiateCheckout(currentQty, currentDeliveryPrice);
+            const hashedPhone = await sha256(customerPhone);
+            ttq.identify({ phone_number: hashedPhone });
 
             const wilayaEl   = document.getElementById('wilaya');
             const wilayaText = wilayaEl.options[wilayaEl.selectedIndex].text;
@@ -1511,7 +1600,12 @@
                 sendToBot(BOT_2)
             ]);
 
-            trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
+                        trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
+
+            // ─── TIKTOK: PlaceAnOrder + Purchase ───
+            ttqTrackPlaceAnOrder(currentQty, effectiveDelivery);
+            ttqTrackPurchase(currentQty, effectiveDelivery, customerPhone, wilayaText);
+
             showSuccess();
             btn.disabled = false;
             btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
