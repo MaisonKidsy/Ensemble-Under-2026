@@ -1149,9 +1149,9 @@
         }
 
         function getSKU(color, size) {
-            const colorCode = color === 'Vert Militaire' ? 'VM' : 'VE';
-            return 'UA-ENS-' + colorCode + '-' + size;
-        }
+    const colorCode = color === 'Vert Militaire' ? 'VERT MILITAIRE' : "VERT D'EAU";
+    return 'PRD4TRKN-' + colorCode + '-' + size;
+}
 
         // ─────────────────────────────────────────────────────────────
         //  REAL PHOTOS CAROUSEL — CLOUDINARY CDN IMAGES
@@ -1764,17 +1764,18 @@
             const deliveryTypeText = deliveryType === 'home' ? 'توصيل للمنزل 🏠' : 'التوصيل للمكتب 📦';
             const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
 
-            const message = `
+            const offerText = currentQty >= 2 ? '🎁 Livraison Gratuite' : '—';
+const message = `
 🛒 <b>طلب جديد — Ensemble été 2026</b>
 
 👤 <b>الاسم الكامل:</b> ${customerName}
 📱 <b>رقم الهاتف:</b> ${customerPhone}
 📍 <b>الولاية:</b> ${wilayaText}
 🏘️ <b>البلدية:</b> ${baladiya}
-🎨 <b>اللون:</b> ${selectedColor}
-📏 <b>المقاس:</b> ${selectedSize}
+🎨 <b>الفاريانت:</b> ${selectedColor} / ${selectedSize}
 🏷️ <b>SKU:</b> ${sku}
 🚚 <b>نوع التوصيل:</b> ${deliveryTypeText}
+🎁 <b>العرض:</b> ${offerText}
 📦 <b>الكمية:</b> ${currentQty}
 💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج
 🚚 <b>سعر التوصيل:</b> ${freeDeliveryText}
@@ -1830,14 +1831,14 @@
     wilaya:         wilayaText,
     commune:        baladiya,
     produit:        'Ensemble été 2026',
-    couleur:        selectedColor,
-    taille:         selectedSize,
-    sku:            sku,
-    livraison: deliveryType === 'home' ? 'A Domicile' : 'Stop Desk',
-    quantite:       currentQty,
-    prix_produit:   productPrice,
-    prix_livraison: effectiveDelivery,
-    prix_total:     total,
+    variante:       selectedColor + ' / ' + selectedSize,
+sku:            sku,
+livraison:      deliveryType === 'home' ? 'A Domicile' : 'Stop Desk',
+offre:          currentQty >= 2 ? 'Livraison Gratuite' : 'Aucune',
+quantite:       currentQty,
+prix_produit:   productPrice,
+prix_livraison: effectiveDelivery,
+prix_total:     total,
 };
 
             // ─── SEND ALL REQUESTS ───
