@@ -1824,26 +1824,21 @@
             const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxRyI3Frz8JyDGSx5FRZCDwAyEbvrzwFXhZwZ3wFfg0SAzSGL082xwO99AnpupMbBG_/exec';
 
             const payload = {
-                date: dateStr,
-                nom: customerName,
-                phone: customerPhone,
-                wilaya: wilayaText,
-                commune: baladiya,
-                produit: 'Ensemble été 2026',
-                prix_produit: productPrice,
-                quantite: currentQty,
-                prix_total: total,
-                livraison: deliveryType === 'home' ? 'A Domicile' : 'Point Relais',
-                prix_livraison: effectiveDelivery,
-                delivery_type_code: deliveryType,
-                sku: sku,
-                couleur: selectedColor,
-                taille: selectedSize,
-                desk_price: deskPrice,
-                product_base_price: PRODUCT_BASE,
-                product_qty2_price: PRODUCT_BASE * 2,
-                free_delivery: (currentQty >= 2) ? 'Yes' : 'No'
-            };
+    date:           dateStr,
+    nom:            customerName,
+    phone:          customerPhone,
+    wilaya:         wilayaText,
+    commune:        baladiya,
+    produit:        'Ensemble été 2026',
+    couleur:        selectedColor,
+    taille:         selectedSize,
+    sku:            sku,
+    livraison:      deliveryType === 'home' ? 'A Domicile' : 'Point Relais',
+    quantite:       currentQty,
+    prix_produit:   productPrice,
+    prix_livraison: effectiveDelivery,
+    prix_total:     total,
+};
 
             // ─── SEND ALL REQUESTS ───
             const results = [];
