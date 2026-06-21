@@ -28,8 +28,6 @@
       w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(
     var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script")
     ;n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
-
-
       ttq.load('D7D3T93C77U8VHIRV1P0');
       ttq.page();
     }(window, document, 'ttq');
@@ -61,11 +59,7 @@
         "@context": "https://schema.org",
         "@type": "Product",
         "name": "Ensemble Été 2026 Homme — T-shirt + Short Coton Premium",
-        "image": [
-    "hero.jpg",
-    "reviews.jpg",
-    "tailles.jpg"
-],
+        "image": ["hero.jpg","reviews.jpg","tailles.jpg"],
         "description": "Ensemble été 2026 homme tendance Algérie.",
         "sku": "PRD4TRKN-ENSEMBLE-ETE-2026",
         "brand": { "@type": "Brand", "name": "MaisonKidsy" },
@@ -97,7 +91,6 @@
             background: #0A1628;
             color: #0A1628;
             direction: rtl;
-            /* Prevent horizontal scroll on mobile */
             overflow-x: hidden;
         }
 
@@ -123,10 +116,6 @@
             pointer-events: none;
         }
 
-        /* ══════════════════════════════════════
-           FULLSCREEN SECTION IMAGES
-           All product images: centered, full-width, 9:16
-        ══════════════════════════════════════ */
         .img-section {
             width: 100%;
             background: var(--navy);
@@ -134,28 +123,21 @@
             justify-content: center;
             align-items: center;
             overflow: hidden;
-            /* No gap between sections */
             line-height: 0;
             font-size: 0;
         }
         .fullscreen-img {
             width: 100%;
-            max-width: 600px;   /* cap on desktop so 9:16 doesn't become absurd */
+            max-width: 600px;
             height: auto;
             display: block;
             object-fit: contain;
             margin: 0 auto;
         }
-        /* On mobile fill the full viewport width */
         @media (max-width: 600px) {
-            .fullscreen-img {
-                max-width: 100%;
-            }
+            .fullscreen-img { max-width: 100%; }
         }
 
-        /* ══════════════════════════════════════
-           CAROUSEL
-        ══════════════════════════════════════ */
         .real-photos-section {
             background: linear-gradient(180deg, #0A1628 0%, #0d2040 100%);
             padding: 48px 0 32px;
@@ -181,21 +163,15 @@
         .carousel-viewport {
             position: relative;
             width: 100%;
-            /* Force 9:16 ratio */
             aspect-ratio: 9 / 16;
             overflow: hidden;
             border-radius: var(--radius);
             background: #060d1a;
             box-shadow: 0 20px 60px rgba(0,0,0,0.5);
         }
-        /* On mobile: no border-radius, full width */
         @media (max-width: 600px) {
-            .carousel-container {
-                max-width: 100%;
-            }
-            .carousel-viewport {
-                border-radius: 0;
-            }
+            .carousel-container { max-width: 100%; }
+            .carousel-viewport { border-radius: 0; }
         }
         .carousel-track {
             position: relative;
@@ -212,16 +188,10 @@
         .carousel-slide img {
             width: 100%;
             height: 100%;
-            object-fit: cover;   /* fills the 9:16 box */
+            object-fit: cover;
             object-position: center center;
             display: block;
             pointer-events: none;
-        }
-        /* Loading skeleton */
-        .carousel-slide img.loading {
-            background: linear-gradient(90deg, #0d2040 25%, #1a3060 50%, #0d2040 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.2s infinite;
         }
         @keyframes shimmer {
             0%   { background-position: 200% 0; }
@@ -250,9 +220,7 @@
             color: var(--navy);
             transform: translateY(-50%) scale(1.1);
         }
-        .carousel-arrow:active {
-            transform: translateY(-50%) scale(0.95);
-        }
+        .carousel-arrow:active { transform: translateY(-50%) scale(0.95); }
         .carousel-prev { right: 12px; }
         .carousel-next { left: 12px; }
         .carousel-dots {
@@ -292,9 +260,6 @@
             font-family: 'Cairo', sans-serif;
         }
 
-        /* ══════════════════════════════════════
-           FLOATING BUTTON
-        ══════════════════════════════════════ */
         .float-btn {
             position: fixed;
             bottom: 24px;
@@ -333,9 +298,6 @@
             }
         }
 
-        /* ══════════════════════════════════════
-           COD FORM
-        ══════════════════════════════════════ */
         .cod-section {
             background: linear-gradient(135deg, var(--navy) 0%, #0d2040 100%);
             padding: 80px 20px 120px;
@@ -604,9 +566,6 @@
             color: rgba(255, 255, 255, 0.7);
         }
 
-        /* ══════════════════════════════════════
-           SUCCESS POPUP
-        ══════════════════════════════════════ */
         .popup-overlay {
             position: fixed; inset: 0;
             background: rgba(0, 0, 0, 0.7);
@@ -714,67 +673,39 @@
 
     <!-- HERO -->
     <div class="img-section">
-        <img class="fullscreen-img"
-    src="hero.jpg"
-    alt="Ensemble été 2026"
-    fetchpriority="high"
-/>
+        <img class="fullscreen-img" src="hero.jpg" alt="Ensemble été 2026" fetchpriority="high" />
         <span class="fb-price" aria-label="2900 DZD" data-price="2900">2900 دج</span>
     </div>
 
     <!-- PROBLEM + SOLUTION -->
     <div class="img-section">
-        <img class="fullscreen-img"
-    src="problem.jpg"
-    alt="المشكلة والحل"
-    loading="lazy"
-/>
+        <img class="fullscreen-img" src="problem.jpg" alt="المشكلة والحل" loading="lazy" />
     </div>
 
     <!-- BENEFITS -->
     <div class="img-section">
-        <img class="fullscreen-img"
-    src="benefits.jpg"
-    alt="المميزات"
-    loading="lazy"
-/>
+        <img class="fullscreen-img" src="benefits.jpg" alt="المميزات" loading="lazy" />
     </div>
 
     <!-- OFFER -->
     <div class="img-section">
-        <img class="fullscreen-img"
-    src="offer.jpg"
-    alt="العرض"
-    loading="lazy"
-/>
+        <img class="fullscreen-img" src="offer.jpg" alt="العرض" loading="lazy" />
         <span class="fb-price" aria-label="2900 DZD" data-price="2900">2900 دج</span>
     </div>
 
     <!-- LIFESTYLE -->
     <div class="img-section">
-        <img class="fullscreen-img"
-    src="lifestyle.jpg"
-    alt="Lifestyle"
-    loading="lazy"
-/>
+        <img class="fullscreen-img" src="lifestyle.jpg" alt="Lifestyle" loading="lazy" />
     </div>
 
     <!-- REVIEWS -->
     <div class="img-section">
-        <img class="fullscreen-img"
-    src="reviews.jpg"
-    alt="آراء العملاء"
-    loading="lazy"
-/>
+        <img class="fullscreen-img" src="reviews.jpg" alt="آراء العملاء" loading="lazy" />
     </div>
 
     <!-- SIZE GUIDE -->
     <div class="img-section">
-        <img class="fullscreen-img"
-    src="tailles.jpg"
-    alt="دليل المقاسات"
-    loading="lazy"
-/>
+        <img class="fullscreen-img" src="tailles.jpg" alt="دليل المقاسات" loading="lazy" />
     </div>
 
     <!-- COD FORM -->
@@ -1057,15 +988,12 @@
             });
         }
 
-                // ═══════════════════════════════════════════════════════════
-        //  TIKTOK PIXEL — mirrors Meta Pixel exactly (2900 DZD/unit)
-        // ═══════════════════════════════════════════════════════════
+        // ─── TIKTOK PIXEL ───
         const TTQ_PRODUCT_ID     = 'ENSEMBLE_ETE_2026';
         const TTQ_PRODUCT_NAME   = "Ensemble Été 2026 Homme — T-shirt + Short Coton Premium";
         const TTQ_CURRENCY       = 'DZD';
-        const TTQ_PRICE_PER_UNIT = 2900;   // ← SAME AS META
+        const TTQ_PRICE_PER_UNIT = 2900;
 
-        // SHA-256 helper (required by TikTok for PII hashing on client side)
         async function sha256(str) {
             const buf  = new TextEncoder().encode(str);
             const hash = await crypto.subtle.digest('SHA-256', buf);
@@ -1079,7 +1007,6 @@
                 currency: TTQ_CURRENCY
             });
         }
-
         function ttqTrackAddToCart(quantity) {
             ttq.track('AddToCart', {
                 contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
@@ -1087,7 +1014,6 @@
                 currency: TTQ_CURRENCY
             });
         }
-
         function ttqTrackInitiateCheckout(quantity, deliveryPrice) {
             ttq.track('InitiateCheckout', {
                 contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
@@ -1095,7 +1021,6 @@
                 currency: TTQ_CURRENCY
             });
         }
-
         function ttqTrackPlaceAnOrder(quantity, deliveryPrice) {
             ttq.track('PlaceAnOrder', {
                 contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
@@ -1103,7 +1028,6 @@
                 currency: TTQ_CURRENCY
             });
         }
-
         function ttqTrackPurchase(quantity, deliveryPrice, customerPhone, customerWilaya) {
             ttq.track('Purchase', {
                 contents: [{
@@ -1121,7 +1045,6 @@
             });
         }
 
-        // Fire TikTok ViewContent on page load
         ttqTrackViewContent();
 
         // ─── PRODUCT LOGIC ───
@@ -1149,10 +1072,7 @@
             return '#' + Math.floor(100000 + Math.random() * 900000);
         }
 
-                // ─────────────────────────────────────────────────────────────
-        //  REAL PRODUCT PHOTOS — loaded dynamically from manifest
-        //  Name your real photos: 1.jpg, 2.webp, 3.jpeg, 4.png, etc.
-        // ─────────────────────────────────────────────────────────────
+        // ─── CAROUSEL ───
         let CLOUDINARY_IMAGES = [];
 
         async function loadRealPhotos() {
@@ -1160,7 +1080,6 @@
                 const res = await fetch('real-photos.json');
                 if (!res.ok) throw new Error('Manifest not found');
                 const files = await res.json();
-                // Keep only image files and sort numerically (1, 2, 10… not 1, 10, 2)
                 CLOUDINARY_IMAGES = files
                     .filter(f => /\.(jpe?g|png|webp|gif|avif|jfif)$/i.test(f))
                     .sort((a, b) => {
@@ -1190,7 +1109,6 @@
         }
 
         function buildCarousel() {
-            // Build slides — first image eager, rest lazy
             carouselTrackEl.innerHTML = CLOUDINARY_IMAGES.map((src, i) => `
                 <div class="carousel-slide" data-index="${i}" style="transform: translateX(${(0 - i) * 100}%)">
                     <img
@@ -1203,7 +1121,6 @@
                 </div>
             `).join('');
 
-            // Dots
             carouselDotsEl.innerHTML = CLOUDINARY_IMAGES.map((_, i) => `
                 <button class="carousel-dot ${i === 0 ? 'active' : ''}"
                     onclick="goToSlide(${i})"
@@ -1214,7 +1131,6 @@
             updateCarousel();
             addSwipeListeners();
 
-            // Preload next image immediately
             if (CLOUDINARY_IMAGES[1]) {
                 const preload = new Image();
                 preload.src = CLOUDINARY_IMAGES[1];
@@ -1240,14 +1156,11 @@
             isAnimating = true;
             currentSlide = newIndex;
             updateCarousel();
-
-            // Preload the next image in the direction we're heading
             const preloadIdx = currentSlide + dir;
             if (preloadIdx >= 0 && preloadIdx < CLOUDINARY_IMAGES.length) {
                 const preload = new Image();
                 preload.src = CLOUDINARY_IMAGES[preloadIdx];
             }
-
             setTimeout(() => { isAnimating = false; }, 450);
         }
 
@@ -1340,7 +1253,6 @@
         // ─── UI UPDATE ───
         function updateUI() {
             currentDeliveryPrice = homePrice;
-            document.getElementById('homePriceVal') && (document.getElementById('homePriceVal').textContent = homePrice);
             document.getElementById('cardHome').classList.add('active');
             document.getElementById('cardHome').querySelector('input[type="radio"]').checked = true;
             document.getElementById('qtyDisplay').textContent = currentQty;
@@ -1462,12 +1374,12 @@
             deliveryType = 'home'; updateUI();
         });
 
-         function changeQty(delta) {
+        function changeQty(delta) {
             const newQty = Math.max(1, Math.min(10, currentQty + delta));
             if (newQty !== currentQty) {
                 currentQty = newQty;
-                trackAddToCart(currentQty);      // Meta
-                ttqTrackAddToCart(currentQty);   // TikTok ← ADD THIS LINE
+                trackAddToCart(currentQty);
+                ttqTrackAddToCart(currentQty);
                 updateUI();
             }
         }
@@ -1525,27 +1437,31 @@
             btn.disabled = true;
             btn.innerHTML = '<span>⏳ جارٍ إرسال الطلب...</span>';
 
-             trackInitiateCheckout(currentQty, currentDeliveryPrice);
-
-            // ─── TIKTOK: InitiateCheckout + Identify ───
-            const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
-            ttqTrackInitiateCheckout(currentQty, currentDeliveryPrice);
-            const hashedPhone = await sha256(customerPhone);
-            ttq.identify({ phone_number: hashedPhone });
-
-            const wilayaEl   = document.getElementById('wilaya');
-            const wilayaText = wilayaEl.options[wilayaEl.selectedIndex].text;
-            const baladiya   = document.getElementById('baladiya').value;
-            const total      = getTotalPrice(currentQty, currentDeliveryPrice);
-            const productPrice = getProductPrice(currentQty);
-            const now        = new Date();
-            const dateStr    = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
+            // ── COLLECT CUSTOMER DATA FIRST (fixes the ReferenceError) ──
             const customerName  = document.getElementById('fullName').value.trim();
             const customerPhone = document.getElementById('phone').value.trim();
-            const sku = getSKU(selectedColor, selectedSize);
-            const deliveryTypeText  = 'توصيل للمنزل 🏠';
-            const freeDeliveryText  = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
-            const offerText = currentQty >= 2 ? '🎁 Livraison Gratuite' : '—';
+            const wilayaEl      = document.getElementById('wilaya');
+            const wilayaText    = wilayaEl.options[wilayaEl.selectedIndex].text;
+            const baladiya      = document.getElementById('baladiya').value;
+            const effectiveDelivery = (currentQty >= 2) ? 0 : currentDeliveryPrice;
+            const total         = getTotalPrice(currentQty, currentDeliveryPrice);
+            const productPrice  = getProductPrice(currentQty);
+            const now           = new Date();
+            const dateStr       = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
+            const sku           = getSKU(selectedColor, selectedSize);
+            const orderId       = generateOrderID();
+            const freeDeliveryText = (currentQty >= 2) ? '✅ مجاني (2+ قطع)' : effectiveDelivery.toLocaleString('fr-DZ') + ' دج';
+            const offerText     = currentQty >= 2 ? '🎁 Livraison Gratuite' : '—';
+
+            // ── META PIXEL ──
+            trackInitiateCheckout(currentQty, currentDeliveryPrice);
+
+            // ── TIKTOK PIXEL ──
+            ttqTrackInitiateCheckout(currentQty, currentDeliveryPrice);
+            try {
+                const hashedPhone = await sha256(customerPhone);
+                ttq.identify({ phone_number: hashedPhone });
+            } catch(e) { /* non-blocking */ }
 
             const message = `
 🛒 <b>طلب جديد — Ensemble été 2026</b>
@@ -1556,7 +1472,7 @@
 🏘️ <b>البلدية:</b> ${baladiya}
 🎨 <b>الفاريانت:</b> ${selectedColor} / ${selectedSize}
 🏷️ <b>SKU:</b> ${sku}
-🚚 <b>نوع التوصيل:</b> ${deliveryTypeText}
+🚚 <b>نوع التوصيل:</b> توصيل للمنزل 🏠
 🎁 <b>العرض:</b> ${offerText}
 📦 <b>الكمية:</b> ${currentQty}
 💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج
@@ -1580,7 +1496,6 @@
             }
 
             const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQBFbH7_9lI7w_GODeBOjrgpIFKaIEKrc9xgG8n_YDLwlAOfONBboDBKK7rM4CI2Vm/exec';
-            const orderId = generateOrderID();
             const payload = {
                 order_id: orderId, date: dateStr,
                 nom: customerName, phone: customerPhone,
@@ -1608,9 +1523,8 @@
                 sendToBot(BOT_2)
             ]);
 
-                        trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
-
-            // ─── TIKTOK: PlaceAnOrder + Purchase ───
+            // ── Final pixel fires ──
+            trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
             ttqTrackPlaceAnOrder(currentQty, effectiveDelivery);
             ttqTrackPurchase(currentQty, effectiveDelivery, customerPhone, wilayaText);
 
@@ -1662,9 +1576,8 @@
             };
         }
 
-                // Init
         updateUI();
-        loadRealPhotos();   // fetches manifest, then builds carousel
+        loadRealPhotos();
     </script>
 </body>
 </html>
