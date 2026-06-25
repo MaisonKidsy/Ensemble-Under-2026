@@ -703,7 +703,7 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
 // 0. CONFIG
 // ════════════════════════════════════════════════════════
 // ← IMPORTANT: paste your deployed Apps Script URL here
-const CAPI_SERVER_URL = 'https://script.google.com/macros/s/AKfycbz3gxXKnVxvyIGW45DtFkq4mzMX1VrpnOZvbIFXsmksGyupK0v6ld19R_UK-MzrQ-7p/exec';
+const CAPI_SERVER_URL = 'https://script.google.com/macros/s/AKfycbwfQE1CSeJd1OHHTcq1OOrmhdbMSx6ee4HnH4AqVIGL66ogtIStkx2_oYEOONrHWO9q/exec';
 
 const PRODUCT_BASE       = 5900;
 let   currentQty         = 1;
@@ -1039,7 +1039,7 @@ function showCapiStatus(msg, ok) {
 }
 
 async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-  if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('https://script.google.com/macros/s/AKfycbz3gxXKnVxvyIGW45DtFkq4mzMX1VrpnOZvbIFXsmksGyupK0v6ld19R_UK-MzrQ-7p/exec')) {
+  if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('https://script.google.com/macros/s/AKfycbwfQE1CSeJd1OHHTcq1OOrmhdbMSx6ee4HnH4AqVIGL66ogtIStkx2_oYEOONrHWO9q/exec')) {
     console.warn('[CAPI] Server URL not configured — skipping server-side event');
     return;
   }
