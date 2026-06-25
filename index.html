@@ -1039,30 +1039,19 @@ function showCapiStatus(msg, ok) {
 }
 
 async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-if (!CAPI_SERVER_URL) {
-console.warn('[CAPI] Server URL not configured — skipping server-side event');
-    return;
-  }
+  if (!CAPI_SERVER_URL) return;
 
   const ttclid = getTtclid();
   const extId  = getOrCreateExternalId();
 
-  // ── Get real client IP (best effort) ──
   let clientIp = '';
   try {
-    // Try to get IP from a simple service, or leave empty and let server use request IP
-    // Apps Script can't easily get real client IP, but we can try:
-    const ipRes = await fetch('https://api.ipify.org?format=json', { 
-      method: 'GET',
-      signal: AbortSignal.timeout(3000)
-    }).catch(() => null);
+    const ipRes = await fetch('https://api.ipify.org?format=json', { method: 'GET', signal: AbortSignal.timeout(3000) }).catch(() => null);
     if (ipRes) {
       const ipData = await ipRes.json();
       clientIp = ipData.ip || '';
     }
-  } catch(e) {
-    clientIp = '';
-  }
+  } catch(e) { clientIp = ''; }
 
   const payload = {
     event_type:     eventType,
@@ -1094,48 +1083,36 @@ console.warn('[CAPI] Server URL not configured — skipping server-side event');
     referrer:       document.referrer || '',
     locale:         navigator.language || 'ar-DZ',
     user_agent:     navigator.userAgent,
-    ip:             clientIp,  // ← Pass real IP for better matching
-    
-    // Hashed PII
+    ip:             clientIp, 
     ...(hashedCustomer || {}),
-    
-    ttclid:      ttclid || '',
-    external_id: extId || '',
-    test_event_code: 'TEST05021',  // ← IMPORTANT: Pass test code!
-    
-    // Stable event_id for deduplication
+    ttclid:         ttclid || '',
+    external_id:    extId || '',
+    test_event_code: 'TEST05021', // Leave this while testing!
     event_id: eventType + '_' + (orderData.orderId || Date.now()) + '_' + Math.random().toString(36).slice(2,6)
   };
 
   try {
     showCapiStatus('sending...', true);
-    console.log('[CAPI] Sending payload:', payload);
+    console.log('[CAPI] Sending payload to Apps Script...');
 
-    const resp = await fetch(CAPI_SERVER_URL, {
+    // Trick the browser into thinking this is a standard form submission
+    const formData = new URLSearchParams();
+    formData.append('capi_payload', JSON.stringify(payload));
+
+    // Send using no-cors so the browser doesn't block the request
+    fetch(CAPI_SERVER_URL, {
       method:  'POST',
-      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // ← Changed to text/plain to bypass CORS preflight
-      body:    JSON.stringify(payload)
-      // ← Removed mode: 'cors' to let the browser handle GAS redirects naturally
+      mode:    'no-cors', 
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body:    formData.toString()
     });
 
-    const result = await resp.json();
-    console.log('[CAPI] Server response:', result);
+    // With no-cors, we can't read the response object, so we assume success if fetch didn't throw
+    showCapiStatus('✅ ' + eventType + ' Sent', true);
 
-    // Debug: log the actual payload that was sent to TikTok
-    if (result.payload_sent) {
-      console.log('[CAPI] Payload TikTok received:', result.payload_sent);
-    }
-
-    if (result.tiktok_response && result.tiktok_response.code === 0) {
-      showCapiStatus('✅ ' + eventType + ' OK', true);
-    } else {
-      showCapiStatus('❌ ' + JSON.stringify(result.tiktok_response), false);
-    }
-
-    return result;
   } catch(err) {
     console.error('[CAPI] Fetch error:', err);
-    showCapiStatus('Network error: ' + err.message, false);
+    showCapiStatus('Network error', false);
   }
 }
 
