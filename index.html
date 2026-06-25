@@ -988,79 +988,80 @@
             });
         }
 
-        // ─── TIKTOK PIXEL ADVANCED CONFIGURATION ───
+        // ─── TIKTOK PIXEL — ADVANCED & BULLETPROOF ───
 const TTQ_PIXEL_ID       = 'D8U635BC77UDUI6570PG';
 const TTQ_PRODUCT_ID     = 'ENSEMBLE_ETE_2026';
 const TTQ_PRODUCT_NAME   = "Ensemble Été 2026 Homme — T-shirt + Short Coton Premium";
 const TTQ_CURRENCY       = 'DZD';
 const TTQ_PRICE_PER_UNIT = 2900;
 
-// ── 1. CLICK ID & EXTERNAL ID MANAGEMENT ──
-function getTtclid() {
-    const params = new URLSearchParams(window.location.search);
-    const fromUrl = params.get('ttclid') || params.get('TTCLID');
-    if (fromUrl) {
-        localStorage.setItem('ttclid', fromUrl);
-        sessionStorage.setItem('ttclid', fromUrl);
-        return fromUrl;
-    }
-    return localStorage.getItem('ttclid') || sessionStorage.getItem('ttclid') || '';
+// ── 1. HELPERS ──
+async function sha256(str) {
+    if (!str) return '';
+    try {
+        const buf  = new TextEncoder().encode(String(str));
+        const hash = await crypto.subtle.digest('SHA-256', buf);
+        return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+    } catch (e) { console.error('[TikTok] SHA256 error:', e); return ''; }
 }
 
-function getTtp() {
-    const match = document.cookie.match(/(?:^|; )ttp=([^;]*)/);
-    return match ? decodeURIComponent(match[1]) : '';
+function getTtclid() {
+    try {
+        const p = new URLSearchParams(window.location.search);
+        const fromUrl = p.get('ttclid') || p.get('TTCLID');
+        if (fromUrl) { localStorage.setItem('tk_ttclid', fromUrl); sessionStorage.setItem('tk_ttclid', fromUrl); return fromUrl; }
+        return localStorage.getItem('tk_ttclid') || sessionStorage.getItem('tk_ttclid') || '';
+    } catch (e) { return ''; }
 }
 
 async function getExternalId(phone) {
-    let ext = localStorage.getItem('tk_ext_id');
-    if (!ext && phone) {
-        ext = await sha256(phone + '_maisonkidsy_dz');
-        localStorage.setItem('tk_ext_id', ext);
-    }
-    return ext || '';
+    try {
+        let ext = localStorage.getItem('tk_ext_id');
+        if (!ext && phone) { ext = await sha256(phone + '_maisonkidsy_dz'); localStorage.setItem('tk_ext_id', ext); }
+        return ext || '';
+    } catch (e) { return ''; }
 }
 
-// ── 2. ADVANCED MATCHING (hashed PII) ──
-// TikTok REQUIRES hashing for: phone, email, first_name, last_name, city, state, country, zip, external_id
+// ── 2. ADVANCED MATCHING (hashed PII) — NON-BLOCKING ──
 async function ttqAdvancedIdentify(name, phone, wilaya, baladiya) {
-    const parts = name.trim().split(/\s+/).filter(Boolean);
-    const firstName = parts[0] || '';
-    const lastName  = parts.slice(1).join(' ') || '';
+    try {
+        const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
+        const firstName = parts[0] || '';
+        const lastName  = parts.slice(1).join(' ') || '';
 
-    const payload = {};
-    if (phone)     payload.phone_number = await sha256(phone);
-    if (firstName) payload.first_name   = await sha256(firstName);
-    if (lastName)  payload.last_name    = await sha256(lastName);
-    if (baladiya)  payload.city         = await sha256(baladiya.toLowerCase().trim());
-    if (wilaya)    payload.state        = await sha256(wilaya.toLowerCase().trim());
-    payload.country    = await sha256('dz');
-    payload.external_id = phone ? await sha256(phone) : await sha256(name + Date.now());
+        const payload = {};
+        if (phone)     payload.phone_number = await sha256(phone);
+        if (firstName) payload.first_name   = await sha256(firstName);
+        if (lastName)  payload.last_name    = await sha256(lastName);
+        if (baladiya)  payload.city         = await sha256(String(baladiya).toLowerCase().trim());
+        if (wilaya)    payload.state        = await sha256(String(wilaya).toLowerCase().trim());
+        payload.country = await sha256('dz');
 
-    // Remove empty keys
-    Object.keys(payload).forEach(k => { if (!payload[k]) delete payload[k]; });
+        const extId = await getExternalId(phone);
+        if (extId) payload.external_id = extId;
 
-    ttq.identify(payload);
+        if (typeof ttq !== 'undefined' && ttq.identify) {
+            ttq.identify(payload);
+            console.log('[TikTok] ✅ identify sent — keys:', Object.keys(payload));
+        }
+    } catch (e) { console.error('[TikTok] ❌ identify failed:', e); }
 }
 
-// ── 3. ADVANCED EVENT BUILDER ──
-async function buildTikTokPayload(eventType, quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya, orderId) {
-    const ttclid     = getTtclid();
-    const ttp        = getTtp();
-    const externalId = await getExternalId(customerPhone);
-    const sku        = getSKU(selectedColor, selectedSize);
+// ── 3. PAYLOAD BUILDER (synchronous) ──
+function buildTikTokPayload(eventType, quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya, orderId) {
+    const sku = getSKU(selectedColor, selectedSize);
     const productSubtotal = TTQ_PRICE_PER_UNIT * quantity;
-    const finalTotal = productSubtotal + ((quantity >= 2) ? 0 : deliveryPrice);
-    const nameParts  = customerName.trim().split(/\s+/).filter(Boolean);
+    const finalTotal      = productSubtotal + ((quantity >= 2) ? 0 : deliveryPrice);
+    const effDelivery     = (quantity >= 2) ? 0 : deliveryPrice;
 
-    return {
-        // ═══ STANDARD TIKTOK ECOMMERCE ═══
+    const payload = {
+        // Standard e-commerce
         contents: [{
             content_id: TTQ_PRODUCT_ID,
             content_type: 'product',
             content_name: TTQ_PRODUCT_NAME,
             content_category: 'Vêtements Homme > Ensembles > Été',
-            price: TTQ_PRICE_PER_UNIT.toString(),
+            price: TTQ_PRICE_PER_UNIT,
             quantity: quantity,
             num_items: quantity,
             brand: 'MaisonKidsy',
@@ -1073,94 +1074,93 @@ async function buildTikTokPayload(eventType, quantity, deliveryPrice, customerNa
         value: finalTotal,
         currency: TTQ_CURRENCY,
         status: 'submitted',
-        order_id: orderId,
-        description: `${eventType} | ${orderId} | ${customerName} | ${customerWilaya}`,
+        order_id: orderId || generateOrderID(),
+        description: `${eventType} | ${orderId} | ${customerWilaya || ''}`,
 
-        // ═══ ATTRIBUTION & MATCHING ═══
-        ttclid: ttclid,
-        ttp: ttp,
-        external_id: externalId,
-
-        // ═══ FULL CUSTOMER PROFILE (Custom Parameters) ═══
-        customer_full_name: customerName,
-        customer_first_name: nameParts[0] || '',
-        customer_last_name: nameParts.slice(1).join(' ') || '',
-        customer_phone: customerPhone,
-        customer_wilaya: customerWilaya,
-        customer_commune: customerBaladiya,
-        customer_country: 'DZ',
-        // customer_email: '', // Add if you collect email later
-
-        // ═══ ORDER & PRODUCT DETAILS ═══
-        product_sku: sku,
-        product_variant: `${selectedColor} / ${selectedSize}`,
+        // Order details (custom params)
+        sku: sku,
+        variant: `${selectedColor} / ${selectedSize}`,
         product_color: selectedColor,
         product_size: selectedSize,
         quantity: quantity,
         unit_price: TTQ_PRICE_PER_UNIT,
         product_subtotal: productSubtotal,
-        delivery_type: 'A Domicile',
-        delivery_price: (quantity >= 2) ? 0 : deliveryPrice,
+        delivery_price: effDelivery,
         delivery_price_original: deliveryPrice,
-        delivery_wilaya: customerWilaya,
-        delivery_commune: customerBaladiya,
+        delivery_wilaya: customerWilaya || '',
+        delivery_commune: customerBaladiya || '',
         offer_applied: quantity >= 2 ? 'Livraison Gratuite' : 'Standard',
         discount_value: quantity >= 2 ? deliveryPrice : 0,
         final_total: finalTotal,
 
-        // ═══ TECHNICAL / CONTEXT ═══
+        // Technical context
         page_url: window.location.href,
         page_referrer: document.referrer || 'direct',
         timestamp: new Date().toISOString(),
         timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
         device_language: navigator.language,
         screen_resolution: `${window.screen.width}x${window.screen.height}`,
-        device_type: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
-        pixel_version: '2.0',
-        event_source: 'website'
+        device_type: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop'
     };
+
+    // Raw customer data (Events Manager will show these in custom params)
+    if (customerName)     payload.customer_name    = customerName;
+    if (customerPhone)    payload.customer_phone   = customerPhone;
+    if (customerWilaya)   payload.customer_wilaya  = customerWilaya;
+    if (customerBaladiya) payload.customer_commune = customerBaladiya;
+
+    return payload;
 }
 
-// ── 4. ADVANCED EVENT FUNCTIONS ──
-async function ttqTrackViewContentAdvanced() {
-    const payload = await buildTikTokPayload('ViewContent', 1, 0, 'Guest', '', '', '', 'VIEW_' + Date.now());
-    // Remove customer-specific fields for ViewContent
-    delete payload.customer_phone; delete payload.customer_full_name;
-    delete payload.customer_first_name; delete payload.customer_last_name;
-    delete payload.customer_wilaya; delete payload.customer_commune;
-    delete payload.order_id; delete payload.description;
-    ttq.track('ViewContent', payload);
+// ── 4. EVENT WRAPPERS (all fire immediately, no blocking) ──
+function ttqTrackViewContentAdvanced() {
+    try {
+        const p = buildTikTokPayload('ViewContent', 1, 0, '', '', '', '', 'VIEW_' + Date.now());
+        delete p.customer_name; delete p.customer_phone; delete p.customer_wilaya; delete p.customer_commune;
+        ttq.track('ViewContent', p);
+        console.log('[TikTok] ✅ ViewContent');
+    } catch (e) { console.error('[TikTok] ViewContent error:', e); }
 }
 
-async function ttqTrackAddToCartAdvanced(quantity) {
-    const payload = await buildTikTokPayload('AddToCart', quantity, 0, 'Guest', '', '', '', 'ATC_' + Date.now());
-    delete payload.customer_phone; delete payload.customer_full_name;
-    delete payload.customer_first_name; delete payload.customer_last_name;
-    delete payload.customer_wilaya; delete payload.customer_commune;
-    ttq.track('AddToCart', payload);
+function ttqTrackAddToCartAdvanced(quantity) {
+    try {
+        const p = buildTikTokPayload('AddToCart', quantity, 0, '', '', '', '', 'ATC_' + Date.now());
+        delete p.customer_name; delete p.customer_phone; delete p.customer_wilaya; delete p.customer_commune;
+        ttq.track('AddToCart', p);
+        console.log('[TikTok] ✅ AddToCart');
+    } catch (e) { console.error('[TikTok] AddToCart error:', e); }
 }
 
-async function ttqTrackInitiateCheckoutAdvanced(quantity, deliveryPrice) {
-    const payload = await buildTikTokPayload('InitiateCheckout', quantity, deliveryPrice, 'Guest', '', '', '', 'CHK_' + Date.now());
-    delete payload.customer_phone; delete payload.customer_full_name;
-    delete payload.customer_first_name; delete payload.customer_last_name;
-    delete payload.customer_wilaya; delete payload.customer_commune;
-    ttq.track('InitiateCheckout', payload);
+function ttqTrackInitiateCheckoutAdvanced(quantity, deliveryPrice) {
+    try {
+        const p = buildTikTokPayload('InitiateCheckout', quantity, deliveryPrice, '', '', '', '', 'CHK_' + Date.now());
+        delete p.customer_name; delete p.customer_phone; delete p.customer_wilaya; delete p.customer_commune;
+        ttq.track('InitiateCheckout', p);
+        console.log('[TikTok] ✅ InitiateCheckout');
+    } catch (e) { console.error('[TikTok] InitiateCheckout error:', e); }
 }
 
-async function ttqTrackPlaceAnOrderAdvanced(quantity, deliveryPrice, customerPhone) {
-    const payload = await buildTikTokPayload('PlaceAnOrder', quantity, deliveryPrice, 'Guest', customerPhone, '', '', 'ORD_' + Date.now());
-    ttq.track('PlaceAnOrder', payload);
+function ttqTrackPlaceAnOrderAdvanced(quantity, deliveryPrice, customerPhone) {
+    try {
+        const p = buildTikTokPayload('PlaceAnOrder', quantity, deliveryPrice, '', customerPhone, '', '', 'ORD_' + Date.now());
+        ttq.track('PlaceAnOrder', p);
+        console.log('[TikTok] ✅ PlaceAnOrder');
+    } catch (e) { console.error('[TikTok] PlaceAnOrder error:', e); }
 }
 
-async function ttqTrackPurchaseAdvanced(quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya) {
-    // 1. Advanced Matching FIRST (before the event)
-    await ttqAdvancedIdentify(customerName, customerPhone, customerWilaya, customerBaladiya);
+function ttqTrackPurchaseAdvanced(quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya) {
+    // 🔥 CRITICAL: Run identify in background — NEVER block the track call
+    ttqAdvancedIdentify(customerName, customerPhone, customerWilaya, customerBaladiya);
 
-    // 2. Build & fire Purchase with everything
-    const orderId = generateOrderID();
-    const payload = await buildTikTokPayload('Purchase', quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya, orderId);
-    ttq.track('Purchase', payload);
+    // Fire Purchase IMMEDIATELY (guaranteed)
+    try {
+        const orderId = generateOrderID();
+        const p = buildTikTokPayload('Purchase', quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya, orderId);
+        ttq.track('Purchase', p);
+        console.log('[TikTok] ✅ Purchase — order:', orderId, 'value:', p.value);
+    } catch (e) {
+        console.error('[TikTok] ❌ Purchase error:', e);
+    }
 }
 
 // ── 5. INIT ──
@@ -1497,7 +1497,7 @@ ttqTrackViewContentAdvanced();
             const newQty = Math.max(1, Math.min(10, currentQty + delta));
             if (newQty !== currentQty) {
                 currentQty = newQty;
-                trackAddToCart(currentQty);
+                ttqTrackAddToCartAdvanced(currentQty);
                 ttqTrackAddToCartAdvanced(currentQty).catch(()=>{});
                 updateUI();
             }
@@ -1576,7 +1576,7 @@ ttqTrackViewContentAdvanced();
             trackInitiateCheckout(currentQty, currentDeliveryPrice);
 
             // ── TIKTOK PIXEL (ADVANCED) ──
-await ttqTrackInitiateCheckoutAdvanced(currentQty, currentDeliveryPrice);
+ttqTrackInitiateCheckoutAdvanced(currentQty, currentDeliveryPrice);
 try {
     const hashedPhone = await sha256(customerPhone);
     ttq.identify({ phone_number: hashedPhone }); // fallback safety
@@ -1642,11 +1642,10 @@ try {
                 sendToBot(BOT_2)
             ]);
 
-            // ── Final pixel fires ──
+           // Final pixel fires — NO await, synchronous fire
 trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
-await ttqTrackPlaceAnOrderAdvanced(currentQty, effectiveDelivery, customerPhone);
-await ttqTrackPurchaseAdvanced(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText, baladiya);
-
+ttqTrackPlaceAnOrderAdvanced(currentQty, effectiveDelivery, customerPhone);
+ttqTrackPurchaseAdvanced(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText, baladiya);
             showSuccess();
             btn.disabled = false;
             btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
