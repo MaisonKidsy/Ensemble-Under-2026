@@ -1039,7 +1039,7 @@ function showCapiStatus(msg, ok) {
 }
 
 async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('YOUR_DEPLOYMENT_ID')) {
+if (!CAPI_SERVER_URL) {
 console.warn('[CAPI] Server URL not configured — skipping server-side event');
     return;
   }
