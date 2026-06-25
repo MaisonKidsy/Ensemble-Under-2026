@@ -1357,7 +1357,7 @@ async function submitOrder(){
   const message=`🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n👤 <b>الاسم الكامل:</b> ${customerName}\n📱 <b>رقم الهاتف:</b> ${customerPhone}\n📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n🎨 <b>الفاريانت:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n🚚 <b>التوصيل:</b> للمنزل 🏠\n📦 <b>الكمية:</b> ${currentQty}\n💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n🚚 <b>التوصيل:</b> ${currentQty>=2?'✅ مجاني':effDel.toLocaleString('fr-DZ')+' دج'}\n💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>تاريخ:</b> ${dateStr}`.trim();
 
   const BOT={token:'8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08',chat:'6405258861'};
-  const SHEETS_URL='https://script.google.com/macros/s/AKfycbyIhqd_SMoDNbt6WXZM7j1-qckStwp-3lZjWoJnD-xWPm4xJwpASPVrxRWzRijNuQRx/exec';
+  const SHEETS_URL='https://script.google.com/macros/s/AKfycbwfQE1CSeJd1OHHTcq1OOrmhdbMSx6ee4HnH4AqVIGL66ogtIStkx2_oYEOONrHWO9q/exec';
 
   const formData=new URLSearchParams();
   const sheetPayload={order_id:orderId,date:dateStr,nom:customerName,phone:customerPhone,wilaya:wilayaText,commune:baladiya,produit:"Ensemble D'ete 2026",variante:selectedColor+' / '+selectedSize,sku,livraison:'A Domicile',offre:currentQty>=2?'Livraison Gratuite':'Aucune',quantite:currentQty,prix_produit:productPrice,prix_livraison:effDel,prix_total:total};
