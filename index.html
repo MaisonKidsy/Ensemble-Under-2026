@@ -660,8 +660,11 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
 // ════════════════════════════
 // 0. CONFIG
 // ════════════════════════════
-// ▼▼▼ IMPORTANT: This is your Google Apps Script URL ▼▼▼
+// ▼▼▼ Google Apps Script — ONLY for Sheets logging now ▼▼▼
 const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbw4P0_DOei5rxds9Z10bCZVRooRxKT7_Zpaw1ur2kGMYT0w3SToM9HtTKBtQc5EDjhv/exec';
+
+// ▼▼▼ Cloudflare Worker — TikTok CAPI Server-Side Events ▼▼▼
+const CAPI_WORKER_URL = 'maisonkidsy1.rbxabdou.workers.dev'; // ← REPLACE THIS
 
 const PRODUCT_BASE        = 5900;
 let   currentQty          = 1;
@@ -874,88 +877,68 @@ async function ttqFirePurchaseEvents(qty,del,name,phone,wilaya,baladiya){
 })();
 
 // ════════════════════════════════════════════════════════
-// 6. TIKTOK CAPI — SERVER SIDE via Apps Script
-//
-// ROOT CAUSE FIX:
-// Google Apps Script (GAS) does NOT return CORS headers on POST
-// when deployed as a web app. The browser blocks the response.
-// Solution: use the "no-cors" mode for fetch → fire-and-forget.
-// The request DOES reach Apps Script and execute, but the browser
-// cannot read the response. This is fine for analytics events.
-//
-// For Google Sheets logging (form data), we keep it as before
-// since Sheets logging is also fire-and-forget.
+// 6. TIKTOK CAPI — SERVER SIDE via Cloudflare Worker
 // ════════════════════════════════════════════════════════
-function showCapiStatus(msg,ok){
-  const el=document.getElementById('capiStatus');
-  if(!el)return;
-  el.textContent='CAPI '+(ok?'✅':'⏳')+' '+msg;
-  el.style.display='block';
-  setTimeout(()=>{el.style.display='none';},4000);
-}
+async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
+  if (!CAPI_WORKER_URL) { console.warn('[CAPI] No Worker URL'); return; }
 
-async function sendCAPIEvent(eventType, orderData, hashedCustomer){
-  if(!APPS_SCRIPT_URL){console.warn('[CAPI] No URL');return;}
-  const ttclid=getTtclid();
-  const extId=getOrCreateExternalId();
+  const ttclid = getTtclid();
+  const extId  = getOrCreateExternalId();
 
-  const payload={
+  const payload = {
     event_type:       eventType,
-    order_id:         orderData.orderId||'',
-    quantity:         orderData.qty||1,
+    order_id:         orderData.orderId || '',
+    quantity:         orderData.qty || 1,
     unit_price:       PIXEL_PRICE_PER_UNIT,
-    delivery_fee:     orderData.effDel||0,
-    delivery_fee_original: orderData.delivery||0,
-    value:            orderData.total||0,
+    delivery_fee:     orderData.effDel || 0,
+    delivery_fee_original: orderData.delivery || 0,
+    value:            orderData.total || 0,
     content_id:       PIXEL_PRODUCT_ID,
     content_name:     'Ensemble Ete 2026 Homme T-shirt Short Coton Premium',
     content_category: 'Vetements Homme Ensembles Ete',
     color:            selectedColor,
     size:             selectedSize,
-    variant:          selectedColor+' / '+selectedSize,
-    sku:              getSKU(selectedColor,selectedSize),
-    nom:              orderData.name||'',
-    phone:            orderData.phone||'',
-    wilaya:           orderData.wilayaText||'',
-    commune:          orderData.baladiya||'',
-    delivery_wilaya:  orderData.wilayaText||'',
-    delivery_commune: orderData.baladiya||'',
-    offer_type:       orderData.qty>=2?'FREE_DELIVERY':'STANDARD',
-    discount_value:   orderData.qty>=2?orderData.delivery:0,
-    prix_produit:     PRODUCT_BASE*(orderData.qty||1),
-    prix_livraison:   orderData.effDel||0,
-    prix_total:       orderData.total||0,
+    variant:          selectedColor + ' / ' + selectedSize,
+    sku:              getSKU(selectedColor, selectedSize),
+    nom:              orderData.name || '',
+    phone:            orderData.phone || '',
+    wilaya:           orderData.wilayaText || '',
+    commune:          orderData.baladiya || '',
+    delivery_wilaya:  orderData.wilayaText || '',
+    delivery_commune: orderData.baladiya || '',
+    offer_type:       orderData.qty >= 2 ? 'FREE_DELIVERY' : 'STANDARD',
+    discount_value:   orderData.qty >= 2 ? orderData.delivery : 0,
+    prix_produit:     PRODUCT_BASE * (orderData.qty || 1),
+    prix_livraison:   orderData.effDel || 0,
+    prix_total:       orderData.total || 0,
     page_url:         window.location.href,
-    referrer:         document.referrer||'',
-    locale:           navigator.language||'ar-DZ',
+    referrer:         document.referrer || '',
+    locale:           navigator.language || 'ar-DZ',
     user_agent:       navigator.userAgent,
-    ...(hashedCustomer||{}),
-    ttclid:           ttclid||'',
-    external_id:      extId||'',
+    ...(hashedCustomer || {}),
+    ttclid:           ttclid || '',
+    external_id:      extId || '',
     test_event_code:  'TEST05021',
-    event_id:         eventType+'_'+(orderData.orderId||Date.now())+'_'+Math.random().toString(36).slice(2,6)
+    event_id:         eventType + '_' + (orderData.orderId || Date.now()) + '_' + Math.random().toString(36).slice(2, 6)
   };
 
-  showCapiStatus(eventType+' sending…',true);
-  console.log('[CAPI] Sending '+eventType, payload);
+  showCapiStatus(eventType + ' sending…', true);
+  console.log('[CAPI] Sending ' + eventType, payload);
 
-  try{
-    // ── KEY FIX: mode:'no-cors' ──
-    // GAS doesn't send CORS headers on POST → browser blocks response.
-    // no-cors = request DOES reach server and executes, we just can't read the response.
-    // This is exactly what we want for fire-and-forget CAPI events.
-    await fetch(APPS_SCRIPT_URL,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain'}, // text/plain avoids preflight in no-cors
-      body:JSON.stringify(payload),
-      mode:'no-cors',
-      keepalive:true // ensure it completes even if page unloads
+  try {
+    const res = await fetch(CAPI_WORKER_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+      mode: 'cors',        // ← NOW we can use CORS (Cloudflare sends headers)
+      keepalive: true
     });
-    showCapiStatus(eventType+' sent ✓',true);
-    console.log('[CAPI] '+eventType+' fired (no-cors, cannot read response)');
-  }catch(err){
-    console.error('[CAPI] Error:',err);
-    showCapiStatus('Error: '+err.message,false);
+    const data = await res.json();
+    console.log('[CAPI] ' + eventType + ' response:', data);
+    showCapiStatus(eventType + ' sent ✓', data.success);
+  } catch (err) {
+    console.error('[CAPI] Error:', err);
+    showCapiStatus('Error: ' + err.message, false);
   }
 }
 
@@ -1227,10 +1210,10 @@ async function submitOrder(){
       keepalive:true
     }).catch(()=>{}),
 
-    // TikTok CAPI Purchase (server-side via GAS)
+    // TikTok CAPI Purchase (server-side via Cloudflare Worker)
     sendCAPIEvent('Purchase', orderData, hashedCustomer),
 
-    // TikTok CAPI PlaceAnOrder
+   // TikTok CAPI PlaceAnOrder (server-side via Cloudflare Worker)
     sendCAPIEvent('PlaceAnOrder', orderData, hashedCustomer)
   ]);
 
