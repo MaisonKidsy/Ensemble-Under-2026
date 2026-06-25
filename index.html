@@ -1058,19 +1058,21 @@
     }
 
     // ── 3d. Persistent external_id (hashed fingerprint, stored per device) ──
-    function getOrCreateExternalId(phone) {
-        try {
-            let ext = localStorage.getItem('_tk_ext_id');
-            if (!ext) {
-                // deterministic but private device id
-                ext = 'MKDZ-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2,8);
-                localStorage.setItem('_tk_ext_id', ext);
-            }
-            return ext;
-        } catch(e) {
-            return 'MKDZ-' + Date.now().toString(36);
+    async function getExternalId(phone) {
+    const e164 = phoneToE164(phone);
+    if (e164) return await sha256(e164);
+    
+    try {
+        let fallback = localStorage.getItem('_tk_ext_fallback');
+        if (!fallback) {
+            fallback = 'FALLBACK-' + Date.now().toString(36);
+            localStorage.setItem('_tk_ext_fallback', fallback);
         }
+        return await sha256(fallback);
+    } catch(e) {
+        return await sha256('FALLBACK-' + Date.now());
     }
+}
 
     // ── 3e. Identify — call BEFORE track calls for AAM matching ──
     async function ttqIdentify(name, phone, wilaya, baladiya) {
@@ -1080,7 +1082,7 @@
             const parts    = String(name || '').trim().split(/\s+/).filter(Boolean);
             const firstName = parts[0]          || '';
             const lastName  = parts.slice(1).join(' ') || '';
-            const extId     = getOrCreateExternalId(phone);
+            const extId = await getExternalId(phone);
 
             // Hash all PII
             const [hashPhone, hashFirst, hashLast, hashCity, hashState, hashCountry, hashExtId] =
@@ -1120,7 +1122,7 @@
         const effDelivery  = qty >= 2 ? 0 : deliveryPrice;
         const finalValue   = productTotal + effDelivery;
         const ttclid       = getTtclid();
-        const extId        = getOrCreateExternalId('');
+        const extId        = await getExternalId('');
 
         const payload = {
             // ── Required e-commerce fields ──
@@ -1175,8 +1177,13 @@
         // Inject ttclid if present (improves attribution)
         if (ttclid) payload.ttclid = ttclid;
 
-        // Inject external_id (unhashed — TikTok hashes it server-side for browser events)
-        if (extId) payload.external_id = extId;
+            // Inject external_id (unhashed — TikTok hashes it server-side for browser events)
+    if (extId) payload.external_id = extId;
+    
+    // Inject ttclid explicitly into payload (not just as top-level property)
+    if (ttclid) {
+        payload.ttclid = ttclid;
+    }
 
         return payload;
     }
@@ -1186,7 +1193,7 @@
         try {
             const e164 = phoneToE164(phone);
             const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
-            const extId = getOrCreateExternalId(phone);
+            const extId = await getExternalId(phone);
 
             const [hashPhone, hashFirst, hashLast, hashCity, hashState, hashCountry, hashExtId] =
                 await Promise.all([
@@ -1282,7 +1289,9 @@
             console.log('[TK] ✅ PlaceAnOrder fired');
         } catch(e) { console.error('[TK] PlaceAnOrder error', e); }
 
-        return orderId;
+            // Store orderId so server can use same event_id for deduplication
+    window._tk_lastOrderId = orderId;
+    return orderId;
     }
 
     // ════════════════════════════════════════════════════════════════
@@ -1598,113 +1607,86 @@
     // 11. ORDER SUBMISSION
     // ════════════════════════════════════════════════════════════════
     async function submitOrder() {
-        if (!validate()) {
-            document.querySelector('.cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-            return;
-        }
-        const btn = document.getElementById('submitBtn');
-        btn.disabled = true;
-        btn.innerHTML = '<span>⏳ جارٍ إرسال الطلب...</span>';
-
-        // Collect form data
-        const customerName  = document.getElementById('fullName').value.trim();
-        const customerPhone = document.getElementById('phone').value.trim();
-        const wilayaEl      = document.getElementById('wilaya');
-        const wilayaText    = wilayaEl.options[wilayaEl.selectedIndex].text;
-        const baladiya      = document.getElementById('baladiya').value;
-        const effDelivery   = currentQty >= 2 ? 0 : currentDeliveryPrice;
-        const total         = getTotalPrice(currentQty, currentDeliveryPrice);
-        const productPrice  = getProductPrice(currentQty);
-        const now           = new Date();
-        const dateStr       = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
-        const sku           = getSKU(selectedColor, selectedSize);
-        const orderId       = generateOrderID();
-        const freeDelivery  = currentQty >= 2 ? '✅ مجاني (2+ قطع)' : effDelivery.toLocaleString('fr-DZ') + ' دج';
-        const offerText     = currentQty >= 2 ? '🎁 Livraison Gratuite' : '—';
-
-        // ── Fire Meta Pixel events ──
-        metaTrackInitiateCheckout(currentQty, currentDeliveryPrice);
-
-        // ── Fire TikTok InitiateCheckout (sync) ──
-        ttqFireInitiateCheckout(currentQty, currentDeliveryPrice);
-
-        // ── Telegram message ──
-        const message = `
-🛒 <b>طلب جديد — Ensemble été 2026</b>
-
-👤 <b>الاسم الكامل:</b> ${customerName}
-📱 <b>رقم الهاتف:</b> ${customerPhone}
-📍 <b>الولاية:</b> ${wilayaText}
-🏘️ <b>البلدية:</b> ${baladiya}
-🎨 <b>الفاريانت:</b> ${selectedColor} / ${selectedSize}
-🏷️ <b>SKU:</b> ${sku}
-🚚 <b>نوع التوصيل:</b> توصيل للمنزل 🏠
-🎁 <b>العرض:</b> ${offerText}
-📦 <b>الكمية:</b> ${currentQty}
-💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج
-🚚 <b>سعر التوصيل:</b> ${freeDelivery}
-💵 <b>المجموع الكلي:</b> ${total.toLocaleString('fr-DZ')} دج
-📅 <b>تاريخ الطلب:</b> ${dateStr}`.trim();
-
-        const BOT_2 = { token: '8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08', chat: '6405258861' };
-
-        function sendToBot(bot) {
-            return new Promise(resolve => {
-                const xhr = new XMLHttpRequest();
-                xhr.open('POST', `https://api.telegram.org/bot${bot.token}/sendMessage`, true);
-                xhr.setRequestHeader('Content-Type', 'application/json');
-                xhr.timeout   = 15000;
-                xhr.onload    = () => resolve({ success: xhr.status >= 200 && xhr.status < 300 });
-                xhr.onerror   = () => resolve({ success: false });
-                xhr.ontimeout = () => resolve({ success: false });
-                xhr.send(JSON.stringify({ chat_id: bot.chat, text: message, parse_mode: 'HTML' }));
-            });
-        }
-
-        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwQBFbH7_9lI7w_GODeBOjrgpIFKaIEKrc9xgG8n_YDLwlAOfONBboDBKK7rM4CI2Vm/exec';
-        const payload = {
-            order_id: orderId, date: dateStr,
-            nom: customerName, phone: customerPhone,
-            wilaya: wilayaText, commune: baladiya,
-            produit: "Ensemble D'ete 2026",
-            variante: selectedColor + ' / ' + selectedSize,
-            sku: sku,
-            livraison: 'A Domicile',
-            offre: currentQty >= 2 ? 'Livraison Gratuite' : 'Aucune',
-            quantite: currentQty,
-            prix_produit: productPrice,
-            prix_livraison: effDelivery,
-            prix_total: total
-        };
-
-        const formData = new URLSearchParams();
-        Object.keys(payload).forEach(k => formData.append(k, payload[k]));
-
-        // ── Send to Telegram + Google Sheets in parallel ──
-        await Promise.allSettled([
-            fetch(APPS_SCRIPT_URL, {
-                method: 'POST', mode: 'no-cors',
-                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                body: formData.toString()
-            }),
-            sendToBot(BOT_2)
-        ]);
-
-        // ── Fire Meta Purchase ──
-        metaTrackPurchase(currentQty, effDelivery, customerName, customerPhone, wilayaText);
-
-        // ── Fire TikTok Purchase + PlaceAnOrder (async — hashes PII, fires identify first) ──
-        // Non-blocking: show success immediately, pixel fires in background
-        ttqFirePurchaseEvents(currentQty, effDelivery, customerName, customerPhone, wilayaText, baladiya)
-            .then(trkOrderId => {
-                console.log('[TK] Purchase + PlaceAnOrder complete, tracked orderId:', trkOrderId);
-            })
-            .catch(e => console.warn('[TK] Purchase events error', e));
-
-        showSuccess();
-        btn.disabled = false;
-        btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
+    if (!validate()) {
+        document.querySelector('.cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        return;
     }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳ جارٍ إرسال الطلب...</span>';
+
+    // ========== COLLECT FORM DATA ==========
+    const customerName  = document.getElementById('fullName').value.trim();
+    const customerPhone = document.getElementById('phone').value.trim();
+    const wilayaEl      = document.getElementById('wilaya');
+    const wilayaText    = wilayaEl.options[wilayaEl.selectedIndex].text;
+    const baladiya      = document.getElementById('baladiya').value;
+    const effDelivery   = currentQty >= 2 ? 0 : currentDeliveryPrice;
+    const total         = getTotalPrice(currentQty, currentDeliveryPrice);
+    const productPrice  = getProductPrice(currentQty);
+    const now           = new Date();
+    const dateStr       = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
+    const sku           = getSKU(selectedColor, selectedSize);
+    const orderId       = generateOrderID();
+    const freeDelivery  = currentQty >= 2 ? '✅ مجاني (2+ قطع)' : effDelivery.toLocaleString('fr-DZ') + ' دج';
+    const offerText     = currentQty >= 2 ? '🎁 Livraison Gratuite' : '—';
+    const ttclid        = getTtclid();
+
+    // ========== FIRE BROWSER PIXEL EVENTS ==========
+    metaTrackInitiateCheckout(currentQty, currentDeliveryPrice);
+    ttqFireInitiateCheckout(currentQty, currentDeliveryPrice);
+
+    // Fire identify BEFORE Purchase events
+    await ttqIdentify(customerName, customerPhone, wilayaText, baladiya);
+
+    // Fire browser Purchase + PlaceAnOrder
+    ttqFirePurchaseEvents(currentQty, effDelivery, customerName, customerPhone, wilayaText, baladiya);
+
+    // ========== SEND TO GOOGLE APPS SCRIPT SERVER ==========
+    const SERVER_URL = 'https://script.google.com/macros/s/AKfycbwrux4spyIjxfbq7OxzYGxj_fszrGHkudOvEd3iKaZ5Is1GaCVmYxuLcI3R28dcPRni/exec';
+
+    const serverPayload = {
+        eventName: 'Purchase',
+        name: customerName,
+        phone: customerPhone,
+        wilaya: wilayaText,
+        baladiya: baladiya,
+        orderId: orderId,
+        quantity: currentQty,
+        value: total,
+        ttclid: ttclid,
+        userAgent: navigator.userAgent,
+        selectedColor: selectedColor,
+        selectedSize: selectedSize,
+        sku: sku,
+        dateStr: dateStr
+    };
+
+    try {
+        const response = await fetch(SERVER_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(serverPayload)
+        });
+
+        const result = await response.json();
+        console.log('[Server] TikTok Events API response:', result);
+
+        if (!result.success) {
+            console.warn('[Server] Server reported an issue');
+        }
+
+    } catch (err) {
+        console.error('[Server] Failed to reach server:', err);
+        // Fallback: Browser pixel already fired, so TikTok still got the event
+    }
+
+    // ========== SHOW SUCCESS ==========
+    showSuccess();
+    btn.disabled = false;
+    btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
+}
 
     // ════════════════════════════════════════════════════════════════
     // 12. SUCCESS POPUP
