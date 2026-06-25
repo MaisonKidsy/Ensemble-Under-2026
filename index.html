@@ -660,7 +660,7 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
 // ════════════════════════════
 // CONFIG
 // ════════════════════════════
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxqirMEd8WrOi3RBOnPKSPjP7M0zbW7sGivZkEJKN2ofV40QN0Uu7IrJnuf5fyEaunR/exec'; // ← UPDATE THIS
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHmg0SEI9w5yY3AEW_Ad1X3tYkJFauV-AbEMB_LWjDNdN1X_u56JliLq5WdG4PCej7/exec'; // ← UPDATE THIS
 const CAPI_WORKER_URL = 'https://maisonkidsy1.rbxabdou.workers.dev/'; // ← YOUR REAL WORKER URL
 
 const PRODUCT_BASE        = 5900;
@@ -1152,10 +1152,8 @@ async function submitOrder(){
   const sku           = getSKU(selectedColor,selectedSize);
   const orderId       = generateOrderID();
 
-  // Meta Pixel
+  // Meta + TikTok browser pixels
   metaTrackInitiateCheckout(currentQty,currentDeliveryPrice);
-
-  // TikTok browser InitiateCheckout
   ttqFireInitiateCheckout(currentQty,currentDeliveryPrice);
 
   // Telegram message
@@ -1163,7 +1161,7 @@ async function submitOrder(){
 
   const BOT={token:'8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08',chat:'6405258861'};
 
-  // Google Sheets form data (URL-encoded → goes to processSheetSubmission in GAS)
+  // Google Sheets form data
   const formData=new URLSearchParams();
   const sheetPayload={
     order_id:orderId,date:dateStr,nom:customerName,phone:customerPhone,
@@ -1189,41 +1187,48 @@ async function submitOrder(){
   };
   const orderData={orderId,qty:currentQty,delivery:currentDeliveryPrice,effDel,total,name:customerName,phone:customerPhone,wilayaText,baladiya};
 
-  // Fire all in parallel (all fire-and-forget)
-  await Promise.allSettled([
-    // Telegram
+  // ════════════════════════════════════════
+  // CAPI: Fire TikTok server-side FIRST
+  // ════════════════════════════════════════
+  console.log('[CAPI] Starting server-side events...');
+  console.log('[CAPI] Worker URL:', CAPI_WORKER_URL);
+
+  try {
+    const r1 = await sendCAPIEvent('Purchase', orderData, hashedCustomer);
+    console.log('[CAPI] Purchase result:', r1);
+  } catch(e) {
+    console.error('[CAPI] Purchase FAILED:', e.message);
+  }
+
+  try {
+    const r2 = await sendCAPIEvent('PlaceAnOrder', orderData, hashedCustomer);
+    console.log('[CAPI] PlaceAnOrder result:', r2);
+  } catch(e) {
+    console.error('[CAPI] PlaceAnOrder FAILED:', e.message);
+  }
+
+  // ════════════════════════════════════════
+  // Background: Telegram + Sheets (fire-and-forget)
+  // ════════════════════════════════════════
+  Promise.allSettled([
     fetch(`https://api.telegram.org/bot${BOT.token}/sendMessage`,{
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
+      method:'POST',headers:{'Content-Type':'application/json'},
       body:JSON.stringify({chat_id:BOT.chat,text:message,parse_mode:'HTML'})
     }).catch(()=>{}),
 
-    // Google Sheets (URL-encoded, no-cors fire-and-forget)
     fetch(APPS_SCRIPT_URL,{
-      method:'POST',
-      headers:{'Content-Type':'text/plain'},
-      body:formData.toString(),
-      mode:'no-cors',
-      keepalive:true
-    }).catch(()=>{}),
-
-    // TikTok CAPI Purchase (server-side via Cloudflare Worker)
-    sendCAPIEvent('Purchase', orderData, hashedCustomer),
-
-   // TikTok CAPI PlaceAnOrder (server-side via Cloudflare Worker)
-    sendCAPIEvent('PlaceAnOrder', orderData, hashedCustomer)
+      method:'POST',headers:{'Content-Type':'text/plain'},
+      body:formData.toString(),mode:'no-cors',keepalive:true
+    }).catch(()=>{})
   ]);
 
-  // Meta Purchase pixel
+  // Browser pixels
   metaTrackPurchase(currentQty,effDel);
-
-  // TikTok browser Purchase
   ttqFirePurchaseEvents(currentQty,effDel,customerName,customerPhone,wilayaText,baladiya).catch(()=>{});
 
   showSuccess();
   btn.disabled=false;btn.innerHTML='<span>✅ أتمم طلبي الآن</span>';
 }
-
 // ════════════════════════════
 // 13. SUCCESS POPUP
 // ════════════════════════════
