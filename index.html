@@ -1439,7 +1439,7 @@ async function loadRealPhotos(){
   try{
     const res=await fetch('real-photos.json');if(!res.ok)throw new Error();
     const files=await res.json();
-    CLOUDINARY_IMAGES=files.filter(f=>/\.(jpe?g|png|webp|gif|avif|jpg)$/i.test(f)).sort((a,b)=>{
+    CLOUDINARY_IMAGES=files.filter(f=>/\.(jpg|png|webp|gif|avif)$/i.test(f)).sort((a,b)=>{
       const nA=parseInt(a.match(/^(\d+)/)?.[1]||0,10);const nB=parseInt(b.match(/^(\d+)/)?.[1]||0,10);return nA-nB;
     });
   }catch(_){CLOUDINARY_IMAGES=[];}
