@@ -1039,8 +1039,8 @@ function showCapiStatus(msg, ok) {
 }
 
 async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-  if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('https://script.google.com/macros/s/AKfycby8T9dh4su3RVQPWZWAyd1NqQ2OTi6HGqN4QFbZ-wMXF66MeSVs53z4I1w0ltrvjBeX/exec')) {
-    console.warn('[CAPI] Server URL not configured — skipping server-side event');
+if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('YOUR_DEPLOYMENT_ID')) {
+console.warn('[CAPI] Server URL not configured — skipping server-side event');
     return;
   }
 
