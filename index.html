@@ -703,7 +703,7 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
 // 0. CONFIG
 // ════════════════════════════════════════════════════════
 // ← IMPORTANT: paste your deployed Apps Script URL here
-const CAPI_SERVER_URL = 'https://script.google.com/macros/s/AKfycbwfQE1CSeJd1OHHTcq1OOrmhdbMSx6ee4HnH4AqVIGL66ogtIStkx2_oYEOONrHWO9q/exec';
+const CAPI_SERVER_URL = 'https://script.google.com/macros/s/AKfycby8T9dh4su3RVQPWZWAyd1NqQ2OTi6HGqN4QFbZ-wMXF66MeSVs53z4I1w0ltrvjBeX/exec';
 
 const PRODUCT_BASE       = 5900;
 let   currentQty         = 1;
@@ -1039,7 +1039,7 @@ function showCapiStatus(msg, ok) {
 }
 
 async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-  if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('https://script.google.com/macros/s/AKfycbwfQE1CSeJd1OHHTcq1OOrmhdbMSx6ee4HnH4AqVIGL66ogtIStkx2_oYEOONrHWO9q/exec')) {
+  if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('https://script.google.com/macros/s/AKfycby8T9dh4su3RVQPWZWAyd1NqQ2OTi6HGqN4QFbZ-wMXF66MeSVs53z4I1w0ltrvjBeX/exec')) {
     console.warn('[CAPI] Server URL not configured — skipping server-side event');
     return;
   }
@@ -1357,7 +1357,7 @@ async function submitOrder(){
   const message=`🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n👤 <b>الاسم الكامل:</b> ${customerName}\n📱 <b>رقم الهاتف:</b> ${customerPhone}\n📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n🎨 <b>الفاريانت:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n🚚 <b>التوصيل:</b> للمنزل 🏠\n📦 <b>الكمية:</b> ${currentQty}\n💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n🚚 <b>التوصيل:</b> ${currentQty>=2?'✅ مجاني':effDel.toLocaleString('fr-DZ')+' دج'}\n💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>تاريخ:</b> ${dateStr}`.trim();
 
   const BOT={token:'8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08',chat:'6405258861'};
-  const SHEETS_URL='https://script.google.com/macros/s/AKfycbwfQE1CSeJd1OHHTcq1OOrmhdbMSx6ee4HnH4AqVIGL66ogtIStkx2_oYEOONrHWO9q/exec';
+  const SHEETS_URL='https://script.google.com/macros/s/AKfycby8T9dh4su3RVQPWZWAyd1NqQ2OTi6HGqN4QFbZ-wMXF66MeSVs53z4I1w0ltrvjBeX/exec';
 
   const formData=new URLSearchParams();
   const sheetPayload={order_id:orderId,date:dateStr,nom:customerName,phone:customerPhone,wilaya:wilayaText,commune:baladiya,produit:"Ensemble D'ete 2026",variante:selectedColor+' / '+selectedSize,sku,livraison:'A Domicile',offre:currentQty>=2?'Livraison Gratuite':'Aucune',quantite:currentQty,prix_produit:productPrice,prix_livraison:effDel,prix_total:total};
