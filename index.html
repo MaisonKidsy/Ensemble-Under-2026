@@ -20,12 +20,10 @@ ttq.load('D8U635BC77UDUI6570PG');
 }(window,document,'ttq');
 </script>
 
-<!-- OG / Schema same as original — omitted for brevity, keep yours -->
-
 <style>
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    RESET & TOKENS
-════════════════════════════════════════════════ */
+══════════════════════════════════════════ */
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
 :root{
@@ -44,23 +42,23 @@ body{
   overflow-x:hidden;
 }
 
-/* ════════════════════════════════════════════════
-   ADAPTIVE IMAGE QUALITY ENGINE
-   Classes set by JS based on Network API:
-   .net-slow  → load placeholder blurred tiny img first, then swap
-   .net-mid   → load medium quality
-   .net-fast  → load full quality immediately
-════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   IMAGE SECTIONS
+   CRITICAL: overflow must be visible so scroll arrows show above next section
+══════════════════════════════════════════ */
 .img-section{
   width:100%;
   background:var(--navy);
   display:flex;
   justify-content:center;
   align-items:center;
-  overflow:hidden;
   line-height:0;
   font-size:0;
-  position:relative; /* for scroll-arrow */
+  /* NO overflow:hidden here — arrows need to escape */
+  position:relative;
+  /* Extra bottom padding = half the arrow height so it doesn't overlap content */
+  padding-bottom:22px;
+  margin-bottom:0;
 }
 .fullscreen-img{
   width:100%;
@@ -69,93 +67,68 @@ body{
   display:block;
   object-fit:contain;
   margin:0 auto;
-  transition:filter 0.6s ease, opacity 0.5s ease;
+  transition:filter 0.5s ease, opacity 0.4s ease;
 }
 @media(max-width:600px){.fullscreen-img{max-width:100%;}}
 
 /* Skeleton shimmer while loading */
-.img-section.loading::after{
-  content:'';
-  position:absolute;inset:0;
+.img-section.loading .fullscreen-img{
+  min-height:200px;
   background:linear-gradient(90deg,#0d1e36 25%,#162c50 50%,#0d1e36 75%);
   background-size:200% 100%;
   animation:shimmer 1.5s infinite;
-  z-index:1;
 }
-.img-section.loaded::after{display:none;}
+.img-section.loaded .fullscreen-img{animation:none;background:none;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 
-/* Blur-up: slow connections see blurred tiny src first */
-.img-blur-up{filter:blur(20px) brightness(0.8);}
+/* Blur-up for slow connections */
+.img-blur-up{filter:blur(16px) brightness(0.85);}
 .img-blur-up.sharp{filter:none;}
 
-/* ════════════════════════════════════════════════
-   SCROLL ARROW — splits between sections
-════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   SCROLL ARROWS
+   z-index:100 ensures they are always on top
+   pointer-events:none so they don't block touch
+══════════════════════════════════════════ */
 .scroll-arrow{
   position:absolute;
-  bottom:-22px; /* half in this section, half in next */
+  bottom:-22px;
   left:50%;
   transform:translateX(-50%);
-  z-index:50;
+  z-index:100;
   width:44px;height:44px;
   pointer-events:none;
-  /* no background — pure SVG circle with animation */
 }
 .scroll-arrow svg{
   width:44px;height:44px;
   overflow:visible;
-  filter:drop-shadow(0 0 8px rgba(245,197,24,0.6));
+  filter:drop-shadow(0 0 8px rgba(245,197,24,0.7));
 }
-/* Outer pulsing ring */
+/* Pulsing ring */
 .sa-ring{
-  fill:none;
-  stroke:rgba(245,197,24,0.25);
-  stroke-width:1.5;
+  fill:none;stroke:rgba(245,197,24,0.3);stroke-width:1.5;
   animation:sa-ring-pulse 2s ease-in-out infinite;
   transform-origin:22px 22px;
 }
-@keyframes sa-ring-pulse{
-  0%,100%{r:20;opacity:0.4;}
-  50%{r:24;opacity:0;} /* increases radius so ring floats out */
-}
-/* Inner circle */
-.sa-circle{
-  fill:rgba(10,22,40,0.85);
-  stroke:var(--gold);
-  stroke-width:1.5;
-}
-/* Animated chevron down */
+@keyframes sa-ring-pulse{0%,100%{r:20;opacity:0.5;}50%{r:25;opacity:0;}}
+.sa-circle{fill:rgba(10,22,40,0.9);stroke:var(--gold);stroke-width:2;}
 .sa-chevron{
-  stroke:var(--gold);
-  stroke-width:2;
-  stroke-linecap:round;
-  stroke-linejoin:round;
-  fill:none;
+  stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none;
   animation:sa-bounce 1.8s ease-in-out infinite;
 }
-@keyframes sa-bounce{
-  0%,100%{transform:translateY(0);}
-  50%{transform:translateY(4px);}
-}
-/* Double chevron offset */
-.sa-chevron2{
-  animation-delay:0.2s;
-  opacity:0.5;
-}
+@keyframes sa-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
+.sa-chevron2{animation-delay:0.18s;opacity:0.5;}
 
-/* ════════════════════════════════════════════════
-   FLOATING CTA BUTTON
-════════════════════════════════════════════════ */
+/* ══════════════════════════════════════════
+   FLOATING CTA
+══════════════════════════════════════════ */
 .float-btn{
-  position:fixed;
-  bottom:24px;left:50%;
+  position:fixed;bottom:24px;left:50%;
   transform:translateX(-50%);
   z-index:999;
   background:linear-gradient(135deg,var(--red),#c0001f);
   color:white;border:none;
-  padding:16px 40px;
-  border-radius:50px;
+  padding:16px 40px;border-radius:50px;
   font-family:'Cairo',sans-serif;
   font-size:1.05rem;font-weight:900;
   cursor:pointer;
@@ -163,47 +136,32 @@ body{
   animation:float-pulse 2s infinite;
   white-space:nowrap;
   text-decoration:none;
-  display:inline-flex;
-  align-items:center;gap:8px;
+  display:inline-flex;align-items:center;gap:8px;
   transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);
 }
 .float-btn.scroll-hint{
   background:linear-gradient(135deg,#1a3a6e,#0d2040);
   box-shadow:0 8px 30px rgba(10,22,40,0.6);
-  animation:none;
-  padding:14px 32px;
-  font-size:0.95rem;
+  animation:none;padding:14px 32px;font-size:0.95rem;
 }
-.float-btn .btn-arrow{
-  display:inline-block;
-  animation:hint-bounce 1.4s ease-in-out infinite;
-  font-size:1.1rem;
-}
+.float-btn .btn-arrow{display:inline-block;animation:hint-bounce 1.4s ease-in-out infinite;font-size:1.1rem;}
 @keyframes hint-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
-@keyframes float-pulse{
-  0%,100%{box-shadow:0 8px 30px rgba(232,19,42,0.5);}
-  50%{box-shadow:0 8px 50px rgba(232,19,42,0.8);}
-}
+@keyframes float-pulse{0%,100%{box-shadow:0 8px 30px rgba(232,19,42,0.5);}50%{box-shadow:0 8px 50px rgba(232,19,42,0.8);}}
 @media(max-width:768px){
   .float-btn{padding:14px 24px;font-size:0.95rem;width:calc(100% - 32px);justify-content:center;}
   .float-btn.scroll-hint{font-size:0.88rem;}
 }
 
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    REAL PHOTOS CAROUSEL
-════════════════════════════════════════════════ */
+══════════════════════════════════════════ */
 .real-photos-section{
   background:linear-gradient(180deg,#0A1628 0%,#0d2040 100%);
-  padding:48px 0 32px;
-  position:relative;
-  overflow:hidden;
+  padding:48px 0 40px;position:relative;overflow:hidden;
 }
 .section-title{
-  color:var(--gold);
-  font-size:clamp(1.6rem,4vw,2.2rem);
-  font-weight:900;
-  text-align:center;
-  margin-bottom:28px;
+  color:var(--gold);font-size:clamp(1.6rem,4vw,2.2rem);
+  font-weight:900;text-align:center;margin-bottom:28px;
   text-shadow:0 2px 10px rgba(245,197,24,0.2);
 }
 .carousel-container{position:relative;width:100%;max-width:480px;margin:0 auto;touch-action:pan-y;user-select:none;}
@@ -222,14 +180,21 @@ body{
 }
 .carousel-arrow:hover{background:var(--gold);color:var(--navy);transform:translateY(-50%) scale(1.1);}
 .carousel-prev{right:12px;}.carousel-next{left:12px;}
-.carousel-dots{display:flex;justify-content:center;gap:10px;margin-top:20px;}
+.carousel-dots{display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap;}
 .carousel-dot{width:10px;height:10px;border-radius:50%;border:none;background:rgba(255,255,255,0.25);cursor:pointer;transition:all 0.3s;padding:0;}
 .carousel-dot.active{background:var(--gold);width:28px;border-radius:5px;}
 .carousel-counter{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(10,22,40,0.8);color:var(--gold);padding:6px 18px;border-radius:20px;font-size:0.85rem;font-weight:700;z-index:10;border:1px solid rgba(245,197,24,0.25);direction:ltr;}
+/* Placeholder when no images */
+.carousel-placeholder{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;height:100%;color:rgba(255,255,255,0.4);font-family:'Cairo',sans-serif;
+  font-size:0.9rem;gap:12px;
+}
+.carousel-placeholder span{font-size:2.5rem;}
 
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    COD FORM
-════════════════════════════════════════════════ */
+══════════════════════════════════════════ */
 .cod-section{background:linear-gradient(135deg,var(--navy) 0%,#0d2040 100%);padding:80px 20px 120px;}
 .form-header{text-align:center;margin-bottom:48px;}
 .form-header h2{color:white;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px;}
@@ -288,9 +253,9 @@ body{
 .trust-badges{display:flex;justify-content:center;gap:24px;margin-top:24px;flex-wrap:wrap;}
 .trust-item{display:flex;align-items:center;gap:6px;font-size:0.82rem;color:rgba(255,255,255,0.7);}
 
-/* ════════════════════════════════════════════════
+/* ══════════════════════════════════════════
    SUCCESS POPUP
-════════════════════════════════════════════════ */
+══════════════════════════════════════════ */
 .popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;}
 .popup-overlay.active{display:flex;}
 .popup-box{background:white;border-radius:24px;padding:48px 40px;max-width:480px;width:100%;text-align:center;position:relative;animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1);}
@@ -303,19 +268,18 @@ body{
 .popup-close{position:absolute;top:16px;left:16px;background:var(--light-gray);border:none;width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray);}
 .popup-phone{background:linear-gradient(135deg,#f0fff4,#e8f5e9);border:1px solid #c3e6cb;border-radius:12px;padding:14px 20px;margin:20px 0;font-size:1rem;color:#155724;font-weight:600;}
 
-/* ════════════════════════════════════════════════
-   CAPI STATUS INDICATOR (dev only)
-════════════════════════════════════════════════ */
+/* CAPI status — dev debug */
 #capiStatus{
   position:fixed;bottom:80px;right:12px;
-  background:rgba(10,22,40,0.9);
-  border:1px solid var(--gold);
+  background:rgba(10,22,40,0.92);border:1px solid var(--gold);
   color:var(--gold);font-size:0.7rem;
   padding:4px 10px;border-radius:8px;
   z-index:998;display:none;
-  font-family:'Cairo',sans-serif;
-  pointer-events:none;
+  font-family:'Cairo',sans-serif;pointer-events:none;
 }
+
+/* fb hidden price */
+.fb-price{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;color:transparent;font-size:0.001px;pointer-events:none;}
 
 /* FOOTER */
 footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-align:center;}
@@ -328,11 +292,8 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
 .footer-divider{border-color:rgba(255,255,255,0.1);margin:24px 0;}
 .footer-copy{font-size:0.8rem;opacity:0.4;}
 
-/* fb hidden price */
-.fb-price{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;color:transparent;font-size:0.001px;pointer-events:none;}
-
 @media(max-width:480px){
-  .cod-section{padding:60px 12px 100px;text-align:center;}
+  .cod-section{padding:60px 12px 100px;}
   .cod-form{padding:24px 14px;border-radius:18px;}
   .size-grid{grid-template-columns:repeat(5,1fr);gap:6px;}
   .size-btn{padding:10px 2px;font-size:0.85rem;}
@@ -343,41 +304,41 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
 </head>
 <body>
 
-<!-- CAPI DEV STATUS -->
-<div id="capiStatus">CAPI ⏳</div>
+<div id="capiStatus"></div>
 
-<!-- ════════════════════════════════════════════
-     FLOATING CTA
-════════════════════════════════════════════ -->
+<!-- FLOATING CTA -->
 <a class="float-btn" id="floatBtn" onclick="handleFloatBtn(event)" href="#cod-form">
   <span id="floatBtnText">🛒 اسحب للأسفل لمزيد من التفاصيل</span>
 </a>
 
-<!-- ════════════════════════════════════════════
-     REAL PHOTOS CAROUSEL
-════════════════════════════════════════════ -->
+<!-- REAL PHOTOS CAROUSEL -->
 <section class="real-photos-section" id="realPhotos">
   <h2 class="section-title">📸 صور حقيقة للمنتج</h2>
   <div class="carousel-container">
     <div class="carousel-viewport" id="carouselViewport">
-      <div class="carousel-track" id="carouselTrack"></div>
+      <div class="carousel-track" id="carouselTrack">
+        <!-- Placeholder shown immediately while JSON loads -->
+        <div class="carousel-placeholder">
+          <span>📷</span>
+          <p style="font-family:'Cairo',sans-serif;font-size:0.9rem;">جارٍ تحميل الصور...</p>
+        </div>
+      </div>
     </div>
-    <button class="carousel-arrow carousel-next" onclick="moveCarousel(1)" aria-label="التالية">❯</button>
-    <button class="carousel-arrow carousel-prev" onclick="moveCarousel(-1)" aria-label="السابقة">❮</button>
-    <div class="carousel-counter" id="carouselCounter">0 / 0</div>
+    <button class="carousel-arrow carousel-next" id="btnNext" onclick="moveCarousel(1)" aria-label="التالية" style="display:none">❯</button>
+    <button class="carousel-arrow carousel-prev" id="btnPrev" onclick="moveCarousel(-1)" aria-label="السابقة" style="display:none">❮</button>
+    <div class="carousel-counter" id="carouselCounter" style="display:none">1 / 1</div>
     <div class="carousel-dots" id="carouselDots"></div>
   </div>
 </section>
 
-<!-- ════════════════════════════════════════════
-     IMAGE SECTIONS — each with scroll arrow
-════════════════════════════════════════════ -->
+<!-- ══════════════════════════════════════════
+     IMAGE SECTIONS — each with visible scroll arrow
+══════════════════════════════════════════ -->
 
 <!-- HERO -->
 <div class="img-section loading" data-section="hero">
   <img class="fullscreen-img" data-src="hero.jpg" src="" alt="Ensemble été 2026" fetchpriority="high"/>
   <span class="fb-price" aria-label="2900 DZD" data-price="2900">2900 دج</span>
-  <!-- Scroll arrow between hero ↔ problem -->
   <div class="scroll-arrow" aria-hidden="true">
     <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
       <circle class="sa-ring" cx="22" cy="22" r="20"/>
@@ -454,23 +415,20 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
   </div>
 </div>
 
-<!-- SIZE GUIDE — last image: no scroll arrow (leads to form) -->
+<!-- TAILLES — last image, red arrow pointing to form -->
 <div class="img-section loading" data-section="tailles">
   <img class="fullscreen-img" data-src="tailles.jpg" src="" alt="دليل المقاسات"/>
-  <!-- Final arrow points to form -->
-  <div class="scroll-arrow" style="bottom:-22px;" aria-hidden="true">
+  <div class="scroll-arrow" aria-hidden="true">
     <svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg">
-      <circle class="sa-ring" cx="22" cy="22" r="20"/>
-      <circle class="sa-circle" cx="22" cy="22" style="fill:rgba(232,19,42,0.85);stroke:#E8132A;"/>
+      <circle class="sa-ring" cx="22" cy="22" r="20" style="stroke:rgba(232,19,42,0.35)"/>
+      <circle class="sa-circle" cx="22" cy="22" r="18" style="fill:rgba(232,19,42,0.9);stroke:#E8132A;"/>
       <polyline class="sa-chevron" points="14,18 22,26 30,18" style="stroke:#ffffff;"/>
       <polyline class="sa-chevron sa-chevron2" points="14,22 22,30 30,22" style="stroke:#ffffff;"/>
     </svg>
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════
-     COD FORM
-════════════════════════════════════════════ -->
+<!-- COD FORM -->
 <section class="cod-section" id="cod-form">
   <div class="container">
     <div class="form-header">
@@ -693,29 +651,28 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════════════════════════════
+<!-- ════════════════════════════════════════
      MAIN SCRIPT
-═══════════════════════════════════════════════════════════════ -->
+════════════════════════════════════════ -->
 <script>
 'use strict';
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 0. CONFIG
-// ════════════════════════════════════════════════════════
-// ← IMPORTANT: paste your deployed Apps Script URL here
-const CAPI_SERVER_URL = 'https://script.google.com/macros/s/AKfycbwk1NtaU_09lBoOi-WBUqH3O8oQF127AuUfqoi1t79ZwrRrrVoflVaALMwl3ERUHX6m/exec';
+// ════════════════════════════
+// ▼▼▼ IMPORTANT: This is your Google Apps Script URL ▼▼▼
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwk1NtaU_09lBoOi-WBUqH3O8oQF127AuUfqoi1t79ZwrRrrVoflVaALMwl3ERUHX6m/exec';
 
-const PRODUCT_BASE       = 5900;
-let   currentQty         = 1;
+const PRODUCT_BASE        = 5900;
+let   currentQty          = 1;
 let   currentDeliveryPrice = 0;
-let   deliveryType       = 'home';
-let   homePrice          = 0;
-let   selectedColor      = 'Vert Militaire';
-let   selectedSize       = 'M';
+let   deliveryType        = 'home';
+let   homePrice           = 0;
+let   selectedColor       = 'Vert Militaire';
+let   selectedSize        = 'M';
 
 const PIXEL_PRODUCT_ID     = 'ENSEMBLE_ETE_2026';
 const PIXEL_PRICE_PER_UNIT = 2900;
-const PIXEL_CURRENCY       = 'DZD';
 
 function getProductPrice(qty)         { return PRODUCT_BASE * qty; }
 function getTotalPrice(qty, delivery) { return getProductPrice(qty) + (qty >= 2 ? 0 : delivery); }
@@ -724,217 +681,129 @@ function getSKU(color, size) {
 }
 function generateOrderID() { return '#' + Math.floor(100000 + Math.random() * 900000); }
 
-// ════════════════════════════════════════════════════════
-// 1. ADAPTIVE IMAGE QUALITY ENGINE
-// ════════════════════════════════════════════════════════
-const NetQuality = (function() {
-  // Detect connection quality: 'slow' | 'mid' | 'fast'
-  function detect() {
-    // Network Information API
+// ════════════════════════════
+// 1. ADAPTIVE IMAGE LOADING
+// ════════════════════════════
+const NetQuality = (function(){
+  function detect(){
     const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    if (conn) {
-      const ect = conn.effectiveType; // '2g','3g','4g','slow-2g'
-      const down = conn.downlink;     // Mbps
-      const rtt  = conn.rtt;          // ms
-
-      if (ect === 'slow-2g' || ect === '2g' || down < 0.5 || rtt > 800) return 'slow';
-      if (ect === '3g' || down < 2 || rtt > 300) return 'mid';
+    if(conn){
+      const ect=conn.effectiveType, down=conn.downlink, rtt=conn.rtt;
+      if(ect==='slow-2g'||ect==='2g'||down<0.5||rtt>800)return 'slow';
+      if(ect==='3g'||down<2||rtt>300)return 'mid';
       return 'fast';
     }
-    // Fallback: measure timing with a tiny probe image (1x1 png ~70b)
-    // Default to 'mid' synchronously; update async
     return 'mid';
   }
-
-  // For each quality level, we define how to load images
-  // slow → tiny placeholder (blurred), then lazy full
-  // mid  → normal lazy load
-  // fast → eager load everything
-  const QUALITY = detect();
-  console.log('[NetQ] Detected quality:', QUALITY);
-  return { level: QUALITY };
+  return {level:detect()};
 })();
 
-// ── Lazy load images based on quality ──
-function loadImages() {
-  const sections = document.querySelectorAll('.img-section');
-
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const section = entry.target;
-      const img = section.querySelector('img.fullscreen-img');
-      if (!img || img.dataset.loaded) return;
-
-      const src = img.dataset.src;
-      if (!src) return;
-
-      if (NetQuality.level === 'slow') {
-        // Phase 1: load tiny version (append ?w=30 as hint — if CDN supports it)
-        // We use the main src but with a blur class while loading
-        img.classList.add('img-blur-up');
-        img.onload = () => {
-          img.classList.add('sharp');
-          section.classList.remove('loading');
-          section.classList.add('loaded');
-          img.dataset.loaded = '1';
-        };
-        img.src = src;
-      } else if (NetQuality.level === 'mid') {
-        img.onload = () => {
-          section.classList.remove('loading');
-          section.classList.add('loaded');
-          img.dataset.loaded = '1';
-        };
-        img.src = src;
-      } else {
-        // fast: load immediately
-        img.onload = () => {
-          section.classList.remove('loading');
-          section.classList.add('loaded');
-          img.dataset.loaded = '1';
-        };
-        img.src = src;
-      }
-      observer.unobserve(section);
-    });
-  }, {
-    rootMargin: NetQuality.level === 'fast' ? '600px' : NetQuality.level === 'mid' ? '300px' : '100px',
-    threshold: 0
-  });
-
-  // Hero: load immediately regardless
-  const heroSection = document.querySelector('[data-section="hero"]');
-  if (heroSection) {
-    const heroImg = heroSection.querySelector('img.fullscreen-img');
-    if (heroImg && heroImg.dataset.src) {
-      heroImg.src = heroImg.dataset.src;
-      heroImg.onload = () => {
-        heroSection.classList.remove('loading');
-        heroSection.classList.add('loaded');
-        heroImg.dataset.loaded = '1';
+function loadImages(){
+  const sections=document.querySelectorAll('.img-section');
+  const margins={fast:'600px',mid:'300px',slow:'100px'};
+  const observer=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting)return;
+      const sec=entry.target;
+      const img=sec.querySelector('img.fullscreen-img');
+      if(!img||img.dataset.loaded)return;
+      const src=img.dataset.src; if(!src)return;
+      if(NetQuality.level==='slow') img.classList.add('img-blur-up');
+      img.onload=()=>{
+        img.classList.add('sharp');
+        sec.classList.remove('loading');sec.classList.add('loaded');
+        img.dataset.loaded='1';
       };
+      img.onerror=()=>{sec.classList.remove('loading');sec.classList.add('loaded');};
+      img.src=src;
+      observer.unobserve(sec);
+    });
+  },{rootMargin:margins[NetQuality.level]||'300px',threshold:0});
+
+  // Hero always loads immediately
+  const hero=document.querySelector('[data-section="hero"]');
+  if(hero){
+    const hi=hero.querySelector('img.fullscreen-img');
+    if(hi&&hi.dataset.src){
+      hi.onload=()=>{hero.classList.remove('loading');hero.classList.add('loaded');hi.dataset.loaded='1';};
+      hi.onerror=()=>{hero.classList.remove('loading');hero.classList.add('loaded');};
+      hi.src=hi.dataset.src;
     }
   }
-
-  sections.forEach(s => {
-    if (s.dataset.section !== 'hero') observer.observe(s);
-  });
-
-  // Listen for connection changes (mobile switching 3G → 4G etc.)
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  if (conn) {
-    conn.addEventListener('change', () => {
-      console.log('[NetQ] Connection changed → reload pending images');
-      loadImages(); // re-trigger for any unloaded
-    });
-  }
+  sections.forEach(s=>{ if(s.dataset.section!=='hero') observer.observe(s); });
 }
 
-// ════════════════════════════════════════════════════════
-// 2. FLOATING CTA — scroll-aware text
-// ════════════════════════════════════════════════════════
-let hasScrolled    = false;
-let scrollBackTimer = null;
-const floatBtn     = document.getElementById('floatBtn');
-const floatBtnText = document.getElementById('floatBtnText');
+// ════════════════════════════
+// 2. FLOATING CTA
+// ════════════════════════════
+let hasScrolled=false, scrollBackTimer=null;
+const floatBtn=document.getElementById('floatBtn');
+const floatBtnText=document.getElementById('floatBtnText');
 
-// Track if user has reached the form
-function isFormVisible() {
-  const form = document.getElementById('cod-form');
-  const rect = form.getBoundingClientRect();
-  return rect.top < window.innerHeight * 0.8;
+function isFormVisible(){
+  const r=document.getElementById('cod-form').getBoundingClientRect();
+  return r.top < window.innerHeight*0.8;
 }
-
-window.addEventListener('scroll', () => {
-  const scrollY = window.scrollY || window.pageYOffset;
-
-  if (scrollY < 50) {
-    // Top of page — show default CTA
-    setFloatBtnCTA();
-    hasScrolled = false;
-    return;
-  }
-
-  if (!hasScrolled) {
-    // First scroll — show "scroll down" hint
-    hasScrolled = true;
-    setFloatBtnHint();
-
-    // After 2.5s of scrolling, revert to CTA
+window.addEventListener('scroll',()=>{
+  const y=window.scrollY||window.pageYOffset;
+  if(y<50){setFloatBtnCTA();hasScrolled=false;return;}
+  if(!hasScrolled){
+    hasScrolled=true;setFloatBtnHint();
     clearTimeout(scrollBackTimer);
-    scrollBackTimer = setTimeout(() => {
-      if (!isFormVisible()) setFloatBtnCTA();
-    }, 2500);
+    scrollBackTimer=setTimeout(()=>{ if(!isFormVisible())setFloatBtnCTA(); },2500);
   }
+  if(isFormVisible())setFloatBtnCTA();
+},{passive:true});
 
-  // If form is already visible, always show "order now"
-  if (isFormVisible()) setFloatBtnCTA();
-}, { passive: true });
+function setFloatBtnHint(){floatBtn.classList.add('scroll-hint');floatBtnText.innerHTML='<span class="btn-arrow">↓</span> اسحب للأسفل لمزيد من التفاصيل';}
+function setFloatBtnCTA(){floatBtn.classList.remove('scroll-hint');floatBtnText.innerHTML='🛒 اطلب الآن — الدفع عند الاستلام';}
+function handleFloatBtn(e){e.preventDefault();document.getElementById('cod-form').scrollIntoView({behavior:'smooth',block:'start'});setFloatBtnCTA();}
 
-function setFloatBtnHint() {
-  floatBtn.classList.add('scroll-hint');
-  floatBtnText.innerHTML = '<span class="btn-arrow">↓</span> اسحب للأسفل لمزيد من التفاصيل';
-}
-function setFloatBtnCTA() {
-  floatBtn.classList.remove('scroll-hint');
-  floatBtnText.innerHTML = 'اسحب للأسفل لمزيد من التفاصيل';
-}
-
-function handleFloatBtn(e) {
-  e.preventDefault();
-  document.getElementById('cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-  // Reset to CTA after click
-  setFloatBtnCTA();
-}
-
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 3. META PIXEL
-// ════════════════════════════════════════════════════════
-fbq('track','ViewContent',{content_ids:[PIXEL_PRODUCT_ID],content_type:'product',value:PIXEL_PRICE_PER_UNIT,currency:PIXEL_CURRENCY});
+// ════════════════════════════
+fbq('track','ViewContent',{content_ids:[PIXEL_PRODUCT_ID],content_type:'product',value:PIXEL_PRICE_PER_UNIT,currency:'DZD'});
+function metaTrackInitiateCheckout(qty,del){fbq('track','InitiateCheckout',{contents:[{id:PIXEL_PRODUCT_ID,quantity:qty}],content_type:'product',value:(PIXEL_PRICE_PER_UNIT*qty)+del,currency:'DZD',num_items:qty});}
+function metaTrackPurchase(qty,del){fbq('track','Purchase',{contents:[{id:PIXEL_PRODUCT_ID,quantity:qty}],content_type:'product',value:(PIXEL_PRICE_PER_UNIT*qty)+del,currency:'DZD',num_items:qty});}
 
-function metaTrackInitiateCheckout(qty,del){fbq('track','InitiateCheckout',{contents:[{id:PIXEL_PRODUCT_ID,quantity:qty}],content_type:'product',value:(PIXEL_PRICE_PER_UNIT*qty)+del,currency:PIXEL_CURRENCY,num_items:qty});}
-function metaTrackPurchase(qty,del,name,phone,wilaya){fbq('track','Purchase',{contents:[{id:PIXEL_PRODUCT_ID,quantity:qty}],content_type:'product',value:(PIXEL_PRICE_PER_UNIT*qty)+del,currency:PIXEL_CURRENCY,num_items:qty});}
-
-// ════════════════════════════════════════════════════════
-// 4. SHA-256 HELPER
-// ════════════════════════════════════════════════════════
-async function sha256(raw) {
-  if (!raw) return '';
-  try {
-    const norm = String(raw).trim().toLowerCase();
-    const buf  = new TextEncoder().encode(norm);
-    const hash = await crypto.subtle.digest('SHA-256', buf);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-  } catch(e) { return ''; }
+// ════════════════════════════
+// 4. SHA-256
+// ════════════════════════════
+async function sha256(raw){
+  if(!raw)return'';
+  try{
+    const norm=String(raw).trim().toLowerCase();
+    const buf=new TextEncoder().encode(norm);
+    const hash=await crypto.subtle.digest('SHA-256',buf);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){return'';}
 }
-function phoneToE164(phone) {
-  const c = String(phone||'').replace(/\D/g,'');
-  if (c.startsWith('0') && c.length===10) return '+213'+c.slice(1);
-  if (c.startsWith('213') && c.length===12) return '+'+c;
-  return '+213'+c;
+function phoneToE164(phone){
+  const c=String(phone||'').replace(/\D/g,'');
+  if(c.startsWith('0')&&c.length===10)return'+213'+c.slice(1);
+  if(c.startsWith('213')&&c.length===12)return'+'+c;
+  return'+213'+c;
 }
-function getTtclid() {
-  try {
-    const p = new URLSearchParams(window.location.search);
-    const u = p.get('ttclid')||p.get('TTCLID');
-    if (u) { try{localStorage.setItem('_tk_ttclid',u);}catch(_){} return u; }
+function getTtclid(){
+  try{
+    const p=new URLSearchParams(window.location.search);
+    const u=p.get('ttclid')||p.get('TTCLID');
+    if(u){try{localStorage.setItem('_tk_ttclid',u);}catch(_){}return u;}
     try{const ls=localStorage.getItem('_tk_ttclid');if(ls)return ls;}catch(_){}
-  } catch(_){}
-  return '';
+  }catch(_){}return'';
 }
-function getOrCreateExternalId() {
-  try {
+function getOrCreateExternalId(){
+  try{
     let e=localStorage.getItem('_tk_ext_id');
     if(!e){e='MKDZ-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);localStorage.setItem('_tk_ext_id',e);}
     return e;
-  }catch(_){return 'MKDZ-'+Date.now().toString(36);}
+  }catch(_){return'MKDZ-'+Date.now().toString(36);}
 }
 
-// ════════════════════════════════════════════════════════
-// 5. TIKTOK BROWSER PIXEL EVENTS
-// ════════════════════════════════════════════════════════
-function buildTTQPayload(label,qty,del,orderId) {
+// ════════════════════════════
+// 5. TIKTOK BROWSER PIXEL
+// ════════════════════════════
+function buildTTQPayload(label,qty,del,orderId){
   const sku=getSKU(selectedColor,selectedSize);
   const prod=PIXEL_PRICE_PER_UNIT*qty;
   const effDel=qty>=2?0:del;
@@ -953,8 +822,8 @@ function buildTTQPayload(label,qty,del,orderId) {
     device_type:/Mobi|Android|iPhone/i.test(navigator.userAgent)?'mobile':'desktop',
     screen:window.screen.width+'x'+window.screen.height
   };
-  if(ttclid) p.ttclid=ttclid;
-  if(extId)  p.external_id=extId;
+  if(ttclid)p.ttclid=ttclid;
+  if(extId)p.external_id=extId;
   return p;
 }
 async function ttqIdentify(name,phone,wilaya,baladiya){
@@ -963,37 +832,20 @@ async function ttqIdentify(name,phone,wilaya,baladiya){
     const e164=phoneToE164(phone);
     const parts=String(name||'').trim().split(/\s+/).filter(Boolean);
     const extId=getOrCreateExternalId();
-    const [hp,hf,hl,hc,hs,hco,he]=await Promise.all([
+    const[hp,hf,hl,hc,hs,hco,he]=await Promise.all([
       sha256(e164),sha256(parts[0]||''),sha256(parts.slice(1).join(' ')),
       sha256((baladiya||'').toLowerCase().trim()),sha256((wilaya||'').toLowerCase().trim()),
       sha256('dz'),sha256(extId)
     ]);
     const id={};
-    if(hp) id.phone_number=hp; if(hf) id.first_name=hf; if(hl) id.last_name=hl;
-    if(hc) id.city=hc; if(hs) id.state=hs; if(hco) id.country=hco; if(he) id.external_id=he;
+    if(hp)id.phone_number=hp;if(hf)id.first_name=hf;if(hl)id.last_name=hl;
+    if(hc)id.city=hc;if(hs)id.state=hs;if(hco)id.country=hco;if(he)id.external_id=he;
     ttq.identify(id);
-    console.log('[TK] identify fired:',Object.keys(id).join(', '));
-  }catch(e){console.warn('[TK] identify error',e);}
-}
-async function injectHashedCustomer(p,name,phone,wilaya,baladiya){
-  try{
-    const e164=phoneToE164(phone);
-    const parts=String(name||'').trim().split(/\s+/).filter(Boolean);
-    const extId=getOrCreateExternalId();
-    const [hp,hf,hl,hc,hs,hco,he]=await Promise.all([
-      sha256(e164),sha256(parts[0]||''),sha256(parts.slice(1).join(' ')),
-      sha256((baladiya||'').toLowerCase().trim()),sha256((wilaya||'').toLowerCase().trim()),
-      sha256('dz'),sha256(extId)
-    ]);
-    if(hp) p.hashed_phone_number=hp; if(hf) p.hashed_first_name=hf; if(hl) p.hashed_last_name=hl;
-    if(hc) p.hashed_city=hc; if(hs) p.hashed_state=hs; if(hco) p.hashed_country=hco; if(he) p.external_id=he;
-    p.delivery_wilaya=wilaya||''; p.delivery_commune=baladiya||'';
-  }catch(e){console.warn('[TK] hashing error',e);}
-  return p;
+  }catch(e){}
 }
 function ttqFireViewContent(){
   if(typeof ttq==='undefined')return;
-  try{const p=buildTTQPayload('ViewContent',1,0,'VIEW_'+Date.now());ttq.track('ViewContent',p);console.log('[TK] ViewContent fired');}catch(e){}
+  try{const p=buildTTQPayload('ViewContent',1,0,'VIEW_'+Date.now());ttq.track('ViewContent',p);}catch(e){}
 }
 function ttqFireAddToCart(qty){
   if(typeof ttq==='undefined')return;
@@ -1004,147 +856,121 @@ function ttqFireInitiateCheckout(qty,del){
   try{const p=buildTTQPayload('InitiateCheckout',qty,del,'CHK_'+Date.now());ttq.track('InitiateCheckout',p);}catch(e){}
 }
 async function ttqFirePurchaseEvents(qty,del,name,phone,wilaya,baladiya){
-  if(typeof ttq==='undefined')return null;
+  if(typeof ttq==='undefined')return;
   const orderId=generateOrderID();
   await ttqIdentify(name,phone,wilaya,baladiya);
   let pPur=buildTTQPayload('Purchase',qty,del,orderId);
-  pPur=await injectHashedCustomer(pPur,name,phone,wilaya,baladiya);
   let pPAO=buildTTQPayload('PlaceAnOrder',qty,del,'ORD_'+Date.now());
-  pPAO=await injectHashedCustomer(pPAO,name,phone,wilaya,baladiya);
-  try{ttq.track('Purchase',pPur);console.log('[TK] Purchase browser fired',orderId);}catch(e){}
-  try{ttq.track('PlaceAnOrder',pPAO);console.log('[TK] PlaceAnOrder browser fired');}catch(e){}
-  return {orderId,pPur,pPAO};
+  try{ttq.track('Purchase',pPur);}catch(e){}
+  try{ttq.track('PlaceAnOrder',pPAO);}catch(e){}
 }
-
-// ── Init TikTok ──
 (function(){
   function tryFire(){
-    if(typeof ttq!=='undefined'&&typeof ttq.page==='function'){
-      ttq.page(); ttqFireViewContent();
-    }else{ setTimeout(tryFire,200); }
+    if(typeof ttq!=='undefined'&&typeof ttq.page==='function'){ttq.page();ttqFireViewContent();}
+    else setTimeout(tryFire,200);
   }
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tryFire);
+  if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',tryFire);
   else tryFire();
 })();
 
 // ════════════════════════════════════════════════════════
-// 6. TIKTOK EVENTS API (CAPI) — SERVER-SIDE via Apps Script
+// 6. TIKTOK CAPI — SERVER SIDE via Apps Script
+//
+// ROOT CAUSE FIX:
+// Google Apps Script (GAS) does NOT return CORS headers on POST
+// when deployed as a web app. The browser blocks the response.
+// Solution: use the "no-cors" mode for fetch → fire-and-forget.
+// The request DOES reach Apps Script and execute, but the browser
+// cannot read the response. This is fine for analytics events.
+//
+// For Google Sheets logging (form data), we keep it as before
+// since Sheets logging is also fire-and-forget.
 // ════════════════════════════════════════════════════════
-function showCapiStatus(msg, ok) {
-  const el = document.getElementById('capiStatus');
-  if (!el) return;
-  el.textContent = 'CAPI ' + (ok ? '✅' : '❌') + ' ' + msg;
-  el.style.display = 'block';
-  setTimeout(() => { el.style.display = 'none'; }, 5000);
+function showCapiStatus(msg,ok){
+  const el=document.getElementById('capiStatus');
+  if(!el)return;
+  el.textContent='CAPI '+(ok?'✅':'⏳')+' '+msg;
+  el.style.display='block';
+  setTimeout(()=>{el.style.display='none';},4000);
 }
 
-async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-if (!CAPI_SERVER_URL) {
-console.warn('[CAPI] Server URL not configured — skipping server-side event');
-    return;
-  }
+async function sendCAPIEvent(eventType, orderData, hashedCustomer){
+  if(!APPS_SCRIPT_URL){console.warn('[CAPI] No URL');return;}
+  const ttclid=getTtclid();
+  const extId=getOrCreateExternalId();
 
-  const ttclid = getTtclid();
-  const extId  = getOrCreateExternalId();
-
-  // ── Get real client IP (best effort) ──
-  let clientIp = '';
-  try {
-    // Try to get IP from a simple service, or leave empty and let server use request IP
-    // Apps Script can't easily get real client IP, but we can try:
-    const ipRes = await fetch('https://api.ipify.org?format=json', { 
-      method: 'GET',
-      signal: AbortSignal.timeout(3000)
-    }).catch(() => null);
-    if (ipRes) {
-      const ipData = await ipRes.json();
-      clientIp = ipData.ip || '';
-    }
-  } catch(e) {
-    clientIp = '';
-  }
-
-  const payload = {
-    event_type:     eventType,
-    order_id:       orderData.orderId || '',
-    quantity:       orderData.qty || 1,
-    unit_price:     PIXEL_PRICE_PER_UNIT,
-    delivery_fee:   orderData.effDel || 0,
-    delivery_fee_original: orderData.delivery || 0,
-    value:          orderData.total || 0,
-    content_id:     PIXEL_PRODUCT_ID,
-    content_name:   'Ensemble Ete 2026 Homme T-shirt Short Coton Premium',
+  const payload={
+    event_type:       eventType,
+    order_id:         orderData.orderId||'',
+    quantity:         orderData.qty||1,
+    unit_price:       PIXEL_PRICE_PER_UNIT,
+    delivery_fee:     orderData.effDel||0,
+    delivery_fee_original: orderData.delivery||0,
+    value:            orderData.total||0,
+    content_id:       PIXEL_PRODUCT_ID,
+    content_name:     'Ensemble Ete 2026 Homme T-shirt Short Coton Premium',
     content_category: 'Vetements Homme Ensembles Ete',
-    color:          selectedColor,
-    size:           selectedSize,
-    variant:        selectedColor + ' / ' + selectedSize,
-    sku:            getSKU(selectedColor, selectedSize),
-    nom:            orderData.name || '',
-    phone:          orderData.phone || '',
-    wilaya:         orderData.wilayaText || '',
-    commune:        orderData.baladiya || '',
-    delivery_wilaya:  orderData.wilayaText || '',
-    delivery_commune: orderData.baladiya || '',
-    offer_type:     orderData.qty >= 2 ? 'FREE_DELIVERY' : 'STANDARD',
-    discount_value: orderData.qty >= 2 ? orderData.delivery : 0,
-    prix_produit:   PRODUCT_BASE * (orderData.qty || 1),
-    prix_livraison: orderData.effDel || 0,
-    prix_total:     orderData.total || 0,
-    page_url:       window.location.href,
-    referrer:       document.referrer || '',
-    locale:         navigator.language || 'ar-DZ',
-    user_agent:     navigator.userAgent,
-    ip:             clientIp,  // ← Pass real IP for better matching
-    
-    // Hashed PII
-    ...(hashedCustomer || {}),
-    
-    ttclid:      ttclid || '',
-    external_id: extId || '',
-    test_event_code: 'TEST05021',  // ← IMPORTANT: Pass test code!
-    
-    // Stable event_id for deduplication
-    event_id: eventType + '_' + (orderData.orderId || Date.now()) + '_' + Math.random().toString(36).slice(2,6)
+    color:            selectedColor,
+    size:             selectedSize,
+    variant:          selectedColor+' / '+selectedSize,
+    sku:              getSKU(selectedColor,selectedSize),
+    nom:              orderData.name||'',
+    phone:            orderData.phone||'',
+    wilaya:           orderData.wilayaText||'',
+    commune:          orderData.baladiya||'',
+    delivery_wilaya:  orderData.wilayaText||'',
+    delivery_commune: orderData.baladiya||'',
+    offer_type:       orderData.qty>=2?'FREE_DELIVERY':'STANDARD',
+    discount_value:   orderData.qty>=2?orderData.delivery:0,
+    prix_produit:     PRODUCT_BASE*(orderData.qty||1),
+    prix_livraison:   orderData.effDel||0,
+    prix_total:       orderData.total||0,
+    page_url:         window.location.href,
+    referrer:         document.referrer||'',
+    locale:           navigator.language||'ar-DZ',
+    user_agent:       navigator.userAgent,
+    ...(hashedCustomer||{}),
+    ttclid:           ttclid||'',
+    external_id:      extId||'',
+    test_event_code:  'TEST05021',
+    event_id:         eventType+'_'+(orderData.orderId||Date.now())+'_'+Math.random().toString(36).slice(2,6)
   };
 
-  try {
-    showCapiStatus('sending...', true);
-    console.log('[CAPI] Sending payload:', payload);
+  showCapiStatus(eventType+' sending…',true);
+  console.log('[CAPI] Sending '+eventType, payload);
 
-    const resp = await fetch(CAPI_SERVER_URL, {
-      method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload),
-      mode:    'cors'
+  try{
+    // ── KEY FIX: mode:'no-cors' ──
+    // GAS doesn't send CORS headers on POST → browser blocks response.
+    // no-cors = request DOES reach server and executes, we just can't read the response.
+    // This is exactly what we want for fire-and-forget CAPI events.
+    await fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'}, // text/plain avoids preflight in no-cors
+      body:JSON.stringify(payload),
+      mode:'no-cors',
+      keepalive:true // ensure it completes even if page unloads
     });
-
-    const result = await resp.json();
-    console.log('[CAPI] Server response:', result);
-
-    // Debug: log the actual payload that was sent to TikTok
-    if (result.payload_sent) {
-      console.log('[CAPI] Payload TikTok received:', result.payload_sent);
-    }
-
-    if (result.tiktok_response && result.tiktok_response.code === 0) {
-      showCapiStatus('✅ ' + eventType + ' OK', true);
-    } else {
-      showCapiStatus('❌ ' + JSON.stringify(result.tiktok_response), false);
-    }
-
-    return result;
-  } catch(err) {
-    console.error('[CAPI] Fetch error:', err);
-    showCapiStatus('Network error: ' + err.message, false);
+    showCapiStatus(eventType+' sent ✓',true);
+    console.log('[CAPI] '+eventType+' fired (no-cors, cannot read response)');
+  }catch(err){
+    console.error('[CAPI] Error:',err);
+    showCapiStatus('Error: '+err.message,false);
   }
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 7. CANVAS PRICE RENDERER
-// ════════════════════════════════════════════════════════
-const canvas = document.getElementById('totalPriceCanvas');
-const ctx    = canvas.getContext('2d');
-if(!CanvasRenderingContext2D.prototype.roundRect){CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){r=Math.min(r,w/2,h/2);this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);return this;};}
+// ════════════════════════════
+const canvas=document.getElementById('totalPriceCanvas');
+const ctx=canvas.getContext('2d');
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);
+    this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);return this;
+  };
+}
 function renderTotalPrice(){
   const total=getTotalPrice(currentQty,currentDeliveryPrice);
   const w=canvas.width,h=canvas.height;
@@ -1157,21 +983,21 @@ function renderTotalPrice(){
   ctx.fillStyle='#0A1628';ctx.font='bold 38px Cairo,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(total.toLocaleString('fr-DZ')+' دج',w/2,50);
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 8. UI UPDATE
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 function updateUI(){
   currentDeliveryPrice=homePrice;
   document.getElementById('qtyDisplay').textContent=currentQty;
   const hl=document.getElementById('homePriceLabel');
-  if(currentQty>=2) hl.innerHTML='✅ <strong style="color:green;">مجاني</strong>';
+  if(currentQty>=2)hl.innerHTML='✅ <strong style="color:green;">مجاني</strong>';
   else hl.innerHTML='+ <strong id="homePriceVal">'+homePrice+'</strong> دج';
   renderTotalPrice();
 }
 
-// ════════════════════════════════════════════════════════
-// 9. COMMUNES DATA (full 58 wilayas — same as original)
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
+// 9. COMMUNES DATA
+// ════════════════════════════
 const communes={
   '1':['أدرار','أولاد أحمد تيمي','أولف','إن زغمير','اقبلي','السبع','بودة','تامست','تامنطيط','تسابيت','تيت','تيمقتن','رقان','زاوية كنتة','سالي','فنوغيل'],
   '2':['أبو الحسن','أم الدروع','أولاد بن عبد القادر','أولاد عباس','أولاد فارس','الأبيض مجاجة','الحجاج','الزبوجة','الشطية','الشلف','الصبحة','الظهرة','الكريمية','المرسى','الهرانفة','بريرة','بنايرية','بني بوعتاب','بني حواء','بني راشد','بوزغاية','بوقادير','تاجنة','تاوقريت','تلعصة','تنس','حرشون','سنجاس','سيدي عبد الرحمن','سيدي عكاشة','عين مران','مصدق','وادي الفضة','وادي سلي','وادي قوسين'],
@@ -1233,14 +1059,14 @@ const communes={
   '58':['المنيعة','المنيعة','حاسي القارة']
 };
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 10. FORM EVENTS
-// ════════════════════════════════════════════════════════
-document.getElementById('wilaya').addEventListener('change', function(){
+// ════════════════════════════
+document.getElementById('wilaya').addEventListener('change',function(){
   const val=this.value;
   const bEl=document.getElementById('baladiya');
   bEl.innerHTML='<option value="">-- اختر البلدية --</option>';
-  if(val && communes[val]){
+  if(val&&communes[val]){
     communes[val].sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;bEl.appendChild(o);});
     bEl.disabled=false;
     const opt=this.options[this.selectedIndex];
@@ -1295,7 +1121,6 @@ function changeQty(delta){
   const n=Math.max(1,Math.min(10,currentQty+delta));
   if(n!==currentQty){currentQty=n;updateUI();ttqFireAddToCart(currentQty);}
 }
-// Early identify on phone blur
 document.getElementById('phone').addEventListener('blur',function(){
   const phone=this.value.trim();
   const name=document.getElementById('fullName').value.trim();
@@ -1308,9 +1133,9 @@ document.getElementById('phone').addEventListener('blur',function(){
 });
 document.getElementById('phone').addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'');});
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 11. VALIDATION
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 function validate(){
   let ok=true;
   const name=document.getElementById('fullName').value.trim();
@@ -1326,9 +1151,9 @@ function validate(){
   return ok;
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 12. ORDER SUBMISSION
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 async function submitOrder(){
   if(!validate()){document.querySelector('.cod-form').scrollIntoView({behavior:'smooth',block:'start'});return;}
   const btn=document.getElementById('submitBtn');
@@ -1347,27 +1172,33 @@ async function submitOrder(){
   const sku           = getSKU(selectedColor,selectedSize);
   const orderId       = generateOrderID();
 
-  // ── Meta Pixel ──
+  // Meta Pixel
   metaTrackInitiateCheckout(currentQty,currentDeliveryPrice);
 
-  // ── TikTok browser (InitiateCheckout) ──
+  // TikTok browser InitiateCheckout
   ttqFireInitiateCheckout(currentQty,currentDeliveryPrice);
 
-  // ── Telegram ──
-  const message=`🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n👤 <b>الاسم الكامل:</b> ${customerName}\n📱 <b>رقم الهاتف:</b> ${customerPhone}\n📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n🎨 <b>الفاريانت:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n🚚 <b>التوصيل:</b> للمنزل 🏠\n📦 <b>الكمية:</b> ${currentQty}\n💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n🚚 <b>التوصيل:</b> ${currentQty>=2?'✅ مجاني':effDel.toLocaleString('fr-DZ')+' دج'}\n💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>تاريخ:</b> ${dateStr}`.trim();
+  // Telegram message
+  const message=`🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n👤 <b>الاسم الكامل:</b> ${customerName}\n📱 <b>رقم الهاتف:</b> ${customerPhone}\n📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n🎨 <b>الفاريانت:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n🚚 <b>التوصيل:</b> للمنزل 🏠\n📦 <b>الكمية:</b> ${currentQty}\n💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n🚚 <b>رسوم التوصيل:</b> ${currentQty>=2?'✅ مجاني':effDel.toLocaleString('fr-DZ')+' دج'}\n💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>تاريخ:</b> ${dateStr}`.trim();
 
   const BOT={token:'8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08',chat:'6405258861'};
-  const SHEETS_URL='https://script.google.com/macros/s/AKfycbwk1NtaU_09lBoOi-WBUqH3O8oQF127AuUfqoi1t79ZwrRrrVoflVaALMwl3ERUHX6m/exec';
 
+  // Google Sheets form data (URL-encoded → goes to processSheetSubmission in GAS)
   const formData=new URLSearchParams();
-  const sheetPayload={order_id:orderId,date:dateStr,nom:customerName,phone:customerPhone,wilaya:wilayaText,commune:baladiya,produit:"Ensemble D'ete 2026",variante:selectedColor+' / '+selectedSize,sku,livraison:'A Domicile',offre:currentQty>=2?'Livraison Gratuite':'Aucune',quantite:currentQty,prix_produit:productPrice,prix_livraison:effDel,prix_total:total};
+  const sheetPayload={
+    order_id:orderId,date:dateStr,nom:customerName,phone:customerPhone,
+    wilaya:wilayaText,commune:baladiya,
+    produit:"Ensemble D'ete 2026",variante:selectedColor+' / '+selectedSize,sku,
+    livraison:'A Domicile',offre:currentQty>=2?'Livraison Gratuite':'Aucune',
+    quantite:currentQty,prix_produit:productPrice,prix_livraison:effDel,prix_total:total
+  };
   Object.keys(sheetPayload).forEach(k=>formData.append(k,sheetPayload[k]));
 
-  // ── Hash customer PII for CAPI ──
+  // Hash customer PII for CAPI
   const e164=phoneToE164(customerPhone);
   const parts=String(customerName).trim().split(/\s+/).filter(Boolean);
   const extId=getOrCreateExternalId();
-  const [hp,hf,hl,hc,hs,hco,he]=await Promise.all([
+  const[hp,hf,hl,hc,hs,hco,he]=await Promise.all([
     sha256(e164),sha256(parts[0]||''),sha256(parts.slice(1).join(' ')),
     sha256((baladiya||'').toLowerCase().trim()),sha256((wilayaText||'').toLowerCase().trim()),
     sha256('dz'),sha256(extId)
@@ -1376,39 +1207,46 @@ async function submitOrder(){
     hashed_phone_number:hp,hashed_first_name:hf,hashed_last_name:hl,
     hashed_city:hc,hashed_state:hs,hashed_country:hco,external_id:he
   };
-
   const orderData={orderId,qty:currentQty,delivery:currentDeliveryPrice,effDel,total,name:customerName,phone:customerPhone,wilayaText,baladiya};
 
-  // ── Fire all in parallel ──
+  // Fire all in parallel (all fire-and-forget)
   await Promise.allSettled([
     // Telegram
-    new Promise(res=>{
-      const xhr=new XMLHttpRequest();
-      xhr.open('POST',`https://api.telegram.org/bot${BOT.token}/sendMessage`,true);
-      xhr.setRequestHeader('Content-Type','application/json');
-      xhr.timeout=15000;xhr.onload=()=>res();xhr.onerror=()=>res();xhr.ontimeout=()=>res();
-      xhr.send(JSON.stringify({chat_id:BOT.chat,text:message,parse_mode:'HTML'}));
-    }),
-    // Google Sheets
-    fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:formData.toString()}).catch(()=>{}),    // TikTok CAPI (server-side) — Purchase event
+    fetch(`https://api.telegram.org/bot${BOT.token}/sendMessage`,{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({chat_id:BOT.chat,text:message,parse_mode:'HTML'})
+    }).catch(()=>{}),
+
+    // Google Sheets (URL-encoded, no-cors fire-and-forget)
+    fetch(APPS_SCRIPT_URL,{
+      method:'POST',
+      headers:{'Content-Type':'text/plain'},
+      body:formData.toString(),
+      mode:'no-cors',
+      keepalive:true
+    }).catch(()=>{}),
+
+    // TikTok CAPI Purchase (server-side via GAS)
     sendCAPIEvent('Purchase', orderData, hashedCustomer),
-    // TikTok CAPI — PlaceAnOrder
+
+    // TikTok CAPI PlaceAnOrder
     sendCAPIEvent('PlaceAnOrder', orderData, hashedCustomer)
   ]);
 
-  // ── Meta Purchase ──
-  metaTrackPurchase(currentQty,effDel,customerName,customerPhone,wilayaText);
+  // Meta Purchase pixel
+  metaTrackPurchase(currentQty,effDel);
 
-  // ── TikTok browser Purchase (async, non-blocking) ──
+  // TikTok browser Purchase
   ttqFirePurchaseEvents(currentQty,effDel,customerName,customerPhone,wilayaText,baladiya).catch(()=>{});
 
   showSuccess();
   btn.disabled=false;btn.innerHTML='<span>✅ أتمم طلبي الآن</span>';
 }
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 13. SUCCESS POPUP
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 function showSuccess(){
   document.getElementById('successPopup').classList.add('active');
   document.getElementById('orderForm').reset();
@@ -1429,54 +1267,124 @@ function showSuccess(){
 function closePopup(){document.getElementById('successPopup').classList.remove('active');}
 document.getElementById('successPopup').addEventListener('click',function(e){if(e.target===this)closePopup();});
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 14. CAROUSEL
-// ════════════════════════════════════════════════════════
-let CLOUDINARY_IMAGES=[];let currentSlide=0;
+// ════════════════════════════
+let CAROUSEL_IMAGES=[];
+let currentSlide=0;
 let touchStartX=0,touchEndX=0,isAnimating=false;
 
 async function loadRealPhotos(){
   try{
-    const res=await fetch('real-photos.json');if(!res.ok)throw new Error();
+    // Try to load real-photos.json
+    const ctrl=new AbortController();
+    const timeout=setTimeout(()=>ctrl.abort(),5000);
+    const res=await fetch('real-photos.json',{signal:ctrl.signal});
+    clearTimeout(timeout);
+    if(!res.ok)throw new Error('HTTP '+res.status);
     const files=await res.json();
-    CLOUDINARY_IMAGES=files.filter(f=>/\.(jpg|png|webp|gif|avif)$/i.test(f)).sort((a,b)=>{
-      const nA=parseInt(a.match(/^(\d+)/)?.[1]||0,10);const nB=parseInt(b.match(/^(\d+)/)?.[1]||0,10);return nA-nB;
-    });
-  }catch(_){CLOUDINARY_IMAGES=[];}
+    if(!Array.isArray(files)||files.length===0)throw new Error('empty');
+    CAROUSEL_IMAGES=files
+      .filter(f=>/\.(jpg|jpeg|png|webp|gif|avif)$/i.test(f))
+      .sort((a,b)=>{
+        const nA=parseInt(a.match(/^(\d+)/)?.[1]||'0',10);
+        const nB=parseInt(b.match(/^(\d+)/)?.[1]||'0',10);
+        return nA-nB;
+      });
+    if(CAROUSEL_IMAGES.length===0)throw new Error('no images');
+  }catch(err){
+    console.warn('[Carousel] real-photos.json not loaded:',err.message);
+    // Fallback: try to detect images by probing common names
+    CAROUSEL_IMAGES=[];
+    // Show a friendly "no photos" state
+  }
   initCarousel();
 }
+
 function initCarousel(){
   const track=document.getElementById('carouselTrack');
   const dots=document.getElementById('carouselDots');
   const counter=document.getElementById('carouselCounter');
-  if(!track||!CLOUDINARY_IMAGES.length)return;
-  track.innerHTML=CLOUDINARY_IMAGES.map((src,i)=>`<div class="carousel-slide" data-index="${i}" style="transform:translateX(${(0-i)*100}%)"><img src="${src}" alt="صورة ${i+1}" ${i===0?'fetchpriority="high"':'loading="lazy"'} draggable="false" onerror="this.parentElement.style.background='#0d2040'"/></div>`).join('');
-  dots.innerHTML=CLOUDINARY_IMAGES.map((_,i)=>`<button class="carousel-dot ${i===0?'active':''}" onclick="goToSlide(${i})" aria-label="صورة ${i+1}"></button>`).join('');
+  const btnNext=document.getElementById('btnNext');
+  const btnPrev=document.getElementById('btnPrev');
+
+  if(!CAROUSEL_IMAGES.length){
+    // Show placeholder message
+    track.innerHTML=`
+      <div class="carousel-placeholder">
+        <span>📷</span>
+        <p style="font-family:'Cairo',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.5);text-align:center;padding:0 20px;">
+          أضف صور المنتج الحقيقية في ملف real-photos.json
+        </p>
+      </div>`;
+    dots.innerHTML='';
+    if(counter)counter.style.display='none';
+    if(btnNext)btnNext.style.display='none';
+    if(btnPrev)btnPrev.style.display='none';
+    return;
+  }
+
+  // Build slides
+  track.innerHTML=CAROUSEL_IMAGES.map((src,i)=>`
+    <div class="carousel-slide" data-index="${i}" style="transform:translateX(${(0-i)*100}%)">
+      <img src="${src}" alt="صورة ${i+1}"
+           ${i===0?'fetchpriority="high"':'loading="lazy"'}
+           draggable="false"
+           onerror="this.parentElement.style.background='#0d2040';this.style.display='none'"/>
+    </div>`).join('');
+
+  dots.innerHTML=CAROUSEL_IMAGES.map((_,i)=>`
+    <button class="carousel-dot ${i===0?'active':''}" onclick="goToSlide(${i})" aria-label="صورة ${i+1}"></button>`).join('');
+
+  if(counter){counter.style.display='block';}
+  if(btnNext)btnNext.style.display='flex';
+  if(btnPrev)btnPrev.style.display='flex';
+
   updateCarousel();
+
+  // Touch support
   const vp=document.getElementById('carouselViewport');
   if(vp){
     vp.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;},{passive:true});
-    vp.addEventListener('touchend',e=>{touchEndX=e.changedTouches[0].screenX;if(Math.abs(touchEndX-touchStartX)>50)moveCarousel(touchEndX<touchStartX?1:-1);},{passive:true});
+    vp.addEventListener('touchend',e=>{
+      touchEndX=e.changedTouches[0].screenX;
+      if(Math.abs(touchEndX-touchStartX)>50)moveCarousel(touchEndX<touchStartX?1:-1);
+    },{passive:true});
   }
-  if(CLOUDINARY_IMAGES[1]){const p=new Image();p.src=CLOUDINARY_IMAGES[1];}
+
+  // Preload second image
+  if(CAROUSEL_IMAGES[1]){const p=new Image();p.src=CAROUSEL_IMAGES[1];}
 }
+
 function updateCarousel(){
-  document.querySelectorAll('.carousel-slide').forEach((s,i)=>s.style.transform=`translateX(${(currentSlide-i)*100}%)`);
+  document.querySelectorAll('.carousel-slide').forEach((s,i)=>{
+    s.style.transform=`translateX(${(currentSlide-i)*100}%)`;
+  });
   document.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===currentSlide));
-  const c=document.getElementById('carouselCounter');if(c)c.textContent=(currentSlide+1)+' / '+CLOUDINARY_IMAGES.length;
+  const c=document.getElementById('carouselCounter');
+  if(c)c.textContent=(currentSlide+1)+' / '+CAROUSEL_IMAGES.length;
 }
 function moveCarousel(dir){
-  if(isAnimating)return;const n=currentSlide+dir;if(n<0||n>=CLOUDINARY_IMAGES.length)return;
+  if(isAnimating)return;
+  const n=currentSlide+dir;
+  if(n<0||n>=CAROUSEL_IMAGES.length)return;
   isAnimating=true;currentSlide=n;updateCarousel();
-  const pre=currentSlide+dir;if(pre>=0&&pre<CLOUDINARY_IMAGES.length){const p=new Image();p.src=CLOUDINARY_IMAGES[pre];}
+  const pre=currentSlide+dir;
+  if(pre>=0&&pre<CAROUSEL_IMAGES.length){const p=new Image();p.src=CAROUSEL_IMAGES[pre];}
   setTimeout(()=>{isAnimating=false;},450);
 }
-function goToSlide(index){if(isAnimating||index<0||index>=CLOUDINARY_IMAGES.length)return;currentSlide=index;updateCarousel();}
-document.addEventListener('keydown',e=>{if(e.key==='ArrowLeft')moveCarousel(1);if(e.key==='ArrowRight')moveCarousel(-1);});
+function goToSlide(index){
+  if(isAnimating||index<0||index>=CAROUSEL_IMAGES.length)return;
+  currentSlide=index;updateCarousel();
+}
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft')moveCarousel(1);
+  if(e.key==='ArrowRight')moveCarousel(-1);
+});
 
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 // 15. BOOT
-// ════════════════════════════════════════════════════════
+// ════════════════════════════
 updateUI();
 loadRealPhotos();
 loadImages();
