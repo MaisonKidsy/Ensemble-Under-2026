@@ -703,7 +703,7 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
 // 0. CONFIG
 // ════════════════════════════════════════════════════════
 // ← IMPORTANT: paste your deployed Apps Script URL here
-const CAPI_SERVER_URL = 'https://script.google.com/macros/s/AKfycbwd4zWZuMXrR5_nx4v3GZyL2kXHFp0YKwjRWYdGwz9kEJgaeo9z_FvMEEgPzlX3EVJ9/exec';
+const CAPI_SERVER_URL = 'https://script.google.com/macros/s/AKfycbwk1NtaU_09lBoOi-WBUqH3O8oQF127AuUfqoi1t79ZwrRrrVoflVaALMwl3ERUHX6m/exec';
 
 const PRODUCT_BASE       = 5900;
 let   currentQty         = 1;
@@ -1039,19 +1039,30 @@ function showCapiStatus(msg, ok) {
 }
 
 async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-  if (!CAPI_SERVER_URL) return;
+if (!CAPI_SERVER_URL) {
+console.warn('[CAPI] Server URL not configured — skipping server-side event');
+    return;
+  }
 
   const ttclid = getTtclid();
   const extId  = getOrCreateExternalId();
 
+  // ── Get real client IP (best effort) ──
   let clientIp = '';
   try {
-    const ipRes = await fetch('https://api.ipify.org?format=json', { method: 'GET', signal: AbortSignal.timeout(3000) }).catch(() => null);
+    // Try to get IP from a simple service, or leave empty and let server use request IP
+    // Apps Script can't easily get real client IP, but we can try:
+    const ipRes = await fetch('https://api.ipify.org?format=json', { 
+      method: 'GET',
+      signal: AbortSignal.timeout(3000)
+    }).catch(() => null);
     if (ipRes) {
       const ipData = await ipRes.json();
       clientIp = ipData.ip || '';
     }
-  } catch(e) { clientIp = ''; }
+  } catch(e) {
+    clientIp = '';
+  }
 
   const payload = {
     event_type:     eventType,
@@ -1083,36 +1094,48 @@ async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
     referrer:       document.referrer || '',
     locale:         navigator.language || 'ar-DZ',
     user_agent:     navigator.userAgent,
-    ip:             clientIp, 
+    ip:             clientIp,  // ← Pass real IP for better matching
+    
+    // Hashed PII
     ...(hashedCustomer || {}),
-    ttclid:         ttclid || '',
-    external_id:    extId || '',
-    test_event_code: 'TEST05021', // Leave this while testing!
+    
+    ttclid:      ttclid || '',
+    external_id: extId || '',
+    test_event_code: 'TEST05021',  // ← IMPORTANT: Pass test code!
+    
+    // Stable event_id for deduplication
     event_id: eventType + '_' + (orderData.orderId || Date.now()) + '_' + Math.random().toString(36).slice(2,6)
   };
 
   try {
     showCapiStatus('sending...', true);
-    console.log('[CAPI] Sending payload to Apps Script...');
+    console.log('[CAPI] Sending payload:', payload);
 
-    // Trick the browser into thinking this is a standard form submission
-    const formData = new URLSearchParams();
-    formData.append('capi_payload', JSON.stringify(payload));
-
-    // Send using no-cors so the browser doesn't block the request
-    fetch(CAPI_SERVER_URL, {
+    const resp = await fetch(CAPI_SERVER_URL, {
       method:  'POST',
-      mode:    'no-cors', 
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body:    formData.toString()
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(payload),
+      mode:    'cors'
     });
 
-    // With no-cors, we can't read the response object, so we assume success if fetch didn't throw
-    showCapiStatus('✅ ' + eventType + ' Sent', true);
+    const result = await resp.json();
+    console.log('[CAPI] Server response:', result);
 
+    // Debug: log the actual payload that was sent to TikTok
+    if (result.payload_sent) {
+      console.log('[CAPI] Payload TikTok received:', result.payload_sent);
+    }
+
+    if (result.tiktok_response && result.tiktok_response.code === 0) {
+      showCapiStatus('✅ ' + eventType + ' OK', true);
+    } else {
+      showCapiStatus('❌ ' + JSON.stringify(result.tiktok_response), false);
+    }
+
+    return result;
   } catch(err) {
     console.error('[CAPI] Fetch error:', err);
-    showCapiStatus('Network error', false);
+    showCapiStatus('Network error: ' + err.message, false);
   }
 }
 
@@ -1334,56 +1357,53 @@ async function submitOrder(){
   const message=`🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n👤 <b>الاسم الكامل:</b> ${customerName}\n📱 <b>رقم الهاتف:</b> ${customerPhone}\n📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n🎨 <b>الفاريانت:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n🚚 <b>التوصيل:</b> للمنزل 🏠\n📦 <b>الكمية:</b> ${currentQty}\n💰 <b>سعر المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n🚚 <b>التوصيل:</b> ${currentQty>=2?'✅ مجاني':effDel.toLocaleString('fr-DZ')+' دج'}\n💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>تاريخ:</b> ${dateStr}`.trim();
 
   const BOT={token:'8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08',chat:'6405258861'};
-  const SHEETS_URL='https://script.google.com/macros/s/AKfycbwd4zWZuMXrR5_nx4v3GZyL2kXHFp0YKwjRWYdGwz9kEJgaeo9z_FvMEEgPzlX3EVJ9/exec';
+  const SHEETS_URL='https://script.google.com/macros/s/AKfycbwk1NtaU_09lBoOi-WBUqH3O8oQF127AuUfqoi1t79ZwrRrrVoflVaALMwl3ERUHX6m/exec';
 
-  // ── 1. Prepare Google Sheets Data ──
-  const formData = new URLSearchParams();
-  const sheetPayload = {
-    order_id: orderId, date: dateStr, nom: customerName, phone: customerPhone, 
-    wilaya: wilayaText, commune: baladiya, produit: "Ensemble D'ete 2026", 
-    variante: selectedColor + ' / ' + selectedSize, sku, livraison: 'A Domicile', 
-    offre: currentQty >= 2 ? 'Livraison Gratuite' : 'Aucune', quantite: currentQty, 
-    prix_produit: productPrice, prix_livraison: effDel, prix_total: total
+  const formData=new URLSearchParams();
+  const sheetPayload={order_id:orderId,date:dateStr,nom:customerName,phone:customerPhone,wilaya:wilayaText,commune:baladiya,produit:"Ensemble D'ete 2026",variante:selectedColor+' / '+selectedSize,sku,livraison:'A Domicile',offre:currentQty>=2?'Livraison Gratuite':'Aucune',quantite:currentQty,prix_produit:productPrice,prix_livraison:effDel,prix_total:total};
+  Object.keys(sheetPayload).forEach(k=>formData.append(k,sheetPayload[k]));
+
+  // ── Hash customer PII for CAPI ──
+  const e164=phoneToE164(customerPhone);
+  const parts=String(customerName).trim().split(/\s+/).filter(Boolean);
+  const extId=getOrCreateExternalId();
+  const [hp,hf,hl,hc,hs,hco,he]=await Promise.all([
+    sha256(e164),sha256(parts[0]||''),sha256(parts.slice(1).join(' ')),
+    sha256((baladiya||'').toLowerCase().trim()),sha256((wilayaText||'').toLowerCase().trim()),
+    sha256('dz'),sha256(extId)
+  ]);
+  const hashedCustomer={
+    hashed_phone_number:hp,hashed_first_name:hf,hashed_last_name:hl,
+    hashed_city:hc,hashed_state:hs,hashed_country:hco,external_id:he
   };
-  Object.keys(sheetPayload).forEach(k => formData.append(k, sheetPayload[k]));
 
-  // ── 2. Prepare TikTok CAPI Data (Send it INSIDE the Sheets request) ──
-  const capiData = {
-    orderId: orderId,
-    qty: currentQty,
-    total: total,
-    ttclid: getTtclid(),
-    external_id: extId,
-    user_agent: navigator.userAgent,
-    test_code: 'TEST05021', // Leave this while testing!
-    customer: hashedCustomer
-  };
-  formData.append('capi_data', JSON.stringify(capiData));
+  const orderData={orderId,qty:currentQty,delivery:currentDeliveryPrice,effDel,total,name:customerName,phone:customerPhone,wilayaText,baladiya};
 
-  // ── 3. Fire all requests (Telegram + ONE Unified Google request) ──
+  // ── Fire all in parallel ──
   await Promise.allSettled([
     // Telegram
-    new Promise(res => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('POST', `https://api.telegram.org/bot${BOT.token}/sendMessage`, true);
-      xhr.setRequestHeader('Content-Type', 'application/json');
-      xhr.timeout = 15000; xhr.onload = () => res(); xhr.onerror = () => res(); xhr.ontimeout = () => res();
-      xhr.send(JSON.stringify({ chat_id: BOT.chat, text: message, parse_mode: 'HTML' }));
+    new Promise(res=>{
+      const xhr=new XMLHttpRequest();
+      xhr.open('POST',`https://api.telegram.org/bot${BOT.token}/sendMessage`,true);
+      xhr.setRequestHeader('Content-Type','application/json');
+      xhr.timeout=15000;xhr.onload=()=>res();xhr.onerror=()=>res();xhr.ontimeout=()=>res();
+      xhr.send(JSON.stringify({chat_id:BOT.chat,text:message,parse_mode:'HTML'}));
     }),
-    // Google Sheets + TikTok CAPI (Combined!)
-    fetch(SHEETS_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: formData.toString()
-    }).catch(() => {})
+    // Google Sheets
+    fetch(SHEETS_URL,{method:'POST',headers:{'Content-Type':'application/x-www-form-urlencoded'},body:formData.toString()}).catch(()=>{}),    // TikTok CAPI (server-side) — Purchase event
+    sendCAPIEvent('Purchase', orderData, hashedCustomer),
+    // TikTok CAPI — PlaceAnOrder
+    sendCAPIEvent('PlaceAnOrder', orderData, hashedCustomer)
   ]);
 
-  // ── Meta & TikTok Browser Events ──
-  metaTrackPurchase(currentQty, effDel, customerName, customerPhone, wilayaText);
-  ttqFirePurchaseEvents(currentQty, effDel, customerName, customerPhone, wilayaText, baladiya).catch(() => {});
+  // ── Meta Purchase ──
+  metaTrackPurchase(currentQty,effDel,customerName,customerPhone,wilayaText);
+
+  // ── TikTok browser Purchase (async, non-blocking) ──
+  ttqFirePurchaseEvents(currentQty,effDel,customerName,customerPhone,wilayaText,baladiya).catch(()=>{});
 
   showSuccess();
-  btn.disabled = false; btn.innerHTML = '<span>✅ أتمم طلبي الآن</span>';
+  btn.disabled=false;btn.innerHTML='<span>✅ أتمم طلبي الآن</span>';
 }
 
 // ════════════════════════════════════════════════════════
