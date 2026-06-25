@@ -1039,7 +1039,7 @@ function showCapiStatus(msg, ok) {
 }
 
 async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-  if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('YOUR_DEPLOYMENT_ID')) {
+  if (!CAPI_SERVER_URL || CAPI_SERVER_URL.includes('https://script.google.com/macros/s/AKfycbyIhqd_SMoDNbt6WXZM7j1-qckStwp-3lZjWoJnD-xWPm4xJwpASPVrxRWzRijNuQRx/exec')) {
     console.warn('[CAPI] Server URL not configured — skipping server-side event');
     return;
   }
@@ -1047,8 +1047,23 @@ async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
   const ttclid = getTtclid();
   const extId  = getOrCreateExternalId();
 
-  // Collect IP + UA client-side to pass to server
-  // (server can't get real IP from Google Apps Script without a proxy)
+  // ── Get real client IP (best effort) ──
+  let clientIp = '';
+  try {
+    // Try to get IP from a simple service, or leave empty and let server use request IP
+    // Apps Script can't easily get real client IP, but we can try:
+    const ipRes = await fetch('https://api.ipify.org?format=json', { 
+      method: 'GET',
+      signal: AbortSignal.timeout(3000)
+    }).catch(() => null);
+    if (ipRes) {
+      const ipData = await ipRes.json();
+      clientIp = ipData.ip || '';
+    }
+  } catch(e) {
+    clientIp = '';
+  }
+
   const payload = {
     event_type:     eventType,
     order_id:       orderData.orderId || '',
@@ -1078,26 +1093,23 @@ async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
     page_url:       window.location.href,
     referrer:       document.referrer || '',
     locale:         navigator.language || 'ar-DZ',
-
-    // Hashed PII (computed client-side for deduplication + AAM)
+    user_agent:     navigator.userAgent,
+    ip:             clientIp,  // ← Pass real IP for better matching
+    
+    // Hashed PII
     ...(hashedCustomer || {}),
-
-    // ttclid for attribution
+    
     ttclid:      ttclid || '',
     external_id: extId || '',
-
-    // Pass UA — server needs it for matching
-    user_agent:  navigator.userAgent,
-    // Note: real IP must be passed from client since Apps Script server won't have it
-    // We pass a placeholder; Apps Script will use UrlFetchApp which has its own IP
-    ip:          '' // Apps Script cannot get client IP — TikTok will use user_agent matching
+    test_event_code: 'TEST05021',  // ← IMPORTANT: Pass test code!
+    
+    // Stable event_id for deduplication
+    event_id: eventType + '_' + (orderData.orderId || Date.now()) + '_' + Math.random().toString(36).slice(2,6)
   };
-
-  // ── Deduplicate: generate a stable event_id ──
-  payload.event_id = eventType + '_' + (orderData.orderId || Date.now()) + '_' + Math.random().toString(36).slice(2,6);
 
   try {
     showCapiStatus('sending...', true);
+    console.log('[CAPI] Sending payload:', payload);
 
     const resp = await fetch(CAPI_SERVER_URL, {
       method:  'POST',
@@ -1109,18 +1121,21 @@ async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
     const result = await resp.json();
     console.log('[CAPI] Server response:', result);
 
-    if (result && result.tiktok_response && result.tiktok_response.code === 0) {
-      showCapiStatus('OK (' + eventType + ')', true);
-      console.log('[CAPI] ✅ ' + eventType + ' sent successfully to TikTok Events API');
+    // Debug: log the actual payload that was sent to TikTok
+    if (result.payload_sent) {
+      console.log('[CAPI] Payload TikTok received:', result.payload_sent);
+    }
+
+    if (result.tiktok_response && result.tiktok_response.code === 0) {
+      showCapiStatus('✅ ' + eventType + ' OK', true);
     } else {
-      showCapiStatus('ERR: ' + JSON.stringify(result.tiktok_response), false);
-      console.warn('[CAPI] ⚠️ Non-zero code from TikTok:', result);
+      showCapiStatus('❌ ' + JSON.stringify(result.tiktok_response), false);
     }
 
     return result;
   } catch(err) {
     console.error('[CAPI] Fetch error:', err);
-    showCapiStatus('Network error', false);
+    showCapiStatus('Network error: ' + err.message, false);
   }
 }
 
