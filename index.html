@@ -988,64 +988,183 @@
             });
         }
 
-        // ─── TIKTOK PIXEL ───
-        const TTQ_PRODUCT_ID     = 'ENSEMBLE_ETE_2026';
-        const TTQ_PRODUCT_NAME   = "Ensemble Été 2026 Homme — T-shirt + Short Coton Premium";
-        const TTQ_CURRENCY       = 'DZD';
-        const TTQ_PRICE_PER_UNIT = 2900;
+        // ─── TIKTOK PIXEL ADVANCED CONFIGURATION ───
+const TTQ_PIXEL_ID       = 'D8U635BC77UDUI6570PG';
+const TTQ_PRODUCT_ID     = 'ENSEMBLE_ETE_2026';
+const TTQ_PRODUCT_NAME   = "Ensemble Été 2026 Homme — T-shirt + Short Coton Premium";
+const TTQ_CURRENCY       = 'DZD';
+const TTQ_PRICE_PER_UNIT = 2900;
 
-        async function sha256(str) {
-            const buf  = new TextEncoder().encode(str);
-            const hash = await crypto.subtle.digest('SHA-256', buf);
-            return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-        }
+// ── 1. CLICK ID & EXTERNAL ID MANAGEMENT ──
+function getTtclid() {
+    const params = new URLSearchParams(window.location.search);
+    const fromUrl = params.get('ttclid') || params.get('TTCLID');
+    if (fromUrl) {
+        localStorage.setItem('ttclid', fromUrl);
+        sessionStorage.setItem('ttclid', fromUrl);
+        return fromUrl;
+    }
+    return localStorage.getItem('ttclid') || sessionStorage.getItem('ttclid') || '';
+}
 
-        function ttqTrackViewContent() {
-            ttq.track('ViewContent', {
-                contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
-                value: TTQ_PRICE_PER_UNIT,
-                currency: TTQ_CURRENCY
-            });
-        }
-        function ttqTrackAddToCart(quantity) {
-            ttq.track('AddToCart', {
-                contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
-                value: TTQ_PRICE_PER_UNIT * quantity,
-                currency: TTQ_CURRENCY
-            });
-        }
-        function ttqTrackInitiateCheckout(quantity, deliveryPrice) {
-            ttq.track('InitiateCheckout', {
-                contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
-                value: (TTQ_PRICE_PER_UNIT * quantity) + deliveryPrice,
-                currency: TTQ_CURRENCY
-            });
-        }
-        function ttqTrackPlaceAnOrder(quantity, deliveryPrice) {
-            ttq.track('PlaceAnOrder', {
-                contents: [{ content_id: TTQ_PRODUCT_ID, content_type: 'product', content_name: TTQ_PRODUCT_NAME }],
-                value: (TTQ_PRICE_PER_UNIT * quantity) + deliveryPrice,
-                currency: TTQ_CURRENCY
-            });
-        }
-        function ttqTrackPurchase(quantity, deliveryPrice, customerPhone, customerWilaya) {
-            ttq.track('Purchase', {
-                contents: [{
-                    content_id: TTQ_PRODUCT_ID,
-                    content_type: 'product',
-                    content_name: TTQ_PRODUCT_NAME,
-                    content_category: 'Vêtements Homme > Ensembles > Été',
-                    price: TTQ_PRICE_PER_UNIT,
-                    num_items: quantity,
-                    brand: 'MaisonKidsy'
-                }],
-                value: (TTQ_PRICE_PER_UNIT * quantity) + deliveryPrice,
-                currency: TTQ_CURRENCY,
-                status: 'submitted'
-            });
-        }
+function getTtp() {
+    const match = document.cookie.match(/(?:^|; )ttp=([^;]*)/);
+    return match ? decodeURIComponent(match[1]) : '';
+}
 
-        ttqTrackViewContent();
+async function getExternalId(phone) {
+    let ext = localStorage.getItem('tk_ext_id');
+    if (!ext && phone) {
+        ext = await sha256(phone + '_maisonkidsy_dz');
+        localStorage.setItem('tk_ext_id', ext);
+    }
+    return ext || '';
+}
+
+// ── 2. ADVANCED MATCHING (hashed PII) ──
+// TikTok REQUIRES hashing for: phone, email, first_name, last_name, city, state, country, zip, external_id
+async function ttqAdvancedIdentify(name, phone, wilaya, baladiya) {
+    const parts = name.trim().split(/\s+/).filter(Boolean);
+    const firstName = parts[0] || '';
+    const lastName  = parts.slice(1).join(' ') || '';
+
+    const payload = {};
+    if (phone)     payload.phone_number = await sha256(phone);
+    if (firstName) payload.first_name   = await sha256(firstName);
+    if (lastName)  payload.last_name    = await sha256(lastName);
+    if (baladiya)  payload.city         = await sha256(baladiya.toLowerCase().trim());
+    if (wilaya)    payload.state        = await sha256(wilaya.toLowerCase().trim());
+    payload.country    = await sha256('dz');
+    payload.external_id = phone ? await sha256(phone) : await sha256(name + Date.now());
+
+    // Remove empty keys
+    Object.keys(payload).forEach(k => { if (!payload[k]) delete payload[k]; });
+
+    ttq.identify(payload);
+}
+
+// ── 3. ADVANCED EVENT BUILDER ──
+async function buildTikTokPayload(eventType, quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya, orderId) {
+    const ttclid     = getTtclid();
+    const ttp        = getTtp();
+    const externalId = await getExternalId(customerPhone);
+    const sku        = getSKU(selectedColor, selectedSize);
+    const productSubtotal = TTQ_PRICE_PER_UNIT * quantity;
+    const finalTotal = productSubtotal + ((quantity >= 2) ? 0 : deliveryPrice);
+    const nameParts  = customerName.trim().split(/\s+/).filter(Boolean);
+
+    return {
+        // ═══ STANDARD TIKTOK ECOMMERCE ═══
+        contents: [{
+            content_id: TTQ_PRODUCT_ID,
+            content_type: 'product',
+            content_name: TTQ_PRODUCT_NAME,
+            content_category: 'Vêtements Homme > Ensembles > Été',
+            price: TTQ_PRICE_PER_UNIT.toString(),
+            quantity: quantity,
+            num_items: quantity,
+            brand: 'MaisonKidsy',
+            sku: sku,
+            color: selectedColor,
+            size: selectedSize
+        }],
+        content_ids: [TTQ_PRODUCT_ID],
+        content_type: 'product',
+        value: finalTotal,
+        currency: TTQ_CURRENCY,
+        status: 'submitted',
+        order_id: orderId,
+        description: `${eventType} | ${orderId} | ${customerName} | ${customerWilaya}`,
+
+        // ═══ ATTRIBUTION & MATCHING ═══
+        ttclid: ttclid,
+        ttp: ttp,
+        external_id: externalId,
+
+        // ═══ FULL CUSTOMER PROFILE (Custom Parameters) ═══
+        customer_full_name: customerName,
+        customer_first_name: nameParts[0] || '',
+        customer_last_name: nameParts.slice(1).join(' ') || '',
+        customer_phone: customerPhone,
+        customer_wilaya: customerWilaya,
+        customer_commune: customerBaladiya,
+        customer_country: 'DZ',
+        // customer_email: '', // Add if you collect email later
+
+        // ═══ ORDER & PRODUCT DETAILS ═══
+        product_sku: sku,
+        product_variant: `${selectedColor} / ${selectedSize}`,
+        product_color: selectedColor,
+        product_size: selectedSize,
+        quantity: quantity,
+        unit_price: TTQ_PRICE_PER_UNIT,
+        product_subtotal: productSubtotal,
+        delivery_type: 'A Domicile',
+        delivery_price: (quantity >= 2) ? 0 : deliveryPrice,
+        delivery_price_original: deliveryPrice,
+        delivery_wilaya: customerWilaya,
+        delivery_commune: customerBaladiya,
+        offer_applied: quantity >= 2 ? 'Livraison Gratuite' : 'Standard',
+        discount_value: quantity >= 2 ? deliveryPrice : 0,
+        final_total: finalTotal,
+
+        // ═══ TECHNICAL / CONTEXT ═══
+        page_url: window.location.href,
+        page_referrer: document.referrer || 'direct',
+        timestamp: new Date().toISOString(),
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        device_language: navigator.language,
+        screen_resolution: `${window.screen.width}x${window.screen.height}`,
+        device_type: /Mobi|Android|iPhone/i.test(navigator.userAgent) ? 'mobile' : 'desktop',
+        pixel_version: '2.0',
+        event_source: 'website'
+    };
+}
+
+// ── 4. ADVANCED EVENT FUNCTIONS ──
+async function ttqTrackViewContentAdvanced() {
+    const payload = await buildTikTokPayload('ViewContent', 1, 0, 'Guest', '', '', '', 'VIEW_' + Date.now());
+    // Remove customer-specific fields for ViewContent
+    delete payload.customer_phone; delete payload.customer_full_name;
+    delete payload.customer_first_name; delete payload.customer_last_name;
+    delete payload.customer_wilaya; delete payload.customer_commune;
+    delete payload.order_id; delete payload.description;
+    ttq.track('ViewContent', payload);
+}
+
+async function ttqTrackAddToCartAdvanced(quantity) {
+    const payload = await buildTikTokPayload('AddToCart', quantity, 0, 'Guest', '', '', '', 'ATC_' + Date.now());
+    delete payload.customer_phone; delete payload.customer_full_name;
+    delete payload.customer_first_name; delete payload.customer_last_name;
+    delete payload.customer_wilaya; delete payload.customer_commune;
+    ttq.track('AddToCart', payload);
+}
+
+async function ttqTrackInitiateCheckoutAdvanced(quantity, deliveryPrice) {
+    const payload = await buildTikTokPayload('InitiateCheckout', quantity, deliveryPrice, 'Guest', '', '', '', 'CHK_' + Date.now());
+    delete payload.customer_phone; delete payload.customer_full_name;
+    delete payload.customer_first_name; delete payload.customer_last_name;
+    delete payload.customer_wilaya; delete payload.customer_commune;
+    ttq.track('InitiateCheckout', payload);
+}
+
+async function ttqTrackPlaceAnOrderAdvanced(quantity, deliveryPrice, customerPhone) {
+    const payload = await buildTikTokPayload('PlaceAnOrder', quantity, deliveryPrice, 'Guest', customerPhone, '', '', 'ORD_' + Date.now());
+    ttq.track('PlaceAnOrder', payload);
+}
+
+async function ttqTrackPurchaseAdvanced(quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya) {
+    // 1. Advanced Matching FIRST (before the event)
+    await ttqAdvancedIdentify(customerName, customerPhone, customerWilaya, customerBaladiya);
+
+    // 2. Build & fire Purchase with everything
+    const orderId = generateOrderID();
+    const payload = await buildTikTokPayload('Purchase', quantity, deliveryPrice, customerName, customerPhone, customerWilaya, customerBaladiya, orderId);
+    ttq.track('Purchase', payload);
+}
+
+// ── 5. INIT ──
+ttqTrackViewContentAdvanced();
 
         // ─── PRODUCT LOGIC ───
         const PRODUCT_BASE = 5900;
@@ -1379,7 +1498,7 @@
             if (newQty !== currentQty) {
                 currentQty = newQty;
                 trackAddToCart(currentQty);
-                ttqTrackAddToCart(currentQty);
+                ttqTrackAddToCartAdvanced(currentQty).catch(()=>{});
                 updateUI();
             }
         }
@@ -1456,13 +1575,13 @@
             // ── META PIXEL ──
             trackInitiateCheckout(currentQty, currentDeliveryPrice);
 
-            // ── TIKTOK PIXEL ──
-            ttqTrackInitiateCheckout(currentQty, currentDeliveryPrice);
-            try {
-                const hashedPhone = await sha256(customerPhone);
-                ttq.identify({ phone_number: hashedPhone });
-            } catch(e) { /* non-blocking */ }
-
+            // ── TIKTOK PIXEL (ADVANCED) ──
+await ttqTrackInitiateCheckoutAdvanced(currentQty, currentDeliveryPrice);
+try {
+    const hashedPhone = await sha256(customerPhone);
+    ttq.identify({ phone_number: hashedPhone }); // fallback safety
+} catch(e) { /* non-blocking */ }
+            
             const message = `
 🛒 <b>طلب جديد — Ensemble été 2026</b>
 
@@ -1524,9 +1643,9 @@
             ]);
 
             // ── Final pixel fires ──
-            trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
-            ttqTrackPlaceAnOrder(currentQty, effectiveDelivery);
-            ttqTrackPurchase(currentQty, effectiveDelivery, customerPhone, wilayaText);
+trackPurchase(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText);
+await ttqTrackPlaceAnOrderAdvanced(currentQty, effectiveDelivery, customerPhone);
+await ttqTrackPurchaseAdvanced(currentQty, effectiveDelivery, customerName, customerPhone, wilayaText, baladiya);
 
             showSuccess();
             btn.disabled = false;
