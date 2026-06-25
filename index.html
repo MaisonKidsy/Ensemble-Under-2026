@@ -1113,9 +1113,9 @@ console.warn('[CAPI] Server URL not configured — skipping server-side event');
 
     const resp = await fetch(CAPI_SERVER_URL, {
       method:  'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body:    JSON.stringify(payload),
-      mode:    'cors'
+      headers: { 'Content-Type': 'text/plain;charset=utf-8' }, // ← Changed to text/plain to bypass CORS preflight
+      body:    JSON.stringify(payload)
+      // ← Removed mode: 'cors' to let the browser handle GAS redirects naturally
     });
 
     const result = await resp.json();
