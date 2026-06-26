@@ -710,7 +710,8 @@ async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
     hashed_country:        hashedCustomer.hashed_country      || '',
     external_id:           hashedCustomer.external_id         || extId,
     ttclid:                ttclid || '',
-      };
+    test_event_code:       'TEST05021',  // ← DEBUG ONLY — delete after confirming
+  };
 
   dbg('CAPI ' + eventType + ' sending…', null);
   console.log('[CAPI] Sending', eventType, payload);
