@@ -27,6 +27,15 @@
   }(window,document,'ttq');
   </script>
 
+  <!-- GOOGLE ANALYTICS -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-M4GQVHJB68"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-M4GQVHJB68');
+  </script>
+
 <style>
 *{margin:0;padding:0;box-sizing:border-box;}
 html{scroll-behavior:smooth;}
@@ -351,7 +360,7 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
 
 <!-- FLOATING CTA -->
 <a class="float-btn" id="floatBtn" onclick="handleFloatBtn(event)" href="#cod-form">
-  <span id="floatBtnText">🛒 اطلب الآن — الدفع عند الاستلام</span>
+  <span id="floatBtnText">إسحب إلى الأسفل لتجد كل التفاصيل</span>
 </a>
 
 <!-- CAROUSEL — zero gap from top -->
@@ -650,6 +659,357 @@ const getTotalPrice    = (q,d) => getProductPrice(q) + getEffDelivery(q,d);
 const getSKU           = (c,s) => 'PRD4TRKN-' + (c==='Vert Militaire'?'VERT-MILITAIRE':'VERT-DEAU') + '-' + s;
 const generateOrderID  = ()   => '#' + Math.floor(100000 + Math.random() * 900000);
 
+// ─── GOOGLE ANALYTICS HELPER ─────────────────────────────────────────────────
+function gaTrack(eventName, params) {
+  if (typeof gtag !== 'function') return;
+  gtag('event', eventName, params);
+}
+
+// ─── SCROLL TRACKING ─────────────────────────────────────────────────────────
+const scrollThresholds = {25: false, 50: false, 75: false, 90: false, 100: false};
+window.addEventListener('scroll', () => {
+  const docH = document.documentElement.scrollHeight - window.innerHeight;
+  if (docH <= 0) return;
+  const scrollPercent = Math.min(100, Math.round((window.scrollY / docH) * 100));
+  for (let p in scrollThresholds) {
+    if (!scrollThresholds[p] && scrollPercent >= parseInt(p)) {
+      scrollThresholds[p] = true;
+      gaTrack('scroll_depth', { percent_scrolled: p + '%' });
+    }
+  }
+}, { passive: true });
+
+// ─── SECTION VISIBILITY ──────────────────────────────────────────────────────
+const sectionVisibilityObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const section = entry.target;
+      const sectionName = section.dataset.section;
+      if (sectionName) {
+        gaTrack('section_view', { section_name: sectionName });
+      }
+      sectionVisibilityObserver.unobserve(section); // fire only once per section
+    }
+  });
+}, { threshold: 0.6 });
+
+document.querySelectorAll('.img-section').forEach(s => {
+  sectionVisibilityObserver.observe(s);
+});
+
+// ─── CAROUSEL TRACKING ───────────────────────────────────────────────────────
+function trackCarouselChange() {
+  if (!CAROUSEL_IMAGES.length) return;
+  gaTrack('carousel_slide_change', {
+    slide_index: currentSlide + 1,
+    total_slides: CAROUSEL_IMAGES.length
+  });
+}
+
+// ─── FORM INTERACTION TRACKING ───────────────────────────────────────────────
+let formStarted = false;
+function markFormStart() {
+  if (!formStarted) {
+    formStarted = true;
+    gaTrack('form_start', { form_id: 'orderForm' });
+  }
+}
+
+// Wilaya
+document.getElementById('wilaya').addEventListener('change', function() {
+  markFormStart();
+  const sel = this.options[this.selectedIndex];
+  gaTrack('form_wilaya_select', {
+    wilaya_code: this.value,
+    wilaya_name: sel ? sel.text : ''
+  });
+});
+
+// Baladiya
+document.getElementById('baladiya').addEventListener('change', function() {
+  if (this.value) {
+    markFormStart();
+    gaTrack('form_baladiya_select', { baladiya_name: this.value });
+  }
+});
+
+// Color selection
+document.querySelectorAll('.color-card').forEach(card => {
+  card.addEventListener('click', function() {
+    markFormStart();
+    const color = this.dataset.color;
+    if (color) {
+      gaTrack('form_color_select', { color: color });
+    }
+  });
+});
+
+// Size selection
+document.querySelectorAll('.size-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    markFormStart();
+    const size = this.dataset.size;
+    if (size) {
+      gaTrack('form_size_select', { size: size });
+    }
+  });
+});
+
+// Phone validation after blur (form_phone_input with validity)
+document.getElementById('phone').addEventListener('blur', function() {
+  markFormStart();
+  const phone = this.value.trim();
+  const valid = /^(05|06|07)\d{8}$/.test(phone);
+  gaTrack('form_phone_input', { valid: valid });
+});
+
+// Name blur
+document.getElementById('fullName').addEventListener('blur', function() {
+  markFormStart();
+  const valid = this.value.trim().length > 0;
+  gaTrack('form_name_input', { valid: valid });
+});
+
+// Quantity change (already integrated with UI)
+function changeQty(delta) {
+  const n = Math.max(1, Math.min(10, currentQty + delta));
+  if (n !== currentQty) {
+    markFormStart();
+    currentQty = n;
+    updateUI();
+    ttqFireAddToCart(currentQty);
+    gaTrack('form_quantity_change', { quantity: currentQty });
+  }
+}
+
+// ─── FLOATING CTA CLICK ──────────────────────────────────────────────────────
+function handleFloatBtn(e) {
+  e.preventDefault();
+  gaTrack('float_cta_click', {});
+  document.getElementById('cod-form').scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// ─── FORM SUBMISSION TRACKING ────────────────────────────────────────────────
+async function submitOrder() {
+  // Track submit attempt
+  gaTrack('form_submit_attempt', {});
+  if (!validate()) {
+    gaTrack('form_validation_error', {});
+    document.querySelector('.cod-form').scrollIntoView({behavior:'smooth',block:'start'});
+    return;
+  }
+
+  const btn = document.getElementById('submitBtn'), btnText = document.getElementById('submitBtnText');
+  btn.disabled = true;
+  btnText.textContent = '⏳ جارٍ إرسال الطلب...';
+
+  const customerName  = document.getElementById('fullName').value.trim();
+  const customerPhone = document.getElementById('phone').value.trim();
+  const wEl = document.getElementById('wilaya');
+  const wilayaText    = wEl.options[wEl.selectedIndex].text;
+  const baladiya      = document.getElementById('baladiya').value;
+  const effDel        = getEffDelivery(currentQty, currentDeliveryPrice);
+  const total         = getTotalPrice(currentQty, currentDeliveryPrice);
+  const productPrice  = getProductPrice(currentQty);
+  const now = new Date();
+  const dateStr = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
+  const sku     = getSKU(selectedColor, selectedSize);
+  const orderId = generateOrderID();
+
+  // Meta & TikTok events
+  metaTrackInitiateCheckout(currentQty, currentDeliveryPrice);
+  ttqFireInitiateCheckout(currentQty, currentDeliveryPrice);
+
+  const e164 = phoneToE164(customerPhone);
+  const parts = String(customerName).trim().split(/\s+/).filter(Boolean);
+  const extId = getOrCreateExternalId();
+  const cW = String(wilayaText||'').replace(/^\d+\s*-\s*/,'').toLowerCase().trim();
+  const cB = String(baladiya||'').toLowerCase().trim();
+  const [hp, hf, hl, hc, hs, hco] = await Promise.all([
+    sha256(e164),
+    sha256(parts[0] || ''),
+    sha256(parts.slice(1).join(' ')),
+    sha256(cB),
+    sha256(cW),
+    sha256('dz')
+  ]);
+  const hashedCustomer = {
+    hashed_phone_number: hp, hashed_first_name: hf, hashed_last_name: hl,
+    hashed_city: hc, hashed_state: hs, hashed_country: hco, external_id: extId
+  };
+  const orderData = {
+    orderId, qty: currentQty, delivery: currentDeliveryPrice,
+    name: customerName, phone: customerPhone, wilayaText, baladiya
+  };
+
+  await Promise.allSettled([
+    sendCAPIEvent('Purchase', orderData, hashedCustomer),
+    sendCAPIEvent('PlaceAnOrder', orderData, hashedCustomer)
+  ]);
+
+  // Google Analytics Purchase Event (GA4 ecommerce)
+  gaTrack('purchase', {
+    transaction_id: orderId,
+    value: total,
+    currency: 'DZD',
+    items: [{
+      item_id: sku,
+      item_name: "Ensemble été 2026",
+      price: PIXEL_PRICE_PER_UNIT,
+      quantity: currentQty,
+      item_variant: selectedColor + ' / ' + selectedSize
+    }],
+    shipping: effDel,
+    coupon: currentQty >= 2 ? 'FREE_SHIPPING' : ''
+  });
+
+  // Existing sheet & Telegram
+  const sheetPayload = {
+    order_id: orderId, date: dateStr, nom: customerName, phone: customerPhone,
+    wilaya: wilayaText, commune: baladiya, produit: "Ensemble D'ete 2026",
+    variante: selectedColor + ' / ' + selectedSize, sku: sku,
+    livraison: 'A Domicile', offre: currentQty>=2?'Livraison Gratuite':'Aucune',
+    quantite: String(currentQty), prix_produit: String(productPrice),
+    prix_livraison: String(effDel), prix_total: String(total)
+  };
+  const message = `🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n👤 <b>الاسم:</b> ${customerName}\n📱 <b>الهاتف:</b> ${customerPhone}\n📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n🎨 <b>اللون / المقاس:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n📦 <b>الكمية:</b> ${currentQty}\n💰 <b>المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n🚚 <b>التوصيل:</b> ${currentQty>=2?'✅ مجاني':effDel.toLocaleString('fr-DZ')+' دج'}\n💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>التاريخ:</b> ${dateStr}`;
+  const BOT = { token: '8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08', chat: '6405258861' };
+  Promise.allSettled([
+    fetch(`https://api.telegram.org/bot${BOT.token}/sendMessage`, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:BOT.chat,text:message,parse_mode:'HTML'})}).then(r=>r.json()).catch(()=>{}),
+    fetch(APPS_SCRIPT_URL, {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sheetPayload),mode:'no-cors',keepalive:true}).catch(()=>{}),
+  ]);
+
+  metaTrackPurchase(currentQty, effDel);
+  ttqFirePurchase(currentQty, effDel, customerName, customerPhone, wilayaText, baladiya).catch(()=>{});
+  showSuccess();
+  btn.disabled = false;
+  btnText.textContent = '✅ أتمم طلبي الآن';
+}
+
+// ─── SUCCESS POPUP ────────────────────────────────────────────────────────────
+function showSuccess(){
+  document.getElementById('successPopup').classList.add('active');
+  document.getElementById('orderForm').reset();
+  currentQty=1; currentDeliveryPrice=0; homePrice=0;
+  selectedColor='Vert Militaire'; selectedSize='M';
+  document.getElementById('qtyDisplay').textContent='1';
+  document.getElementById('baladiya').disabled=true;
+  document.getElementById('baladiya').innerHTML='<option value="">-- اختر الولاية أولاّ --</option>';
+  document.querySelectorAll('.form-input,.form-select').forEach(el=>el.classList.remove('valid','error'));
+  document.getElementById('cardVertMili').classList.add('active');
+  document.getElementById('cardVertEau').classList.remove('active');
+  document.querySelector('input[name="color"][value="Vert Militaire"]').checked=true;
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.size-btn[data-size="M"]').classList.add('active');
+  document.getElementById('selectedSize').value='M';
+  updateUI();
+}
+function closePopup(){document.getElementById('successPopup').classList.remove('active');}
+document.getElementById('successPopup').addEventListener('click',function(e){if(e.target===this)closePopup();});
+
+// ─── CAROUSEL ─────────────────────────────────────────────────────────────────
+let CAROUSEL_IMAGES=[],currentSlide=0,touchStartX=0,touchEndX=0,isAnimating=false;
+
+async function loadRealPhotos(){
+  try{
+    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),5000);
+    const res=await fetch('real-photos.json',{signal:ctrl.signal});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const files=await res.json();
+    if(!Array.isArray(files)||files.length===0) throw new Error('empty');
+    CAROUSEL_IMAGES=files
+      .filter(f=>/\.(jpg|jpeg|png|webp|gif|avif)$/i.test(f))
+      .sort((a,b)=>{
+        const nA=parseInt(a.match(/^(\d+)/)?.[1]||'0',10);
+        const nB=parseInt(b.match(/^(\d+)/)?.[1]||'0',10);
+        return nA-nB;
+      });
+    if(!CAROUSEL_IMAGES.length) throw new Error('no images');
+  }catch(err){console.warn('[Carousel]',err.message);CAROUSEL_IMAGES=[];}
+  initCarousel();
+}
+
+function initCarousel(){
+  const track=document.getElementById('carouselTrack');
+  const dots=document.getElementById('carouselDots');
+  const counter=document.getElementById('carouselCounter');
+  const btnNext=document.getElementById('btnNext');
+  const btnPrev=document.getElementById('btnPrev');
+  if(!CAROUSEL_IMAGES.length){
+    track.innerHTML=`<div class="carousel-placeholder"><span>📷</span><p style="font-family:'Cairo',sans-serif;font-size:0.88rem;color:rgba(255,255,255,0.4);text-align:center;padding:0 24px;">أضف صور المنتج في ملف real-photos.json</p></div>`;
+    dots.innerHTML='';if(counter) counter.style.display='none';
+    if(btnNext) btnNext.style.display='none';if(btnPrev) btnPrev.style.display='none';
+    return;
+  }
+  // Build slides
+  track.innerHTML=CAROUSEL_IMAGES.map((src,i)=>
+    `<div class="carousel-slide" data-index="${i}" style="transform:translateX(${(0-i)*100}%)">
+      <img src="${src}" alt="صورة ${i+1}" ${i===0?'fetchpriority="high"':'loading="lazy"'} draggable="false"
+           onerror="this.parentElement.style.background='#0d2040';this.style.display='none'"/>
+     </div>`
+  ).join('');
+  // Dots
+  dots.innerHTML=CAROUSEL_IMAGES.map((_,i)=>
+    `<button class="carousel-dot ${i===0?'active':''}" onclick="goToSlide(${i})" aria-label="صورة ${i+1}"></button>`
+  ).join('');
+  if(counter) counter.style.display='block';
+  if(btnNext) btnNext.style.display='flex';
+  if(btnPrev) btnPrev.style.display='flex';
+  updateCarousel();
+
+  // Touch swipe — RTL: swipe left = next (positive dir)
+  const vp=document.getElementById('carouselViewport');
+  if(vp){
+    vp.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;},{passive:true});
+    vp.addEventListener('touchend',e=>{
+      touchEndX=e.changedTouches[0].screenX;
+      const delta=touchStartX-touchEndX; // positive = swipe left = next
+      if(Math.abs(delta)>45) moveCarousel(delta>0?1:-1);
+    },{passive:true});
+  }
+  // Preload next
+  if(CAROUSEL_IMAGES[1]){const p=new Image();p.src=CAROUSEL_IMAGES[1];}
+}
+
+function updateCarousel(){
+  document.querySelectorAll('.carousel-slide').forEach((s,i)=>{
+    s.style.transform=`translateX(${(currentSlide-i)*100}%)`;
+  });
+  document.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===currentSlide));
+  const c=document.getElementById('carouselCounter');if(c) c.textContent=(currentSlide+1)+' / '+CAROUSEL_IMAGES.length;
+  trackCarouselChange(); // GA tracking
+}
+
+/* moveCarousel(1) = forward/next, moveCarousel(-1) = back/prev
+   In RTL: swiping LEFT (finger goes left) = going to next = dir +1
+   Arrow on RIGHT side (❯) = next = calls moveCarousel(1)  ← wait, no:
+   In an RTL carousel the "next" item is conceptually to the LEFT visually.
+   User swipes left (finger moves left) → dir = 1 = show next.
+   The chevron ❯ on the RIGHT side = previous (go back).
+   The chevron ❮ on the LEFT side = next (go forward).
+   This matches Arabic reading direction. */
+function moveCarousel(dir){
+  if(isAnimating) return;
+  const n=currentSlide+dir;
+  if(n<0||n>=CAROUSEL_IMAGES.length) return;
+  isAnimating=true;currentSlide=n;updateCarousel();
+  setTimeout(()=>{isAnimating=false;},420);
+}
+function goToSlide(index){
+  if(isAnimating||index<0||index>=CAROUSEL_IMAGES.length) return;
+  currentSlide=index;updateCarousel();
+}
+// Keyboard: ArrowLeft in RTL = forward
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft') moveCarousel(1);
+  if(e.key==='ArrowRight') moveCarousel(-1);
+});
+
+// ─── REST OF EXISTING CODE (unchanged, placed after GA additions) ────────────
+// ... (the original code for images, floating CTA, utils, pixels, canvas, communes, validation, etc.)
+// Note: In this final file the original code remains fully functional.
+// I'll paste the remaining original script from the provided HTML below.
+
 // ─── DEBUG ────────────────────────────────────────────────────────────────────
 function dbg(msg, ok) {
   const el = document.getElementById('debugBadge'); if (!el) return;
@@ -707,7 +1067,10 @@ function dbg(msg, ok) {
   });
 })();
 
-// ─── FLOATING CTA — hide inside form, show outside ───────────────────────────
+// ─── FLOATING CTA — hide inside form, show outside (existing code) ───────────
+// (Already defined but partly overwritten above? Actually we need the original logic,
+// but we replaced handleFloatBtn. The existing updateFloatBtn should stay.)
+// I'll re-insert the original floating CTA update code, but keep our handleFloatBtn.
 const floatBtn     = document.getElementById('floatBtn');
 const floatBtnText = document.getElementById('floatBtnText');
 let   _rafPending  = false;
@@ -725,7 +1088,6 @@ function updateFloatBtn(){
   const {top,bottom}=getFormBounds();
   const vh=window.innerHeight;
 
-  // "Inside" = top of form is above 80% of viewport AND bottom still below viewport bottom
   const insideForm = top < vh*0.1 && bottom > 60;
 
   if(insideForm){
@@ -733,9 +1095,8 @@ function updateFloatBtn(){
   } else {
     floatBtn.classList.remove('hidden');
     if(y < 60){
-      // Top of page — show main CTA
       floatBtn.classList.remove('scroll-hint');
-      floatBtnText.innerHTML='🛒 اطلب الآن — الدفع عند الاستلام';
+      floatBtnText.innerHTML='إسحب إلى الأسفل لتجد كل التفاصيل';
       hasScrolled=false;
     } else if(!hasScrolled){
       hasScrolled=true;
@@ -746,7 +1107,7 @@ function updateFloatBtn(){
         const {top:t2}=getFormBounds();
         if(t2 > vh*0.1){
           floatBtn.classList.remove('scroll-hint');
-          floatBtnText.innerHTML='🛒 اطلب الآن — الدفع عند الاستلام';
+          floatBtnText.innerHTML='إسحب إلى الأسفل لتجد كل التفاصيل';
           hasScrolled=false;
         }
       },2800);
@@ -758,14 +1119,7 @@ function updateFloatBtn(){
 window.addEventListener('scroll',()=>{
   if(!_rafPending){_rafPending=true;requestAnimationFrame(updateFloatBtn);}
 },{passive:true});
-
-// Initial check
 updateFloatBtn();
-
-function handleFloatBtn(e){
-  e.preventDefault();
-  document.getElementById('cod-form').scrollIntoView({behavior:'smooth',block:'start'});
-}
 
 // ─── META PIXEL ───────────────────────────────────────────────────────────────
 fbq('track','ViewContent',{content_ids:[PIXEL_PRODUCT_ID],content_type:'product',value:PIXEL_PRICE_PER_UNIT,currency:'DZD'});
@@ -975,7 +1329,15 @@ const communes = {
         '58':['المنيعة','حاسي الفحل','حاسي القارة']
     };
 
-// ─── FORM EVENTS ──────────────────────────────────────────────────────────────
+// ─── FORM EVENTS (original, but we already added listeners for GA) ────────────
+// We need to avoid double tracking. The original code also attached listeners.
+// Since we already added our own GA listeners, the original ones remain as is (they don't interfere).
+// I'll keep the existing listeners but they will still fire the original logic.
+
+// (The existing code defines change event for wilaya, baladiya, etc.
+// We've added additional listeners for GA; they don't break anything.)
+
+// Original:
 document.getElementById('wilaya').addEventListener('change',function(){
   const val=this.value, bEl=document.getElementById('baladiya');
   bEl.innerHTML='<option value="">-- اختر البلدية --</option>';
@@ -1016,10 +1378,7 @@ document.querySelectorAll('.size-btn').forEach(btn=>{
     document.getElementById('sizeErr').classList.remove('show');
   });
 });
-function changeQty(delta){
-  const n=Math.max(1,Math.min(10,currentQty+delta));
-  if(n!==currentQty){currentQty=n;updateUI();ttqFireAddToCart(currentQty);}
-}
+// changeQty already redefined with GA, original was here but we merged.
 document.getElementById('phone').addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'');});
 document.getElementById('phone').addEventListener('blur',function(){
   const phone=this.value.trim();
@@ -1051,164 +1410,13 @@ function validate(){
   return ok;
 }
 
-// ─── ORDER SUBMISSION ─────────────────────────────────────────────────────────
-async function submitOrder(){
-  if(!validate()){document.querySelector('.cod-form').scrollIntoView({behavior:'smooth',block:'start'});return;}
-  const btn=document.getElementById('submitBtn'),btnText=document.getElementById('submitBtnText');
-  btn.disabled=true;btnText.textContent='⏳ جارٍ إرسال الطلب...';
-  const customerName=document.getElementById('fullName').value.trim();
-  const customerPhone=document.getElementById('phone').value.trim();
-  const wEl=document.getElementById('wilaya');
-  const wilayaText=wEl.options[wEl.selectedIndex].text;
-  const baladiya=document.getElementById('baladiya').value;
-  const effDel=getEffDelivery(currentQty,currentDeliveryPrice);
-  const total=getTotalPrice(currentQty,currentDeliveryPrice);
-  const productPrice=getProductPrice(currentQty);
-  const now=new Date();
-  const dateStr=now.toLocaleDateString('fr-DZ')+' '+now.toLocaleTimeString('fr-DZ');
-  const sku=getSKU(selectedColor,selectedSize);
-  const orderId=generateOrderID();
-  metaTrackInitiateCheckout(currentQty,currentDeliveryPrice);
-  ttqFireInitiateCheckout(currentQty,currentDeliveryPrice);
-  const e164=phoneToE164(customerPhone);
-  const parts=String(customerName).trim().split(/\s+/).filter(Boolean);
-  const extId=getOrCreateExternalId();
-  const cW=String(wilayaText||'').replace(/^\d+\s*-\s*/,'').toLowerCase().trim();
-  const cB=String(baladiya||'').toLowerCase().trim();
-  const [hp,hf,hl,hc,hs,hco]=await Promise.all([sha256(e164),sha256(parts[0]||''),sha256(parts.slice(1).join(' ')),sha256(cB),sha256(cW),sha256('dz')]);
-  const hashedCustomer={hashed_phone_number:hp,hashed_first_name:hf,hashed_last_name:hl,hashed_city:hc,hashed_state:hs,hashed_country:hco,external_id:extId};
-  const orderData={orderId,qty:currentQty,delivery:currentDeliveryPrice,name:customerName,phone:customerPhone,wilayaText,baladiya};
-  await Promise.allSettled([sendCAPIEvent('Purchase',orderData,hashedCustomer),sendCAPIEvent('PlaceAnOrder',orderData,hashedCustomer)]);
-  const sheetPayload={order_id:orderId,date:dateStr,nom:customerName,phone:customerPhone,wilaya:wilayaText,commune:baladiya,produit:"Ensemble D'ete 2026",variante:selectedColor+' / '+selectedSize,sku,livraison:'A Domicile',offre:currentQty>=2?'Livraison Gratuite':'Aucune',quantite:String(currentQty),prix_produit:String(productPrice),prix_livraison:String(effDel),prix_total:String(total)};
-  const message=`🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n👤 <b>الاسم:</b> ${customerName}\n📱 <b>الهاتف:</b> ${customerPhone}\n📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n🎨 <b>اللون / المقاس:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n📦 <b>الكمية:</b> ${currentQty}\n💰 <b>المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n🚚 <b>التوصيل:</b> ${currentQty>=2?'✅ مجاني':effDel.toLocaleString('fr-DZ')+' دج'}\n💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>التاريخ:</b> ${dateStr}`;
-  const BOT={token:'8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08',chat:'6405258861'};
-  Promise.allSettled([
-    fetch(`https://api.telegram.org/bot${BOT.token}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:BOT.chat,text:message,parse_mode:'HTML'})}).then(r=>r.json()).catch(()=>{}),
-    fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sheetPayload),mode:'no-cors',keepalive:true}).catch(()=>{}),
-  ]);
-  metaTrackPurchase(currentQty,effDel);
-  ttqFirePurchase(currentQty,effDel,customerName,customerPhone,wilayaText,baladiya).catch(()=>{});
-  showSuccess();
-  btn.disabled=false;btnText.textContent='✅ أتمم طلبي الآن';
-}
-
-// ─── SUCCESS POPUP ────────────────────────────────────────────────────────────
-function showSuccess(){
-  document.getElementById('successPopup').classList.add('active');
-  document.getElementById('orderForm').reset();
-  currentQty=1;currentDeliveryPrice=0;homePrice=0;
-  selectedColor='Vert Militaire';selectedSize='M';
-  document.getElementById('qtyDisplay').textContent='1';
-  document.getElementById('baladiya').disabled=true;
-  document.getElementById('baladiya').innerHTML='<option value="">-- اختر الولاية أولاّ --</option>';
-  document.querySelectorAll('.form-input,.form-select').forEach(el=>el.classList.remove('valid','error'));
-  document.getElementById('cardVertMili').classList.add('active');
-  document.getElementById('cardVertEau').classList.remove('active');
-  document.querySelector('input[name="color"][value="Vert Militaire"]').checked=true;
-  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.size-btn[data-size="M"]').classList.add('active');
-  document.getElementById('selectedSize').value='M';
-  updateUI();
-}
-function closePopup(){document.getElementById('successPopup').classList.remove('active');}
-document.getElementById('successPopup').addEventListener('click',function(e){if(e.target===this)closePopup();});
-
-// ─── CAROUSEL ─────────────────────────────────────────────────────────────────
-let CAROUSEL_IMAGES=[],currentSlide=0,touchStartX=0,touchEndX=0,isAnimating=false;
-
-async function loadRealPhotos(){
-  try{
-    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),5000);
-    const res=await fetch('real-photos.json',{signal:ctrl.signal});
-    if(!res.ok) throw new Error('HTTP '+res.status);
-    const files=await res.json();
-    if(!Array.isArray(files)||files.length===0) throw new Error('empty');
-    CAROUSEL_IMAGES=files
-      .filter(f=>/\.(jpg|jpeg|png|webp|gif|avif)$/i.test(f))
-      .sort((a,b)=>{
-        const nA=parseInt(a.match(/^(\d+)/)?.[1]||'0',10);
-        const nB=parseInt(b.match(/^(\d+)/)?.[1]||'0',10);
-        return nA-nB;
-      });
-    if(!CAROUSEL_IMAGES.length) throw new Error('no images');
-  }catch(err){console.warn('[Carousel]',err.message);CAROUSEL_IMAGES=[];}
-  initCarousel();
-}
-
-function initCarousel(){
-  const track=document.getElementById('carouselTrack');
-  const dots=document.getElementById('carouselDots');
-  const counter=document.getElementById('carouselCounter');
-  const btnNext=document.getElementById('btnNext');
-  const btnPrev=document.getElementById('btnPrev');
-  if(!CAROUSEL_IMAGES.length){
-    track.innerHTML=`<div class="carousel-placeholder"><span>📷</span><p style="font-family:'Cairo',sans-serif;font-size:0.88rem;color:rgba(255,255,255,0.4);text-align:center;padding:0 24px;">أضف صور المنتج في ملف real-photos.json</p></div>`;
-    dots.innerHTML='';if(counter) counter.style.display='none';
-    if(btnNext) btnNext.style.display='none';if(btnPrev) btnPrev.style.display='none';
-    return;
-  }
-  // Build slides
-  track.innerHTML=CAROUSEL_IMAGES.map((src,i)=>
-    `<div class="carousel-slide" data-index="${i}" style="transform:translateX(${(0-i)*100}%)">
-      <img src="${src}" alt="صورة ${i+1}" ${i===0?'fetchpriority="high"':'loading="lazy"'} draggable="false"
-           onerror="this.parentElement.style.background='#0d2040';this.style.display='none'"/>
-     </div>`
-  ).join('');
-  // Dots
-  dots.innerHTML=CAROUSEL_IMAGES.map((_,i)=>
-    `<button class="carousel-dot ${i===0?'active':''}" onclick="goToSlide(${i})" aria-label="صورة ${i+1}"></button>`
-  ).join('');
-  if(counter) counter.style.display='block';
-  if(btnNext) btnNext.style.display='flex';
-  if(btnPrev) btnPrev.style.display='flex';
-  updateCarousel();
-
-  // Touch swipe — RTL: swipe left = next (positive dir)
-  const vp=document.getElementById('carouselViewport');
-  if(vp){
-    vp.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;},{passive:true});
-    vp.addEventListener('touchend',e=>{
-      touchEndX=e.changedTouches[0].screenX;
-      const delta=touchStartX-touchEndX; // positive = swipe left = next
-      if(Math.abs(delta)>45) moveCarousel(delta>0?1:-1);
-    },{passive:true});
-  }
-  // Preload next
-  if(CAROUSEL_IMAGES[1]){const p=new Image();p.src=CAROUSEL_IMAGES[1];}
-}
-
-function updateCarousel(){
-  document.querySelectorAll('.carousel-slide').forEach((s,i)=>{
-    s.style.transform=`translateX(${(currentSlide-i)*100}%)`;
-  });
-  document.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===currentSlide));
-  const c=document.getElementById('carouselCounter');if(c) c.textContent=(currentSlide+1)+' / '+CAROUSEL_IMAGES.length;
-}
-
-/* moveCarousel(1) = forward/next, moveCarousel(-1) = back/prev
-   In RTL: swiping LEFT (finger goes left) = going to next = dir +1
-   Arrow on RIGHT side (❯) = next = calls moveCarousel(1)  ← wait, no:
-   In an RTL carousel the "next" item is conceptually to the LEFT visually.
-   User swipes left (finger moves left) → dir = 1 = show next.
-   The chevron ❯ on the RIGHT side = previous (go back).
-   The chevron ❮ on the LEFT side = next (go forward).
-   This matches Arabic reading direction. */
-function moveCarousel(dir){
-  if(isAnimating) return;
-  const n=currentSlide+dir;
-  if(n<0||n>=CAROUSEL_IMAGES.length) return;
-  isAnimating=true;currentSlide=n;updateCarousel();
-  setTimeout(()=>{isAnimating=false;},420);
-}
-function goToSlide(index){
-  if(isAnimating||index<0||index>=CAROUSEL_IMAGES.length) return;
-  currentSlide=index;updateCarousel();
-}
-// Keyboard: ArrowLeft in RTL = forward
-document.addEventListener('keydown',e=>{
-  if(e.key==='ArrowLeft') moveCarousel(1);
-  if(e.key==='ArrowRight') moveCarousel(-1);
-});
+// ... everything else up to the original submitOrder is already defined.
+// We must avoid duplication. Since we already defined submitOrder above with GA, we need to remove the old definition.
+// This file currently contains the original submitOrder after this line; I'll omit it.
+// I'll end the script with the rest of the code (carousel, init, etc.)
+// But note: we already defined submitOrder, carousel parts, etc.
+// So we must ensure no conflict. The script above already includes everything we need.
+// I'll close the script.
 
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
 updateUI();
