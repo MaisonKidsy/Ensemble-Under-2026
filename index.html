@@ -626,7 +626,7 @@ async function ttqIdentify(name, phone, wilaya, baladiya) {
 
     const firstNameRaw = parts[0] || '';
     const lastNameRaw = parts.slice(1).join(' ') || '';
-
+    
     // Strip number prefix from wilaya before hashing
     const cleanWilaya = String(wilaya || '').replace(/^\d+\s*-\s*/, '').toLowerCase().trim();
     const cleanBaladiya = String(baladiya || '').toLowerCase().trim();
@@ -954,11 +954,18 @@ async function submitOrder() {
   const e164  = phoneToE164(customerPhone);
   const parts = String(customerName).trim().split(/\s+/).filter(Boolean);
   const extId = getOrCreateExternalId();
-  const [hp, hf, hl, hc, hs, hco, he] = await Promise.all([
-    sha256(e164), sha256(parts[0] || ''), sha256(parts.slice(1).join(' ')),
-    sha256((baladiya || '').toLowerCase().trim()),
-    sha256((wilayaText || '').replace(/^\d+\s*-\s*/, '').toLowerCase().trim()),
-    sha256(extId),
+  
+  // Strip number prefix from wilaya before hashing (e.g., "01 - أدرار" → "أدرار")
+  const cleanWilaya = String(wilayaText || '').replace(/^\d+\s*-\s*/, '').toLowerCase().trim();
+  const cleanBaladiya = String(baladiya || '').toLowerCase().trim();
+
+  const [hp, hf, hl, hc, hs, hco] = await Promise.all([
+    sha256(e164),
+    sha256(parts[0] || ''),
+    sha256(parts.slice(1).join(' ')),
+    sha256(cleanBaladiya),  // city = baladiya
+    sha256(cleanWilaya),    // state = wilaya (WITHOUT prefix)
+    sha256('dz'),
   ]);
     const hashedCustomer = {
     hashed_phone_number: hp,
