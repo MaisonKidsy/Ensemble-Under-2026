@@ -568,11 +568,13 @@ async function sha256(raw) {
     return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
   } catch (e) { return ''; }
 }
+// REPLACE this function
 function phoneToE164(phone) {
   const c = String(phone || '').replace(/\D/g, '');
-  if (c.startsWith('0') && c.length === 10) return '+213' + c.slice(1);
-  if (c.startsWith('213') && c.length === 12) return '+' + c;
-  return '+213' + c;
+  // TikTok wants E164 WITHOUT the + sign for hashing
+  if (c.startsWith('0') && c.length === 10) return '213' + c.slice(1);
+  if (c.startsWith('213') && c.length === 12) return c;
+  return '213' + c;
 }
 function getTtclid() {
   try {
@@ -621,11 +623,12 @@ async function ttqIdentify(name, phone, wilaya, baladiya) {
     const e164 = phoneToE164(phone);
     const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
     const extId = getOrCreateExternalId();
-    const [hp, hf, hl, hc, hs, hco, he] = await Promise.all([
-      sha256(e164), sha256(parts[0] || ''), sha256(parts.slice(1).join(' ')),
-      sha256((baladiya || '').toLowerCase().trim()), sha256((wilaya || '').toLowerCase().trim()),
-      sha256('dz'), sha256(extId)
-    ]);
+      const [hp, hf, hl, hc, hs, hco] = await Promise.all([
+    sha256(e164), sha256(parts[0] || ''), sha256(parts.slice(1).join(' ')),
+    sha256((baladiya || '').toLowerCase().trim()),
+    sha256((wilayaText || '').toLowerCase().trim()),
+    sha256('dz'),
+  ]);
     const id = {};
     if (hp) id.phone_number = hp;
     if (hf) id.first_name = hf;
@@ -697,8 +700,7 @@ async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
     hashed_country:        hashedCustomer.hashed_country      || '',
     external_id:           hashedCustomer.external_id         || extId,
     ttclid:                ttclid || '',
-    test_event_code:       'TEST05021',  // ← REMOVE this line after confirming events appear in TikTok test console
-  };
+      };
 
   dbg('CAPI ' + eventType + ' sending…', null);
   console.log('[CAPI] Sending', eventType, payload);
@@ -943,14 +945,14 @@ async function submitOrder() {
     sha256('dz'),
     sha256(extId),
   ]);
-  const hashedCustomer = {
+    const hashedCustomer = {
     hashed_phone_number: hp,
     hashed_first_name:   hf,
     hashed_last_name:    hl,
     hashed_city:         hc,
     hashed_state:        hs,
     hashed_country:      hco,
-    external_id:         he || extId,
+    external_id:         extId,   // ← RAW, do NOT hash
   };
   const orderData = {
     orderId, qty: currentQty, delivery: currentDeliveryPrice,
