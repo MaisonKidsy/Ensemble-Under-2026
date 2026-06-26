@@ -865,8 +865,7 @@ async function sendCAPIEvent(eventType,orderData,hashedCustomer){
     hashed_last_name:hashedCustomer.hashed_last_name||'',hashed_city:hashedCustomer.hashed_city||'',
     hashed_state:hashedCustomer.hashed_state||'',hashed_country:hashedCustomer.hashed_country||'',
     external_id:hashedCustomer.external_id||extId,ttclid:ttclid||'',
-    test_event_code:'TEST05021',
-  };
+      };
   dbg('CAPI '+eventType+' sending…',null);
   try{
     const ctrl=new AbortController();
