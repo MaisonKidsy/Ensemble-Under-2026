@@ -7,9 +7,12 @@
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Ensemble été 2026 - اطلب الآن</title>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
+  <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/></noscript>
 
-  <!-- ══════════════ META PIXEL ══════════════ -->
+  <!-- META PIXEL -->
   <script>
   !function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js');
   fbq('init','1179330273909023');
@@ -17,7 +20,7 @@
   </script>
   <noscript><img height="1" width="1" style="display:none" src="https://www.facebook.com/tr?id=1179330273909023&ev=PageView&noscript=1"/></noscript>
 
-  <!-- ══════════════ TIKTOK PIXEL ══════════════ -->
+  <!-- TIKTOK PIXEL -->
   <script>
   !function(w,d,t){w.TiktokAnalyticsObject=t;var ttq=w[t]=w[t]||[];ttq.methods=["page","track","identify","instances","debug","on","off","once","ready","alias","group","enableCookie","disableCookie","holdConsent","revokeConsent","grantConsent"],ttq.setAndDefer=function(t,e){t[e]=function(){t.push([e].concat(Array.prototype.slice.call(arguments,0)))}};for(var i=0;i<ttq.methods.length;i++)ttq.setAndDefer(ttq,ttq.methods[i]);ttq.instance=function(t){for(var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n]);return e},ttq.load=function(e,n){var r="https://analytics.tiktok.com/i18n/pixel/events.js",o=n&&n.partner;ttq._i=ttq._i||{},ttq._i[e]=[],ttq._i[e]._u=r,ttq._t=ttq._t||{},ttq._t[e]=+new Date,ttq._o=ttq._o||{},ttq._o[e]=n||{};n=document.createElement("script");n.type="text/javascript",n.async=!0,n.src=r+"?sdkid="+e+"&lib="+t;e=document.getElementsByTagName("script")[0];e.parentNode.insertBefore(n,e)};
   ttq.load('D8U635BC77UDUI6570PG');
@@ -35,64 +38,219 @@ html{scroll-behavior:smooth;}
   --light-gray:#E9ECEF;--success:#28A745;
   --radius:16px;
 }
-body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--navy);direction:rtl;overflow-x:hidden;}
+body{font-family:'Cairo',sans-serif,system-ui,-apple-system;background:var(--navy);color:var(--navy);direction:rtl;overflow-x:hidden;}
 
-/* ── IMAGE SECTIONS ── */
-.img-section{width:100%;background:var(--navy);display:flex;justify-content:center;align-items:center;line-height:0;font-size:0;position:relative;padding-bottom:22px;margin-bottom:0;}
-.fullscreen-img{width:100%;max-width:600px;height:auto;display:block;object-fit:contain;margin:0 auto;transition:filter 0.5s ease,opacity 0.4s ease;}
+/* ── IMAGE SECTIONS — zero gaps ── */
+.img-section{
+  width:100%;
+  background:var(--navy);
+  display:block;
+  line-height:0;
+  font-size:0;
+  position:relative;
+  margin:0;
+  padding:0;
+}
+.fullscreen-img{
+  width:100%;
+  max-width:600px;
+  height:auto;
+  display:block;
+  object-fit:contain;
+  margin:0 auto;
+  transition:filter 0.4s ease,opacity 0.3s ease;
+  image-rendering:auto;
+}
 @media(max-width:600px){.fullscreen-img{max-width:100%;}}
-.img-section.loading .fullscreen-img{min-height:200px;background:linear-gradient(90deg,#0d1e36 25%,#162c50 50%,#0d1e36 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;}
+
+/* Shimmer skeleton */
+.img-section.loading .fullscreen-img{
+  min-height:180px;
+  background:linear-gradient(90deg,#0d1e36 25%,#162c50 50%,#0d1e36 75%);
+  background-size:200% 100%;
+  animation:shimmer 1.5s infinite;
+}
 .img-section.loaded .fullscreen-img{animation:none;background:none;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.img-blur-up{filter:blur(16px) brightness(0.85);}
+.img-blur-up{filter:blur(12px) brightness(0.9);}
 .img-blur-up.sharp{filter:none;}
 
-/* ── SCROLL ARROWS ── */
-.scroll-arrow{position:absolute;bottom:-22px;left:50%;transform:translateX(-50%);z-index:100;width:44px;height:44px;pointer-events:none;}
-.scroll-arrow svg{width:44px;height:44px;overflow:visible;filter:drop-shadow(0 0 8px rgba(245,197,24,0.7));}
-.sa-ring{fill:none;stroke:rgba(245,197,24,0.3);stroke-width:1.5;animation:sa-ring-pulse 2s ease-in-out infinite;transform-origin:22px 22px;}
-@keyframes sa-ring-pulse{0%,100%{r:20;opacity:0.5;}50%{r:25;opacity:0;}}
-.sa-circle{fill:rgba(10,22,40,0.9);stroke:var(--gold);stroke-width:2;}
-.sa-chevron{stroke:var(--gold);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;fill:none;animation:sa-bounce 1.8s ease-in-out infinite;}
-@keyframes sa-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(4px);}}
-.sa-chevron2{animation-delay:0.18s;opacity:0.5;}
+/* ── SCROLL ARROW — sits between images ── */
+.scroll-arrow{
+  position:absolute;
+  bottom:-28px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  width:56px;
+  height:56px;
+  pointer-events:none;
+}
+.scroll-arrow svg{width:56px;height:56px;overflow:visible;filter:drop-shadow(0 0 12px rgba(245,197,24,0.65));}
+.sa-ring{fill:none;stroke:rgba(245,197,24,0.28);stroke-width:1.5;animation:sa-ring-pulse 2.2s ease-in-out infinite;transform-origin:28px 28px;}
+@keyframes sa-ring-pulse{0%,100%{r:26;opacity:0.5;}50%{r:32;opacity:0;}}
+.sa-circle{fill:rgba(10,22,40,0.92);stroke:var(--gold);stroke-width:2.2;}
+.sa-chevron{stroke:var(--gold);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;fill:none;animation:sa-bounce 1.9s ease-in-out infinite;}
+@keyframes sa-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
+.sa-chevron2{animation-delay:0.2s;opacity:0.45;}
+
+/* padding-bottom on img-section to make room for the arrow */
+.img-section:not(:last-of-type){padding-bottom:28px;}
 
 /* ── FLOATING CTA ── */
-.float-btn{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:999;background:linear-gradient(135deg,var(--red),#c0001f);color:white;border:none;padding:16px 40px;border-radius:50px;font-family:'Cairo',sans-serif;font-size:1.05rem;font-weight:900;cursor:pointer;box-shadow:0 8px 30px rgba(232,19,42,0.5);animation:float-pulse 2s infinite;white-space:nowrap;text-decoration:none;display:inline-flex;align-items:center;gap:8px;transition:all 0.35s cubic-bezier(0.34,1.56,0.64,1);}
-.float-btn.scroll-hint{background:linear-gradient(135deg,#1a3a6e,#0d2040);box-shadow:0 8px 30px rgba(10,22,40,0.6);animation:none;padding:14px 32px;font-size:0.95rem;}
+.float-btn{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%);
+  z-index:999;
+  background:linear-gradient(135deg,var(--red),#c0001f);
+  color:white;border:none;
+  padding:15px 38px;
+  border-radius:50px;
+  font-family:'Cairo',sans-serif;font-size:1.05rem;font-weight:900;
+  cursor:pointer;
+  box-shadow:0 8px 28px rgba(232,19,42,0.5);
+  animation:float-pulse 2s infinite;
+  white-space:nowrap;
+  text-decoration:none;
+  display:inline-flex;align-items:center;gap:8px;
+  transition:all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  /* hidden by default - JS controls */
+  opacity:1;
+  pointer-events:auto;
+  will-change:transform,opacity;
+}
+.float-btn.hidden{
+  opacity:0;
+  pointer-events:none;
+  transform:translateX(-50%) translateY(20px);
+}
+.float-btn.scroll-hint{
+  background:linear-gradient(135deg,#1a3a6e,#0d2040);
+  box-shadow:0 8px 28px rgba(10,22,40,0.6);
+  animation:none;
+  padding:13px 30px;
+  font-size:0.95rem;
+}
 .float-btn .btn-arrow{display:inline-block;animation:hint-bounce 1.4s ease-in-out infinite;font-size:1.1rem;}
 @keyframes hint-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(3px);}}
-@keyframes float-pulse{0%,100%{box-shadow:0 8px 30px rgba(232,19,42,0.5);}50%{box-shadow:0 8px 50px rgba(232,19,42,0.8);}}
-@media(max-width:768px){.float-btn{padding:14px 24px;font-size:0.95rem;width:calc(100% - 32px);justify-content:center;}.float-btn.scroll-hint{font-size:0.88rem;}}
+@keyframes float-pulse{0%,100%{box-shadow:0 8px 28px rgba(232,19,42,0.5);}50%{box-shadow:0 8px 50px rgba(232,19,42,0.8);}}
+@media(max-width:768px){
+  .float-btn{padding:14px 22px;font-size:0.95rem;width:calc(100% - 32px);justify-content:center;}
+  .float-btn.scroll-hint{font-size:0.88rem;}
+}
 
 /* ── CAROUSEL ── */
-.real-photos-section{background:linear-gradient(180deg,#0A1628 0%,#0d2040 100%);padding:48px 0 40px;position:relative;overflow:hidden;}
-.section-title{color:var(--gold);font-size:clamp(1.6rem,4vw,2.2rem);font-weight:900;text-align:center;margin-bottom:28px;text-shadow:0 2px 10px rgba(245,197,24,0.2);}
-.carousel-container{position:relative;width:100%;max-width:480px;margin:0 auto;touch-action:pan-y;user-select:none;}
-.carousel-viewport{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;border-radius:var(--radius);background:#060d1a;box-shadow:0 20px 60px rgba(0,0,0,0.5);}
-@media(max-width:600px){.carousel-container{max-width:100%;}.carousel-viewport{border-radius:0;}}
+.real-photos-section{
+  background:var(--navy);
+  padding:0;
+  margin:0;
+  position:relative;
+  overflow:hidden;
+}
+/* Title bar — tight */
+.carousel-header{
+  padding:32px 20px 0;
+  text-align:center;
+}
+.section-title{
+  color:var(--gold);
+  font-size:clamp(1.45rem,3.5vw,2rem);
+  font-weight:900;
+  text-shadow:0 2px 10px rgba(245,197,24,0.18);
+  margin:0;
+  letter-spacing:-0.01em;
+}
+
+/* Carousel wrapper — no top gap */
+.carousel-container{
+  position:relative;
+  width:100%;
+  max-width:480px;
+  margin:0 auto;
+  touch-action:pan-y;
+  user-select:none;
+  padding-top:16px;
+}
+.carousel-viewport{
+  position:relative;
+  width:100%;
+  aspect-ratio:9/16;
+  overflow:hidden;
+  border-radius:18px;
+  background:#060d1a;
+  box-shadow:0 24px 64px rgba(0,0,0,0.55);
+}
+@media(max-width:600px){
+  .carousel-container{max-width:100%;padding-top:12px;}
+  .carousel-viewport{border-radius:0;}
+}
 .carousel-track{position:relative;width:100%;height:100%;}
-.carousel-slide{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform 0.42s cubic-bezier(0.25,1,0.5,1);will-change:transform;}
-.carousel-slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;pointer-events:none;}
-.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border-radius:50%;background:rgba(10,22,40,0.85);border:2px solid var(--gold);color:var(--gold);font-size:1.1rem;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;backdrop-filter:blur(4px);}
-.carousel-arrow:hover{background:var(--gold);color:var(--navy);transform:translateY(-50%) scale(1.1);}
-.carousel-prev{right:12px;}.carousel-next{left:12px;}
-.carousel-dots{display:flex;justify-content:center;gap:10px;margin-top:20px;flex-wrap:wrap;}
-.carousel-dot{width:10px;height:10px;border-radius:50%;border:none;background:rgba(255,255,255,0.25);cursor:pointer;transition:all 0.3s;padding:0;}
-.carousel-dot.active{background:var(--gold);width:28px;border-radius:5px;}
-.carousel-counter{position:absolute;top:16px;left:50%;transform:translateX(-50%);background:rgba(10,22,40,0.8);color:var(--gold);padding:6px 18px;border-radius:20px;font-size:0.85rem;font-weight:700;z-index:10;border:1px solid rgba(245,197,24,0.25);direction:ltr;}
-.carousel-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;color:rgba(255,255,255,0.4);font-family:'Cairo',sans-serif;font-size:0.9rem;gap:12px;}
+.carousel-slide{
+  position:absolute;top:0;left:0;width:100%;height:100%;
+  transition:transform 0.38s cubic-bezier(0.25,1,0.5,1);
+  will-change:transform;
+}
+.carousel-slide img{
+  width:100%;height:100%;
+  object-fit:cover;object-position:center;
+  display:block;pointer-events:none;
+}
+
+/* Arrows — left/right (RTL: next=left, prev=right) */
+.carousel-arrow{
+  position:absolute;top:50%;transform:translateY(-50%);
+  width:48px;height:48px;border-radius:50%;
+  background:rgba(10,22,40,0.88);
+  border:2px solid rgba(245,197,24,0.8);
+  color:var(--gold);font-size:1rem;
+  cursor:pointer;z-index:10;
+  display:flex;align-items:center;justify-content:center;
+  transition:all 0.2s ease;
+  backdrop-filter:blur(6px);
+  box-shadow:0 4px 16px rgba(0,0,0,0.4);
+}
+.carousel-arrow:hover{background:var(--gold);color:var(--navy);transform:translateY(-50%) scale(1.08);}
+/* In RTL: swipe LEFT = next slide. Arrow on the LEFT side shows "next" */
+.carousel-prev{left:14px;}   /* ← this navigates to PREV */
+.carousel-next{right:14px;}  /* → this navigates to NEXT */
+
+/* Dots */
+.carousel-dots{
+  display:flex;justify-content:center;gap:8px;
+  padding:14px 0 24px;
+  flex-wrap:wrap;
+}
+.carousel-dot{
+  width:8px;height:8px;border-radius:50%;border:none;
+  background:rgba(255,255,255,0.22);cursor:pointer;
+  transition:all 0.28s;padding:0;
+}
+.carousel-dot.active{background:var(--gold);width:26px;border-radius:4px;}
+
+/* Counter badge */
+.carousel-counter{
+  position:absolute;top:14px;left:50%;transform:translateX(-50%);
+  background:rgba(10,22,40,0.82);color:var(--gold);
+  padding:5px 16px;border-radius:20px;
+  font-size:0.82rem;font-weight:700;z-index:10;
+  border:1px solid rgba(245,197,24,0.2);direction:ltr;
+  backdrop-filter:blur(4px);
+}
+.carousel-placeholder{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  width:100%;height:100%;color:rgba(255,255,255,0.35);
+  font-family:'Cairo',sans-serif;font-size:0.9rem;gap:12px;
+}
 .carousel-placeholder span{font-size:2.5rem;}
 
 /* ── COD FORM ── */
-.cod-section{background:linear-gradient(135deg,var(--navy) 0%,#0d2040 100%);padding:80px 20px 120px;}
-.form-header{text-align:center;margin-bottom:48px;}
-.form-header h2{color:white;font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;margin-bottom:12px;}
+.cod-section{background:linear-gradient(135deg,var(--navy) 0%,#0d2040 100%);padding:64px 20px 110px;}
+.form-header{text-align:center;margin-bottom:40px;}
+.form-header h2{color:white;font-size:clamp(1.7rem,4vw,2.5rem);font-weight:900;margin-bottom:10px;}
 .form-header h2 span{color:var(--gold);}
 .form-header p{color:rgba(255,255,255,0.7);font-size:1rem;}
-.cod-form{background:white;border-radius:24px;padding:48px 40px;max-width:720px;margin:0 auto;box-shadow:0 30px 80px rgba(0,0,0,0.3);position:relative;overflow:hidden;}
+.cod-form{background:white;border-radius:24px;padding:44px 38px;max-width:720px;margin:0 auto;box-shadow:0 28px 72px rgba(0,0,0,0.32);position:relative;overflow:hidden;}
 .cod-form::before{content:'';position:absolute;top:0;right:0;left:0;height:6px;background:linear-gradient(90deg,var(--gold),var(--red));}
-.form-group{margin-bottom:24px;}
+.form-group{margin-bottom:22px;}
 .form-label{display:flex;align-items:center;gap:8px;font-size:0.95rem;font-weight:700;color:var(--navy);margin-bottom:10px;}
 .form-label .lbl-icon{font-size:1.1rem;}
 .required-star{color:var(--red);}
@@ -156,28 +314,33 @@ body{font-family:'Cairo',sans-serif;background:var(--navy);color:var(--navy);dir
 .popup-close{position:absolute;top:16px;left:16px;background:var(--light-gray);border:none;width:36px;height:36px;border-radius:50%;font-size:1.2rem;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--gray);}
 .popup-phone{background:linear-gradient(135deg,#f0fff4,#e8f5e9);border:1px solid #c3e6cb;border-radius:12px;padding:14px 20px;margin:20px 0;font-size:1rem;color:#155724;font-weight:600;}
 
-/* ── DEBUG BADGE ── */
-#debugBadge{position:fixed;bottom:80px;right:12px;background:rgba(10,22,40,0.95);border:1px solid var(--gold);color:var(--gold);font-size:0.65rem;padding:4px 10px;border-radius:8px;z-index:998;display:none;font-family:monospace;pointer-events:none;max-width:200px;word-break:break-all;}
-
 .fb-price{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;color:transparent;font-size:0.001px;pointer-events:none;}
 
 /* ── FOOTER ── */
-footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-align:center;}
+footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-align:center;}
 .footer-inner{max-width:800px;margin:0 auto;}
-.footer-logo{width:80px;height:80px;background:linear-gradient(135deg,#1a3060,#0d2040);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;overflow:hidden;border:2px solid rgba(245,197,24,0.3);}
+.footer-logo{width:76px;height:76px;background:linear-gradient(135deg,#1a3060,#0d2040);border-radius:16px;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;overflow:hidden;border:2px solid rgba(245,197,24,0.3);}
 .footer-logo img{width:100%;height:100%;object-fit:contain;}
-.footer-name{color:white;font-size:1.2rem;font-weight:700;margin-bottom:8px;}
+.footer-name{color:white;font-size:1.15rem;font-weight:700;margin-bottom:8px;}
 .footer-info{font-size:0.9rem;line-height:1.8;opacity:0.6;}
 .footer-info a{color:inherit;}
-.footer-divider{border-color:rgba(255,255,255,0.1);margin:24px 0;}
+.footer-divider{border-color:rgba(255,255,255,0.1);margin:22px 0;}
 .footer-copy{font-size:0.8rem;opacity:0.4;}
 
+/* ── DEBUG ── */
+#debugBadge{position:fixed;bottom:80px;right:12px;background:rgba(10,22,40,0.95);border:1px solid var(--gold);color:var(--gold);font-size:0.65rem;padding:4px 10px;border-radius:8px;z-index:998;display:none;font-family:monospace;pointer-events:none;max-width:200px;word-break:break-all;}
+
+/* ── REDUCED MOTION ── */
+@media(prefers-reduced-motion:reduce){
+  .scroll-arrow,.float-btn,.carousel-slide{animation:none;transition:none;}
+}
+
 @media(max-width:480px){
-  .cod-section{padding:60px 12px 100px;}
-  .cod-form{padding:24px 14px;border-radius:18px;}
-  .size-grid{grid-template-columns:repeat(5,1fr);gap:6px;}
+  .cod-section{padding:48px 10px 100px;}
+  .cod-form{padding:22px 12px;border-radius:18px;}
+  .size-grid{gap:6px;}
   .size-btn{padding:10px 2px;font-size:0.85rem;}
-  .popup-box{padding:36px 20px;}
+  .popup-box{padding:34px 18px;}
   .trust-badges{gap:12px;}
 }
 </style>
@@ -188,64 +351,74 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
 
 <!-- FLOATING CTA -->
 <a class="float-btn" id="floatBtn" onclick="handleFloatBtn(event)" href="#cod-form">
-  <span id="floatBtnText">🛒 اسحب للأسفل لمزيد من التفاصيل</span>
+  <span id="floatBtnText">🛒 اطلب الآن — الدفع عند الاستلام</span>
 </a>
 
-<!-- REAL PHOTOS CAROUSEL -->
+<!-- CAROUSEL — zero gap from top -->
 <section class="real-photos-section" id="realPhotos">
-  <h2 class="section-title">📸 صور حقيقة للمنتج</h2>
+  <div class="carousel-header">
+    <h2 class="section-title">📸 صور حقيقية للمنتج</h2>
+  </div>
   <div class="carousel-container">
     <div class="carousel-viewport" id="carouselViewport">
       <div class="carousel-track" id="carouselTrack">
         <div class="carousel-placeholder">
           <span>📷</span>
-          <p style="font-family:'Cairo',sans-serif;font-size:0.9rem;">جارٍ تحميل الصور...</p>
+          <p style="font-family:'Cairo',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.45);">جارٍ تحميل الصور...</p>
         </div>
       </div>
+      <!-- Counter inside viewport -->
+      <div class="carousel-counter" id="carouselCounter" style="display:none">1 / 1</div>
+      <!-- Arrows inside viewport -->
+      <button class="carousel-arrow carousel-next" id="btnNext" onclick="moveCarousel(-1)" aria-label="التالية" style="display:none">❯</button>
+      <button class="carousel-arrow carousel-prev" id="btnPrev" onclick="moveCarousel(1)" aria-label="السابقة" style="display:none">❮</button>
     </div>
-    <button class="carousel-arrow carousel-next" id="btnNext" onclick="moveCarousel(1)" aria-label="التالية" style="display:none">❯</button>
-    <button class="carousel-arrow carousel-prev" id="btnPrev" onclick="moveCarousel(-1)" aria-label="السابقة" style="display:none">❮</button>
-    <div class="carousel-counter" id="carouselCounter" style="display:none">1 / 1</div>
     <div class="carousel-dots" id="carouselDots"></div>
   </div>
 </section>
 
-<!-- IMAGE SECTIONS -->
+<!-- IMAGE SECTIONS — stacked with zero gaps, arrows between -->
 <div class="img-section loading" data-section="hero">
-  <img class="fullscreen-img" data-src="hero.jpg" src="" alt="Ensemble été 2026" fetchpriority="high"/>
+  <img class="fullscreen-img" data-src="hero.jpg" src="" alt="Ensemble été 2026" fetchpriority="high" decoding="async"/>
   <span class="fb-price" aria-label="2900 DZD" data-price="2900">2900 دج</span>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="22" cy="22" r="20"/><circle class="sa-circle" cx="22" cy="22" r="18"/><polyline class="sa-chevron" points="14,18 22,26 30,18"/><polyline class="sa-chevron sa-chevron2" points="14,22 22,30 30,22"/></svg></div>
+  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
 </div>
 
 <div class="img-section loading" data-section="problem">
-  <img class="fullscreen-img" data-src="problem.jpg" src="" alt="المشكلة والحل"/>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="22" cy="22" r="20"/><circle class="sa-circle" cx="22" cy="22" r="18"/><polyline class="sa-chevron" points="14,18 22,26 30,18"/><polyline class="sa-chevron sa-chevron2" points="14,22 22,30 30,22"/></svg></div>
+  <img class="fullscreen-img" data-src="problem.jpg" src="" alt="المشكلة والحل" decoding="async"/>
+  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
 </div>
 
 <div class="img-section loading" data-section="benefits">
-  <img class="fullscreen-img" data-src="benefits.jpg" src="" alt="المميزات"/>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="22" cy="22" r="20"/><circle class="sa-circle" cx="22" cy="22" r="18"/><polyline class="sa-chevron" points="14,18 22,26 30,18"/><polyline class="sa-chevron sa-chevron2" points="14,22 22,30 30,22"/></svg></div>
+  <img class="fullscreen-img" data-src="benefits.jpg" src="" alt="المميزات" decoding="async"/>
+  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
 </div>
 
 <div class="img-section loading" data-section="offer">
-  <img class="fullscreen-img" data-src="offer.jpg" src="" alt="العرض"/>
+  <img class="fullscreen-img" data-src="offer.jpg" src="" alt="العرض" decoding="async"/>
   <span class="fb-price" aria-label="2900 DZD" data-price="2900">2900 دج</span>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="22" cy="22" r="20"/><circle class="sa-circle" cx="22" cy="22" r="18"/><polyline class="sa-chevron" points="14,18 22,26 30,18"/><polyline class="sa-chevron sa-chevron2" points="14,22 22,30 30,22"/></svg></div>
+  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
 </div>
 
 <div class="img-section loading" data-section="lifestyle">
-  <img class="fullscreen-img" data-src="lifestyle.jpg" src="" alt="Lifestyle"/>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="22" cy="22" r="20"/><circle class="sa-circle" cx="22" cy="22" r="18"/><polyline class="sa-chevron" points="14,18 22,26 30,18"/><polyline class="sa-chevron sa-chevron2" points="14,22 22,30 30,22"/></svg></div>
+  <img class="fullscreen-img" data-src="lifestyle.jpg" src="" alt="Lifestyle" decoding="async"/>
+  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
 </div>
 
 <div class="img-section loading" data-section="reviews">
-  <img class="fullscreen-img" data-src="reviews.jpg" src="" alt="آراء العملاء"/>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="22" cy="22" r="20"/><circle class="sa-circle" cx="22" cy="22" r="18"/><polyline class="sa-chevron" points="14,18 22,26 30,18"/><polyline class="sa-chevron sa-chevron2" points="14,22 22,30 30,22"/></svg></div>
+  <img class="fullscreen-img" data-src="reviews.jpg" src="" alt="آراء العملاء" decoding="async"/>
+  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
 </div>
 
-<div class="img-section loading" data-section="tailles">
-  <img class="fullscreen-img" data-src="tailles.jpg" src="" alt="دليل المقاسات"/>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 44 44" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="22" cy="22" r="20" style="stroke:rgba(232,19,42,0.35)"/><circle class="sa-circle" cx="22" cy="22" r="18" style="fill:rgba(232,19,42,0.9);stroke:#E8132A;"/><polyline class="sa-chevron" points="14,18 22,26 30,18" style="stroke:#fff;"/><polyline class="sa-chevron sa-chevron2" points="14,22 22,30 30,22" style="stroke:#fff;"/></svg></div>
+<!-- Last image section: red arrow pointing into the form -->
+<div class="img-section loading" data-section="tailles" style="padding-bottom:28px;">
+  <img class="fullscreen-img" data-src="tailles.jpg" src="" alt="دليل المقاسات" decoding="async"/>
+  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="28" cy="28" r="26" fill="none" stroke="rgba(232,19,42,0.28)" stroke-width="1.5" style="animation:sa-ring-pulse 2.2s ease-in-out infinite;transform-origin:28px 28px;"/>
+    <circle cx="28" cy="28" r="22" fill="rgba(232,19,42,0.9)" stroke="#E8132A" stroke-width="2.2"/>
+    <polyline points="18,23 28,33 38,23" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" style="animation:sa-bounce 1.9s ease-in-out infinite;"/>
+    <polyline points="18,28 28,38 38,28" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" style="animation:sa-bounce 1.9s ease-in-out infinite;animation-delay:0.2s;opacity:0.45;"/>
+  </svg></div>
 </div>
 
 <!-- COD FORM -->
@@ -455,17 +628,12 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:40px 20px;text-ali
   </div>
 </div>
 
-<!-- ════════════════════════════════════════════════════════════════════
-     MAIN SCRIPT
-════════════════════════════════════════════════════════════════════ -->
 <script>
 'use strict';
 
 // ─── CONFIG ──────────────────────────────────────────────────────────────────
-// ⚠️ UPDATE THIS after each new Apps Script deployment
-const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxHmg0SEI9w5yY3AEW_Ad1X3tYkJFauV-AbEMB_LWjDNdN1X_u56JliLq5WdG4PCej7/exec';
-const CAPI_WORKER_URL = 'https://maisonkidsy1.rbxabdou.workers.dev/';
-
+const APPS_SCRIPT_URL      = 'https://script.google.com/macros/s/AKfycbxHmg0SEI9w5yY3AEW_Ad1X3tYkJFauV-AbEMB_LWjDNdN1X_u56JliLq5WdG4PCej7/exec';
+const CAPI_WORKER_URL      = 'https://maisonkidsy1.rbxabdou.workers.dev/';
 const PRODUCT_BASE         = 5900;
 const PIXEL_PRODUCT_ID     = 'ENSEMBLE_ETE_2026';
 const PIXEL_PRICE_PER_UNIT = 2900;
@@ -476,673 +644,571 @@ let homePrice            = 0;
 let selectedColor        = 'Vert Militaire';
 let selectedSize         = 'M';
 
-function getProductPrice(qty)          { return PRODUCT_BASE * qty; }
-function getEffDelivery(qty, del)      { return qty >= 2 ? 0 : del; }
-function getTotalPrice(qty, del)       { return getProductPrice(qty) + getEffDelivery(qty, del); }
-function getSKU(color, size)           { return 'PRD4TRKN-' + (color === 'Vert Militaire' ? 'VERT-MILITAIRE' : 'VERT-DEAU') + '-' + size; }
-function generateOrderID()             { return '#' + Math.floor(100000 + Math.random() * 900000); }
+const getProductPrice  = q  => PRODUCT_BASE * q;
+const getEffDelivery   = (q,d) => q >= 2 ? 0 : d;
+const getTotalPrice    = (q,d) => getProductPrice(q) + getEffDelivery(q,d);
+const getSKU           = (c,s) => 'PRD4TRKN-' + (c==='Vert Militaire'?'VERT-MILITAIRE':'VERT-DEAU') + '-' + s;
+const generateOrderID  = ()   => '#' + Math.floor(100000 + Math.random() * 900000);
 
-// ─── DEBUG BADGE ─────────────────────────────────────────────────────────────
+// ─── DEBUG ────────────────────────────────────────────────────────────────────
 function dbg(msg, ok) {
-  const el = document.getElementById('debugBadge');
-  if (!el) return;
-  el.style.display = 'block';
-  el.style.borderColor = ok === false ? '#E8132A' : ok === true ? '#28A745' : '#F5C518';
-  el.style.color = ok === false ? '#ff6b6b' : ok === true ? '#6bff6b' : '#F5C518';
-  el.textContent = msg;
-  // Auto-hide after 6s
-  clearTimeout(el._timer);
-  el._timer = setTimeout(() => { el.style.display = 'none'; }, 6000);
+  const el = document.getElementById('debugBadge'); if (!el) return;
+  el.style.display='block';
+  el.style.borderColor = ok===false?'#E8132A':ok===true?'#28A745':'#F5C518';
+  el.style.color       = ok===false?'#ff6b6b':ok===true?'#6bff6b':'#F5C518';
+  el.textContent=msg;
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>{el.style.display='none';},6000);
 }
 
-// ─── IMAGE LOADING ────────────────────────────────────────────────────────────
-(function loadImages() {
-  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-  let quality = 'mid';
-  if (conn) {
-    const ect = conn.effectiveType, down = conn.downlink, rtt = conn.rtt;
-    if (ect === 'slow-2g' || ect === '2g' || down < 0.5 || rtt > 800) quality = 'slow';
-    else if (ect === 'fast' || (down >= 2 && rtt <= 300)) quality = 'fast';
+// ─── ADAPTIVE IMAGE LOADING ───────────────────────────────────────────────────
+(function loadImages(){
+  const conn = navigator.connection||navigator.mozConnection||navigator.webkitConnection;
+  let quality='mid';
+  if(conn){
+    const {effectiveType:ect,downlink:dl,rtt}=conn;
+    if(ect==='slow-2g'||ect==='2g'||dl<0.5||rtt>800) quality='slow';
+    else if(dl>=2&&rtt<=300) quality='fast';
   }
-  const margins = { fast: '600px', mid: '300px', slow: '100px' };
-  const sections = document.querySelectorAll('.img-section');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (!entry.isIntersecting) return;
-      const sec = entry.target;
-      const img = sec.querySelector('img.fullscreen-img');
-      if (!img || img.dataset.loaded) return;
-      const src = img.dataset.src; if (!src) return;
-      if (quality === 'slow') img.classList.add('img-blur-up');
-      img.onload = () => { img.classList.add('sharp'); sec.classList.remove('loading'); sec.classList.add('loaded'); img.dataset.loaded = '1'; };
-      img.onerror = () => { sec.classList.remove('loading'); sec.classList.add('loaded'); };
-      img.src = src;
-      observer.unobserve(sec);
-    });
-  }, { rootMargin: margins[quality] || '300px', threshold: 0 });
+  const margin={fast:'800px',mid:'400px',slow:'80px'}[quality]||'400px';
 
-  // Hero loads immediately
-  const hero = document.querySelector('[data-section="hero"]');
-  if (hero) {
-    const hi = hero.querySelector('img.fullscreen-img');
-    if (hi && hi.dataset.src) {
-      hi.onload = () => { hero.classList.remove('loading'); hero.classList.add('loaded'); hi.dataset.loaded = '1'; };
-      hi.onerror = () => { hero.classList.remove('loading'); hero.classList.add('loaded'); };
-      hi.src = hi.dataset.src;
+  // Hero — immediate, no observer
+  const hero=document.querySelector('[data-section="hero"]');
+  if(hero){
+    const hi=hero.querySelector('img.fullscreen-img');
+    if(hi&&hi.dataset.src){
+      hi.onload=()=>{hero.classList.replace('loading','loaded');hi.dataset.loaded='1';};
+      hi.onerror=()=>{hero.classList.replace('loading','loaded');};
+      hi.src=hi.dataset.src;
     }
   }
-  sections.forEach(s => { if (s.dataset.section !== 'hero') observer.observe(s); });
+
+  const obs=new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      if(!entry.isIntersecting) return;
+      const sec=entry.target;
+      const img=sec.querySelector('img.fullscreen-img');
+      if(!img||img.dataset.loaded) return;
+      const src=img.dataset.src; if(!src) return;
+      if(quality==='slow') img.classList.add('img-blur-up');
+      img.onload=()=>{
+        img.classList.add('sharp');
+        sec.classList.replace('loading','loaded');
+        img.dataset.loaded='1';
+      };
+      img.onerror=()=>{sec.classList.replace('loading','loaded');};
+      img.src=src;
+      obs.unobserve(sec);
+    });
+  },{rootMargin:margin,threshold:0});
+
+  document.querySelectorAll('.img-section').forEach(s=>{
+    if(s.dataset.section!=='hero') obs.observe(s);
+  });
 })();
 
-// ─── FLOATING CTA ─────────────────────────────────────────────────────────────
-let hasScrolled = false, scrollBackTimer = null;
-const floatBtn = document.getElementById('floatBtn');
+// ─── FLOATING CTA — hide inside form, show outside ───────────────────────────
+const floatBtn     = document.getElementById('floatBtn');
 const floatBtnText = document.getElementById('floatBtnText');
-function isFormVisible() { const r = document.getElementById('cod-form').getBoundingClientRect(); return r.top < window.innerHeight * 0.8; }
-function setFloatBtnHint() { floatBtn.classList.add('scroll-hint'); floatBtnText.innerHTML = '<span class="btn-arrow">↓</span> اسحب للأسفل لمزيد من التفاصيل'; }
-function setFloatBtnCTA() { floatBtn.classList.remove('scroll-hint'); floatBtnText.innerHTML = '🛒 اطلب الآن — الدفع عند الاستلام'; }
-window.addEventListener('scroll', () => {
-  const y = window.scrollY || window.pageYOffset;
-  if (y < 50) { setFloatBtnCTA(); hasScrolled = false; return; }
-  if (!hasScrolled) {
-    hasScrolled = true; setFloatBtnHint();
-    clearTimeout(scrollBackTimer);
-    scrollBackTimer = setTimeout(() => { if (!isFormVisible()) setFloatBtnCTA(); }, 2500);
+let   _rafPending  = false;
+let   hasScrolled  = false;
+let   scrollTimer  = null;
+
+function getFormBounds(){
+  const form=document.getElementById('cod-form');
+  const r=form.getBoundingClientRect();
+  return {top:r.top,bottom:r.bottom};
+}
+
+function updateFloatBtn(){
+  const y=window.scrollY||window.pageYOffset;
+  const {top,bottom}=getFormBounds();
+  const vh=window.innerHeight;
+
+  // "Inside" = top of form is above 80% of viewport AND bottom still below viewport bottom
+  const insideForm = top < vh*0.1 && bottom > 60;
+
+  if(insideForm){
+    floatBtn.classList.add('hidden');
+  } else {
+    floatBtn.classList.remove('hidden');
+    if(y < 60){
+      // Top of page — show main CTA
+      floatBtn.classList.remove('scroll-hint');
+      floatBtnText.innerHTML='🛒 اطلب الآن — الدفع عند الاستلام';
+      hasScrolled=false;
+    } else if(!hasScrolled){
+      hasScrolled=true;
+      floatBtn.classList.add('scroll-hint');
+      floatBtnText.innerHTML='<span class="btn-arrow">↓</span> اسحب للأسفل لمزيد من التفاصيل';
+      clearTimeout(scrollTimer);
+      scrollTimer=setTimeout(()=>{
+        const {top:t2}=getFormBounds();
+        if(t2 > vh*0.1){
+          floatBtn.classList.remove('scroll-hint');
+          floatBtnText.innerHTML='🛒 اطلب الآن — الدفع عند الاستلام';
+          hasScrolled=false;
+        }
+      },2800);
+    }
   }
-  if (isFormVisible()) setFloatBtnCTA();
-}, { passive: true });
-function handleFloatBtn(e) { e.preventDefault(); document.getElementById('cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' }); setFloatBtnCTA(); }
+  _rafPending=false;
+}
 
-// ─── META PIXEL HELPERS ───────────────────────────────────────────────────────
-fbq('track', 'ViewContent', { content_ids: [PIXEL_PRODUCT_ID], content_type: 'product', value: PIXEL_PRICE_PER_UNIT, currency: 'DZD' });
-function metaTrackInitiateCheckout(qty, del) { fbq('track', 'InitiateCheckout', { contents: [{ id: PIXEL_PRODUCT_ID, quantity: qty }], content_type: 'product', value: getTotalPrice(qty, del), currency: 'DZD', num_items: qty }); }
-function metaTrackPurchase(qty, del) { fbq('track', 'Purchase', { contents: [{ id: PIXEL_PRODUCT_ID, quantity: qty }], content_type: 'product', value: getTotalPrice(qty, del), currency: 'DZD', num_items: qty }); }
+window.addEventListener('scroll',()=>{
+  if(!_rafPending){_rafPending=true;requestAnimationFrame(updateFloatBtn);}
+},{passive:true});
 
-// ─── SHA-256 HASHING ──────────────────────────────────────────────────────────
-async function sha256(raw) {
-  if (!raw) return '';
-  try {
-    const norm = String(raw).trim().toLowerCase();
-    const buf = new TextEncoder().encode(norm);
-    const hash = await crypto.subtle.digest('SHA-256', buf);
-    return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2, '0')).join('');
-  } catch (e) { return ''; }
+// Initial check
+updateFloatBtn();
+
+function handleFloatBtn(e){
+  e.preventDefault();
+  document.getElementById('cod-form').scrollIntoView({behavior:'smooth',block:'start'});
 }
-// REPLACE this function
-function phoneToE164(phone) {
-  const c = String(phone || '').replace(/\D/g, '');
-  // TikTok wants E164 WITHOUT the + sign for hashing
-  if (c.startsWith('0') && c.length === 10) return '213' + c.slice(1);
-  if (c.startsWith('213') && c.length === 12) return c;
-  return '213' + c;
+
+// ─── META PIXEL ───────────────────────────────────────────────────────────────
+fbq('track','ViewContent',{content_ids:[PIXEL_PRODUCT_ID],content_type:'product',value:PIXEL_PRICE_PER_UNIT,currency:'DZD'});
+const metaTrackInitiateCheckout=(q,d)=>fbq('track','InitiateCheckout',{contents:[{id:PIXEL_PRODUCT_ID,quantity:q}],content_type:'product',value:getTotalPrice(q,d),currency:'DZD',num_items:q});
+const metaTrackPurchase=(q,d)=>fbq('track','Purchase',{contents:[{id:PIXEL_PRODUCT_ID,quantity:q}],content_type:'product',value:getTotalPrice(q,d),currency:'DZD',num_items:q});
+
+// ─── UTILS ────────────────────────────────────────────────────────────────────
+async function sha256(raw){
+  if(!raw) return '';
+  try{
+    const norm=String(raw).trim().toLowerCase();
+    const buf=new TextEncoder().encode(norm);
+    const hash=await crypto.subtle.digest('SHA-256',buf);
+    return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  }catch(e){return '';}
 }
-function getTtclid() {
-  try {
-    const p = new URLSearchParams(window.location.search);
-    const u = p.get('ttclid') || p.get('TTCLID');
-    if (u) { try { localStorage.setItem('_tk_ttclid', u); } catch (_) {} return u; }
-    try { const ls = localStorage.getItem('_tk_ttclid'); if (ls) return ls; } catch (_) {}
-  } catch (_) {} return '';
+function phoneToE164(p){
+  const c=String(p||'').replace(/\D/g,'');
+  if(c.startsWith('0')&&c.length===10) return '213'+c.slice(1);
+  if(c.startsWith('213')&&c.length===12) return c;
+  return '213'+c;
 }
-function getOrCreateExternalId() {
-  try {
-    let e = localStorage.getItem('_tk_ext_id');
-    if (!e) { e = 'MKDZ-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8); localStorage.setItem('_tk_ext_id', e); }
+function getTtclid(){
+  try{
+    const p=new URLSearchParams(window.location.search);
+    const u=p.get('ttclid')||p.get('TTCLID');
+    if(u){try{localStorage.setItem('_tk_ttclid',u);}catch(_){} return u;}
+    try{const ls=localStorage.getItem('_tk_ttclid');if(ls) return ls;}catch(_){}
+  }catch(_){} return '';
+}
+function getOrCreateExternalId(){
+  try{
+    let e=localStorage.getItem('_tk_ext_id');
+    if(!e){e='MKDZ-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8);localStorage.setItem('_tk_ext_id',e);}
     return e;
-  } catch (_) { return 'MKDZ-' + Date.now().toString(36); }
+  }catch(_){return 'MKDZ-'+Date.now().toString(36);}
 }
 
-// ─── TIKTOK BROWSER PIXEL ────────────────────────────────────────────────────
-function buildTTQContents(qty) {
-  return [{
-    content_id: PIXEL_PRODUCT_ID,
-    content_type: 'product',
-    content_name: 'Ensemble Ete 2026 Homme T-shirt Short Coton Premium',
-    content_category: 'Vetements Homme Ensembles Ete',
-    brand: 'MaisonKidsy',
-    price: PIXEL_PRICE_PER_UNIT,
-    quantity: qty,
-    sku: getSKU(selectedColor, selectedSize),
-  }];
+// ─── TIKTOK PIXEL ─────────────────────────────────────────────────────────────
+function buildTTQContents(qty){
+  return [{content_id:PIXEL_PRODUCT_ID,content_type:'product',content_name:'Ensemble Ete 2026 Homme T-shirt Short Coton Premium',content_category:'Vetements Homme Ensembles Ete',brand:'MaisonKidsy',price:PIXEL_PRICE_PER_UNIT,quantity:qty,sku:getSKU(selectedColor,selectedSize)}];
 }
-function ttqFireViewContent() {
-  if (typeof ttq === 'undefined') return;
-  try { ttq.track('ViewContent', { contents: buildTTQContents(1), content_type: 'product', currency: 'DZD', value: PIXEL_PRICE_PER_UNIT }); } catch (_) {}
-}
-function ttqFireAddToCart(qty) {
-  if (typeof ttq === 'undefined') return;
-  try { ttq.track('AddToCart', { contents: buildTTQContents(qty), content_type: 'product', currency: 'DZD', value: PIXEL_PRICE_PER_UNIT * qty }); } catch (_) {}
-}
-function ttqFireInitiateCheckout(qty, del) {
-  if (typeof ttq === 'undefined') return;
-  try { ttq.track('InitiateCheckout', { contents: buildTTQContents(qty), content_type: 'product', currency: 'DZD', value: getTotalPrice(qty, del), num_items: qty }); } catch (_) {}
-}
-async function ttqIdentify(name, phone, wilaya, baladiya) {
-  if (typeof ttq === 'undefined') return;
-  try {
-    const e164 = phoneToE164(phone);
-    const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
-    const extId = getOrCreateExternalId();
-
-    const firstNameRaw = parts[0] || '';
-    const lastNameRaw = parts.slice(1).join(' ') || '';
-    
-    // Strip number prefix from wilaya before hashing
-    const cleanWilaya = String(wilaya || '').replace(/^\d+\s*-\s*/, '').toLowerCase().trim();
-    const cleanBaladiya = String(baladiya || '').toLowerCase().trim();
-
-    const [hp, hf, hl, hc, hs, hco] = await Promise.all([
-      sha256(e164),
-      firstNameRaw ? sha256(firstNameRaw.toLowerCase().trim()) : Promise.resolve(''),
-      lastNameRaw ? sha256(lastNameRaw.toLowerCase().trim()) : Promise.resolve(''),
-      sha256(cleanBaladiya),
-      sha256(cleanWilaya),
-      sha256('dz'),
-    ]);
-
-    const id = {};
-    if (hp) id.phone_number = hp;
-    if (hf) id.first_name = hf;
-    if (hl) id.last_name = hl;
-    if (hc) id.city = hc;
-    if (hs) id.state = hs;
-    if (hco) id.country = hco;
-    id.external_id = extId;
-
-    console.log('[TTQ] identify:', id);
+function ttqFireViewContent(){if(typeof ttq==='undefined') return;try{ttq.track('ViewContent',{contents:buildTTQContents(1),content_type:'product',currency:'DZD',value:PIXEL_PRICE_PER_UNIT});}catch(_){}}
+function ttqFireAddToCart(qty){if(typeof ttq==='undefined') return;try{ttq.track('AddToCart',{contents:buildTTQContents(qty),content_type:'product',currency:'DZD',value:PIXEL_PRICE_PER_UNIT*qty});}catch(_){}}
+function ttqFireInitiateCheckout(qty,del){if(typeof ttq==='undefined') return;try{ttq.track('InitiateCheckout',{contents:buildTTQContents(qty),content_type:'product',currency:'DZD',value:getTotalPrice(qty,del),num_items:qty});}catch(_){}}
+async function ttqIdentify(name,phone,wilaya,baladiya){
+  if(typeof ttq==='undefined') return;
+  try{
+    const e164=phoneToE164(phone);
+    const parts=String(name||'').trim().split(/\s+/).filter(Boolean);
+    const extId=getOrCreateExternalId();
+    const cW=String(wilaya||'').replace(/^\d+\s*-\s*/,'').toLowerCase().trim();
+    const cB=String(baladiya||'').toLowerCase().trim();
+    const [hp,hf,hl,hc,hs,hco]=await Promise.all([sha256(e164),parts[0]?sha256(parts[0].toLowerCase().trim()):Promise.resolve(''),parts.slice(1).join(' ')?sha256(parts.slice(1).join(' ').toLowerCase().trim()):Promise.resolve(''),sha256(cB),sha256(cW),sha256('dz')]);
+    const id={};
+    if(hp) id.phone_number=hp;
+    if(hf) id.first_name=hf;
+    if(hl) id.last_name=hl;
+    if(hc) id.city=hc;
+    if(hs) id.state=hs;
+    if(hco) id.country=hco;
+    id.external_id=extId;
     ttq.identify(id);
-  } catch (e) {
-    console.error('[TTQ Identify Error]', e);
-  }
+  }catch(e){console.error('[TTQ Identify]',e);}
 }
-async function ttqFirePurchase(qty, del, name, phone, wilaya, baladiya) {
-  if (typeof ttq === 'undefined') return;
-  await ttqIdentify(name, phone, wilaya, baladiya);
-  const total = getTotalPrice(qty, del);
-  try { ttq.track('Purchase', { contents: buildTTQContents(qty), content_type: 'product', currency: 'DZD', value: total, num_items: qty }); } catch (_) {}
-  try { ttq.track('PlaceAnOrder', { contents: buildTTQContents(qty), content_type: 'product', currency: 'DZD', value: total, num_items: qty }); } catch (_) {}
+async function ttqFirePurchase(qty,del,name,phone,wilaya,baladiya){
+  if(typeof ttq==='undefined') return;
+  await ttqIdentify(name,phone,wilaya,baladiya);
+  const total=getTotalPrice(qty,del);
+  try{ttq.track('Purchase',{contents:buildTTQContents(qty),content_type:'product',currency:'DZD',value:total,num_items:qty});}catch(_){}
+  try{ttq.track('PlaceAnOrder',{contents:buildTTQContents(qty),content_type:'product',currency:'DZD',value:total,num_items:qty});}catch(_){}
 }
-// Fire page + ViewContent on load
-(function initTTQ() {
-  function tryFire() {
-    if (typeof ttq !== 'undefined' && typeof ttq.page === 'function') { ttq.page(); ttqFireViewContent(); }
-    else setTimeout(tryFire, 200);
-  }
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', tryFire);
+(function initTTQ(){
+  function tryFire(){if(typeof ttq!=='undefined'&&typeof ttq.page==='function'){ttq.page();ttqFireViewContent();}else setTimeout(tryFire,200);}
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',tryFire);
   else tryFire();
 })();
 
-// ─── TIKTOK CAPI (SERVER-SIDE via Cloudflare Worker) ─────────────────────────
-async function sendCAPIEvent(eventType, orderData, hashedCustomer) {
-  if (!CAPI_WORKER_URL) { console.warn('[CAPI] No Worker URL configured'); return null; }
-
-  const ttclid = getTtclid();
-  const extId  = getOrCreateExternalId();
-  const effDel = getEffDelivery(orderData.qty, orderData.delivery);
-
-  // Field names MUST match what worker.js expects on its hashed_ keys
-  const payload = {
-    event_type:            eventType,
-    event_id:              eventType + '_' + (orderData.orderId || Date.now()) + '_' + Math.random().toString(36).slice(2, 6),
-    order_id:              orderData.orderId  || '',
-    quantity:              orderData.qty      || 1,
-    unit_price:            PIXEL_PRICE_PER_UNIT,
-    delivery_fee:          effDel,
-    value:                 getTotalPrice(orderData.qty, orderData.delivery),
-    content_id:            PIXEL_PRODUCT_ID,
-    content_name:          'Ensemble Ete 2026 Homme T-shirt Short Coton Premium',
-    content_category:      'Vetements Homme Ensembles Ete',
-    color:                 selectedColor,
-    size:                  selectedSize,
-    variant:               selectedColor + ' / ' + selectedSize,
-    sku:                   getSKU(selectedColor, selectedSize),
-    order_status:          'submitted',
-    offer_type:            orderData.qty >= 2 ? 'FREE_DELIVERY' : 'STANDARD',
-    discount_value:        orderData.qty >= 2 ? orderData.delivery : 0,
-    prix_produit:          getProductPrice(orderData.qty),
-    prix_livraison:        effDel,
-    prix_total:            getTotalPrice(orderData.qty, orderData.delivery),
-    page_url:              window.location.href,
-    referrer:              document.referrer || '',
-    user_agent:            navigator.userAgent,
-    locale:                navigator.language || 'ar-DZ',
-    // Hashed PII — keys match worker.js field checks
-    hashed_phone_number:   hashedCustomer.hashed_phone_number || '',
-    hashed_first_name:     hashedCustomer.hashed_first_name   || '',
-    hashed_last_name:      hashedCustomer.hashed_last_name    || '',
-    hashed_city:           hashedCustomer.hashed_city         || '',
-    hashed_state:          hashedCustomer.hashed_state        || '',
-    hashed_country:        hashedCustomer.hashed_country      || '',
-    external_id:           hashedCustomer.external_id         || extId,
-    ttclid:                ttclid || '',
-    test_event_code:       'TEST05021',  // ← DEBUG ONLY — delete after confirming
+// ─── TIKTOK CAPI ──────────────────────────────────────────────────────────────
+async function sendCAPIEvent(eventType,orderData,hashedCustomer){
+  if(!CAPI_WORKER_URL) return null;
+  const ttclid=getTtclid(), extId=getOrCreateExternalId();
+  const effDel=getEffDelivery(orderData.qty,orderData.delivery);
+  const payload={
+    event_type:eventType,
+    event_id:eventType+'_'+(orderData.orderId||Date.now())+'_'+Math.random().toString(36).slice(2,6),
+    order_id:orderData.orderId||'',quantity:orderData.qty||1,unit_price:PIXEL_PRICE_PER_UNIT,
+    delivery_fee:effDel,value:getTotalPrice(orderData.qty,orderData.delivery),
+    content_id:PIXEL_PRODUCT_ID,content_name:'Ensemble Ete 2026 Homme T-shirt Short Coton Premium',
+    content_category:'Vetements Homme Ensembles Ete',color:selectedColor,size:selectedSize,
+    variant:selectedColor+' / '+selectedSize,sku:getSKU(selectedColor,selectedSize),
+    order_status:'submitted',offer_type:orderData.qty>=2?'FREE_DELIVERY':'STANDARD',
+    discount_value:orderData.qty>=2?orderData.delivery:0,
+    prix_produit:getProductPrice(orderData.qty),prix_livraison:effDel,prix_total:getTotalPrice(orderData.qty,orderData.delivery),
+    page_url:window.location.href,referrer:document.referrer||'',user_agent:navigator.userAgent,locale:navigator.language||'ar-DZ',
+    hashed_phone_number:hashedCustomer.hashed_phone_number||'',hashed_first_name:hashedCustomer.hashed_first_name||'',
+    hashed_last_name:hashedCustomer.hashed_last_name||'',hashed_city:hashedCustomer.hashed_city||'',
+    hashed_state:hashedCustomer.hashed_state||'',hashed_country:hashedCustomer.hashed_country||'',
+    external_id:hashedCustomer.external_id||extId,ttclid:ttclid||'',
+    test_event_code:'TEST05021',
   };
-
-  dbg('CAPI ' + eventType + ' sending…', null);
-  console.log('[CAPI] Sending', eventType, payload);
-
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 10000);
-    const res = await fetch(CAPI_WORKER_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      signal: controller.signal,
-      keepalive: true,
-    });
+  dbg('CAPI '+eventType+' sending…',null);
+  try{
+    const ctrl=new AbortController();
+    const timer=setTimeout(()=>ctrl.abort(),10000);
+    const res=await fetch(CAPI_WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload),signal:ctrl.signal,keepalive:true});
     clearTimeout(timer);
-
-    const data = await res.json();
-    const ok = data && data.success;
-    console.log('[CAPI]', eventType, 'response:', data);
-    dbg('CAPI ' + eventType + ' ' + (ok ? '✓ sent' : '✗ ' + (data.tiktok_code || 'error')), ok);
+    const data=await res.json();
+    dbg('CAPI '+eventType+' '+(data&&data.success?'✓ sent':'✗ '+(data.tiktok_code||'error')),data&&data.success);
     return data;
-  } catch (err) {
-    const isTimeout = err.name === 'AbortError';
-    console.error('[CAPI] Error:', err.message);
-    dbg('CAPI ' + eventType + (isTimeout ? ' timeout' : ' error: ' + err.message), false);
+  }catch(err){
+    dbg('CAPI '+eventType+(err.name==='AbortError'?' timeout':' error'),false);
     return null;
   }
 }
 
 // ─── CANVAS PRICE ─────────────────────────────────────────────────────────────
-const canvas = document.getElementById('totalPriceCanvas');
-const ctx = canvas.getContext('2d');
-if (!CanvasRenderingContext2D.prototype.roundRect) {
-  CanvasRenderingContext2D.prototype.roundRect = function(x, y, w, h, r) {
-    r = Math.min(r, w / 2, h / 2);
-    this.moveTo(x + r, y); this.arcTo(x + w, y, x + w, y + h, r); this.arcTo(x + w, y + h, x, y + h, r);
-    this.arcTo(x, y + h, x, y, r); this.arcTo(x, y, x + w, y, r); return this;
+const canvas=document.getElementById('totalPriceCanvas');
+const ctx=canvas.getContext('2d');
+if(!CanvasRenderingContext2D.prototype.roundRect){
+  CanvasRenderingContext2D.prototype.roundRect=function(x,y,w,h,r){
+    r=Math.min(r,w/2,h/2);
+    this.moveTo(x+r,y);this.arcTo(x+w,y,x+w,y+h,r);this.arcTo(x+w,y+h,x,y+h,r);
+    this.arcTo(x,y+h,x,y,r);this.arcTo(x,y,x+w,y,r);return this;
   };
 }
-function renderTotalPrice() {
-  const total = getTotalPrice(currentQty, currentDeliveryPrice);
-  const w = canvas.width, h = canvas.height;
-  ctx.clearRect(0, 0, w, h);
-  const g = ctx.createLinearGradient(0, 0, w, 0); g.addColorStop(0, '#F5C518'); g.addColorStop(1, '#E8A800');
-  ctx.fillStyle = g; ctx.shadowColor = 'rgba(245,197,24,0.35)'; ctx.shadowBlur = 20;
-  ctx.beginPath(); ctx.roundRect(0, 0, w, h, 12); ctx.fill(); ctx.shadowBlur = 0;
-  ctx.fillStyle = 'rgba(255,255,255,0.12)'; ctx.beginPath(); ctx.roundRect(4, 4, w - 8, h - 8, 10); ctx.fill();
-  ctx.fillStyle = 'rgba(10,22,40,0.6)'; ctx.font = 'bold 16px Cairo,sans-serif'; ctx.textAlign = 'right'; ctx.textBaseline = 'middle'; ctx.fillText('المجموع الكامل', w - 20, 28);
-  ctx.fillStyle = '#0A1628'; ctx.font = 'bold 38px Cairo,sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(total.toLocaleString('fr-DZ') + ' دج', w / 2, 50);
+function renderTotalPrice(){
+  const total=getTotalPrice(currentQty,currentDeliveryPrice);
+  const w=canvas.width,h=canvas.height;
+  ctx.clearRect(0,0,w,h);
+  const g=ctx.createLinearGradient(0,0,w,0);g.addColorStop(0,'#F5C518');g.addColorStop(1,'#E8A800');
+  ctx.fillStyle=g;ctx.shadowColor='rgba(245,197,24,0.35)';ctx.shadowBlur=20;
+  ctx.beginPath();ctx.roundRect(0,0,w,h,12);ctx.fill();ctx.shadowBlur=0;
+  ctx.fillStyle='rgba(255,255,255,0.12)';ctx.beginPath();ctx.roundRect(4,4,w-8,h-8,10);ctx.fill();
+  ctx.fillStyle='rgba(10,22,40,0.6)';ctx.font='bold 16px Cairo,sans-serif';ctx.textAlign='right';ctx.textBaseline='middle';ctx.fillText('المجموع الكامل',w-20,28);
+  ctx.fillStyle='#0A1628';ctx.font='bold 38px Cairo,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(total.toLocaleString('fr-DZ')+' دج',w/2,50);
 }
 
-// ─── UI UPDATES ───────────────────────────────────────────────────────────────
-function updateUI() {
-  currentDeliveryPrice = homePrice;
-  document.getElementById('qtyDisplay').textContent = currentQty;
-  const hl = document.getElementById('homePriceLabel');
-  if (currentQty >= 2) hl.innerHTML = '✅ <strong style="color:green;">مجاني</strong>';
-  else hl.innerHTML = '+ <strong id="homePriceVal">' + homePrice + '</strong> دج';
+// ─── UI UPDATE ────────────────────────────────────────────────────────────────
+function updateUI(){
+  currentDeliveryPrice=homePrice;
+  document.getElementById('qtyDisplay').textContent=currentQty;
+  const hl=document.getElementById('homePriceLabel');
+  if(currentQty>=2) hl.innerHTML='✅ <strong style="color:green;">مجاني</strong>';
+  else hl.innerHTML='+ <strong id="homePriceVal">'+homePrice+'</strong> دج';
   renderTotalPrice();
 }
 
 // ─── COMMUNES DATA ────────────────────────────────────────────────────────────
 const communes = {
-  '1':['أدرار','أولاد أحمد تيمي','أولف','إن زغمير','اقبلي','السبع','بودة','تامست','تامنطيط','تسابيت','تيت','تيمقتن','رقان','زاوية كنتة','سالي','فنوغيل'],
-  '2':['أبو الحسن','أم الدروع','أولاد بن عبد القادر','أولاد عباس','أولاد فارس','الأبيض مجاجة','الحجاج','الزبوجة','الشطية','الشلف','الصبحة','الظهرة','الكريمية','المرسى','الهرانفة','بريرة','بنايرية','بني بوعتاب','بني حواء','بني راشد','بوزغاية','بوقادير','تاجنة','تاوقريت','تلعصة','تنس','حرشون','سنجاس','سيدي عبد الرحمن','سيدي عكاشة','عين مران','مصدق','وادي الفضة','وادي سلي','وادي قوسين'],
-  '3':['أفلو','الأغواط','البيضاء','الحاج مشري','الحويطة','الخنق','العسافية','الغيشة','بريدة','بن ناصر بن شهرة','تاجرونة','تاجموت','تاويالة','حاسي الدلاعة','حاسي الرمل','سبقاق','سيدي بوزيد','سيدي مخلوف','عين سيدي علي','عين ماضي','قصر الحيران','قلتة سيدي سعد','وادي مرة','وادي مزي'],
-  '4':['أم البواقي','أولاد حملة','أولاد زواي','أولاد قاسم','البلالة','الجازية','الحرملية','الرحية','الزرق','الضلعة','العامرية','الفجوج بوغرارة سعودي','بئر الشهداء','بحير الشرقي','بريش','سوق نعمان','سيقوس','عين البيضاء','عين الديس','عين الزيتون','عين ببوش','عين فكرون','عين كرشة','عين مليلة','فكيرينة','قصر الصباحي','مسكيانة','هنشير تومغني','وادي نيني'],
-  '5':['أريس','أولاد سلام','باتنة','بريكة','تازولت','جرمة','عين التوتة'],
-  '6':['بجاية','أقبو','أميزور','تازمالت','تيشي','خراطة','سوق اوفلا','صدوق'],
-  '7':['بسكرة','أورلال','الوطاية','برج بن عزوز','خنقة سيدي ناجي','سيدي عقبة','طولقة','عين الناقة'],
-  '8':['بشار','بني ونيف','تاغيت','القنادسة','لحمر'],
-  '9':['البليدة','الأربعاء','الشريعة','العفرون','بوفاريك','بوقرة','حمام ملوان','مفتاح','موزاية'],
-  '10':['البويرة','أولاد راشد','برج أوخريص','بوكرم','تاغزوت','سور الغزلان','قادرية','وادي البردي'],
-  '11':['تمنراست','أدلس','تاظروك','عين امقل'],
-  '12':['تبسة','بئر الذهب','بير العاتر','تبسة','ثليجان','فركان'],
-  '13':['تلمسان','بن سكران','بني صميل','بني مستر','تلمسان','سبدو','مغنية','ندرومة','هنين'],
-  '14':['تيارت','فرندة','قصر الشلالة','مهدية'],
-  '15':['تيزي وزو','أزفون','الأربعاء ناث إيراثن','بوغني','تيزي وزو','ذراع الميزان','عزازقة','عين الحمام'],
-  '16':['الجزائر','ابن عكنون','الابيار','الحراش','الدار البيضاء','الدرارية','الرويبة','باب الزوار','باب الوادي','برج البحري','برج الكيفان','بوزريعة','حسين داي','دالي ابراهيم','رغاية','زرالدة','سيدي امحمد','عين بنيان','محمد بلوزداد'],
-  '17':['الجلفة','الحراش','المسعد','بن يعقوب','دلدول','عين الإبل','عين وسارة'],
-  '18':['جيجل','الطاهير','العوانة','الميلية','تاكسنة','زيامة منصورية','قاوس'],
-  '19':['سطيف','الولجة','بابور','بوقاعة','جميلة','سطيف','عين أرنات','عين الكبيرة'],
-  '20':['سعيدة','سيدي احمد','سيدي بوبكر','عين الحجر'],
-  '21':['سكيكدة','الحروش','القل','رمضان جمال','زردازة','سكيكدة','عزابة','فلفلة'],
-  '22':['سيدي بلعباس','تلاغ','سيدي بلعباس','عين البرد'],
-  '23':['عنابة','الحجار','سرايدي','سيدي عمار','عنابة'],
-  '24':['قالمة','بوحمدان','حمام دباغ','قالمة'],
-  '25':['قسنطينة','ابن زياد','الخروب','ديدوش مراد','زيغود يوسف','قسنطينة'],
-  '26':['المدية','البرواقية','تابلاط','سي المحجوب','قصر البخاري'],
-  '27':['مستغانم','مزغران','مستغانم','سيدي علي'],
-  '28':['المسيلة','بوسعادة','سيدي عيسى','مقرة'],
-  '29':['معسكر','بوحنيفية','سيق','غريس','معسكر'],
-  '30':['ورقلة','حاسي مسعود','سيدي خويلد','ورقلة'],
-  '31':['وهران','أرزيو','بئر الجير','المرسى الكبير','وهران'],
-  '32':['البيض','الأبيض سيدي الشيخ','البيض','بوعلام'],
-  '33':['إيليزي','إن أمناس','إيليزي','برج عمر إدريس'],
-  '34':['برج بوعريريج','برج بوعريريج','برج زمورة','رأس الوادي'],
-  '35':['بومرداس','بومرداس','بودواو','دلس','زموري','سي مصطفى'],
-  '36':['الطارف','الكالة','بن مهيدي','عين الكرمة'],
-  '37':['تندوف','تندوف'],
-  '38':['تيسمسيلت','الأربعاء','تيسمسيلت'],
-  '39':['الوادي','البياضة','الرباح','الوادي','قمار'],
-  '40':['خنشلة','بابار','بغاي','خنشلة'],
-  '41':['سوق أهراس','مداوروش','سدراتة','سوق أهراس'],
-  '42':['تيبازة','بواسماعيل','تيبازة','شرشال'],
-  '43':['ميلة','شلغوم العيد','فرجيوة','ميلة'],
-  '44':['عين الدفلى','خميس مليانة','عين الدفلى','مليانة'],
-  '45':['النعامة','البيوض','المشرية','النعامة','عين الصفراء'],
-  '46':['عين تموشنت','بني صاف','حمام بوحجر','عين تموشنت'],
-  '47':['غرداية','العطف','القرارة','بريان','غرداية'],
-  '48':['غليزان','غليزان','مازونة'],
-  '49':['تيميمون','أوقروت','تيميمون'],
-  '50':['برج باجي مختار','برج باجي مختار','تيمياوين'],
-  '51':['أولاد جلال','أولاد جلال','رأس الميعاد','سيدي خالد'],
-  '52':['بني عباس','بني عباس','كرزاز'],
-  '53':['عين صالح','عين صالح','إينغر'],
-  '54':['عين قزام','عين قزام','تين زواتين'],
-  '55':['تقرت','الحجيرة','تقرت','تماسين'],
-  '56':['جانت','جانت','برج الحواس'],
-  '57':['المغير','المغير','جامعة','سطيل'],
-  '58':['المنيعة','المنيعة','حاسي القارة'],
-};
+        '1':['أدرار','أولاد أحمد تيمي','أولف','إن زغمير','اقبلي','السبع','بودة','تامست','تامنطيط','تسابيت','تيت','تيمقتن','رقان','زاوية كنتة','سالي','فنوغيل'],
+        '2':['أبو الحسن','أم الدروع','أولاد بن عبد القادر','أولاد عباس','أولاد فارس','الأبيض مجاجة','الحجاج','الزبوجة','الشطية','الشلف','الصبحة','الظهرة','الكريمية','المرسى','الهرانفة','بريرة','بنايرية','بني بوعتاب','بني حواء','بني راشد','بوزغاية','بوقادير','تاجنة','تاوقريت','تلعصة','تنس','حرشون','سنجاس','سيدي عبد الرحمن','سيدي عكاشة','عين مران','مصدق','وادي الفضة','وادي سلي','وادي قوسين'],
+        '3':['أفلو','الأغواط','البيضاء','الحاج مشري','الحويطة','الخنق','العسافية','الغيشة','بريدة','بن ناصر بن شهرة','تاجرونة','تاجموت','تاويالة','حاسي الدلاعة','حاسي الرمل','سبقاق','سيدي بوزيد','سيدي مخلوف','عين سيدي علي','عين ماضي','قصر الحيران','قلتة سيدي سعد','وادي مرة','وادي مزي'],
+        '4':['أم البواقي','أولاد حملة','أولاد زواي','أولاد قاسم','البلالة','الجازية','الحرملية','الرحية','الزرق','الضلعة','العامرية','الفجوج بوغرارة سعودي','بئر الشهداء','بحير الشرقي','بريش','سوق نعمان','سيقوس','عين البيضاء','عين الديس','عين الزيتون','عين ببوش','عين فكرون','عين كرشة','عين مليلة','فكيرينة','قصر الصباحي','مسكيانة','هنين','وادي نيني'],
+        '5':['أريس','أولاد سلام','أولاد سي سليمان','أولاد عمار','أولاد عوف','أولاد فاضل','إشمول','إمدوكل','إينوغيسن','الجزار','الحاسي','الرحبات','الشمرة','القصبات','القيقبة','المعذر','باتنة','بريكة','بني فضالة الحقانية','بوزينة','بولهيلات','بومقر','بومية','بيطام','تازولت','تاكسلانت','تالخمت','تغرغار','تكوت','تيغانمين','تيلاطو','تيمقاد','ثنية العابد','جرمة','حيدوسة','رأس العيون','زانة البيضاء','سريانة','سفيان','سقانة','شير','عزيل عبد القادر','عين التوتة','عين جاسر','عين ياقوت','عيون العصافير','غسيرة','فسديس','فم الطوب','قصر بلزمة','كيمل','لارباع','لازرو','لمسان','مروانة','معافة','منعة','نقاوس','وادي الشعبة','وادي الطاقة','وادي الماء'],
+        '6':['أدكار','أقبو','أكفادو','أمالو','أميزور','أوقاس','أوزلاقن','أيت إسماعيل','أيت رزين','إغيل علي','اغرم','الفلاي','القصر','بجاية','برباشة','بني جليل','بني كسيلة','بني معوش','بني مليكش','بو جليل','بوحمزة','بوخليفة','تازمالت','تاسكريوت','تالا حمزة','تامريجت','تامقرة','تاوريرت إغيل','توجة','تيزي نبربر','تيشي','تيفرة','تيمزريت','تينبدار','خراطة','درقينة','ذراع القايد','سمعون','سوق اوفلا','سوق لإثنين','سيدي عياد','سيدي عيش','شلاطة','شميني','صدوق','طيبان','فرعون','فناية الماثن','كنديرة','مالبو','مسيسنة','وادي غير'],
+        '7':['أورلال','أوماش','الحاجب','الحوش','الغروس','الفيض','القنطرة','المزيرعة','الوطاية','برانيس','برج بن عزوز','بسكرة','بوشقرون','جمورة','خنقة سيدي ناجي','زريبة الوادي','سيدي عقبة','شتمة','طولقة','عين الناقة','عين زعطوط','فوغالة','ليشانة','ليوة','مخادمة','مشونش','مليلي'],
+        '8':['العبادلة','القنادسة','المريجة','بشار','بني ونيف','بوكايس','تاغيت','تبلبالة','عرق فراج','لحمر','مشرع هواري بومدين','موغل'],
+        '9':['أولاد يعيش','الأربعاء','البليدة','الشبلي','الشريعة','الشفة','الصومعة','العفرون','اولاد سلامة','بن خليل','بني تامو','بني مراد','بوعرفة','بوعينان','بوفاريك','بوقرة','جبابرة','حمام ملوان','صوحان','عين الرمانة','قرواو','مفتاح','موزاية','وادي العلايق','وادي جر'],
+        '10':['آث منصور','أعمر','أغبالو','أمشدالة','أهل القصر','أولاد راشد','أيت لعزيز','الأخضرية','الأسنام','البويرة','الحاكمية','الحجرة الزرقاء','الخبوزية','الدشمية','العجيبة','المعمورة','المقراني','الهاشمية','بئر غبالو','برج أوخريص','بشلول','بودربالة','بوكرم','تاغزوت','تاقديت','جباحية','حنيف','حيزر','ديرة','روراوة','ريدان','زبربر','سحاريج','سور الغزلان','سوق الخميس','شرفة','عين الترك','عين الحجر','عين العلوي','عين بسام','قادرية','قرومة','مزدور','معلة','وادي البردي'],
+        '11':['أدلس','ابلسة','تاظروك','تمنراست','عين امقل'],
+        '12':['أم علي','الحمامات','الحويجبات','الشريعة','العقلة','العقلة المالحة','العوينات','الكويف','الماء الابيض','المريج','المزرعة','الونزة','بئر الذهب','بئر العاتر','بئر مقدم','بجن','بكارية','بوخضرة','بولحاف الدير','تبسة','ثليجان','سطح قنطيس','صفصاف الوسرى','عين الزرقاء','فركان','قريقر','مرسط','نقرين'],
+        '13':['أولاد رياح','أولاد ميمون','البويهي','الحناية','الرمشي','السواحلية','السواني','العريشة','العزايل','الغزوات','الفحول','القور','باب العسة','بن سكران','بني جليل','بني كسيلة','بني خلاد','بني سنوس','بني صميل','بني مستر','بني وارسوس','بوحلو','تلمسان','تيانت','تيرني بني هديل','جبالة','حمام بوغرارة','دار يغمراسن','زناتة','سبدو','سبعة شيوخ','سوق الثلاثاء','سيدي الجيلالي','سيدي العبدلي','سيدي مجاهد','شتوان','صبرة','عمير','عين الكبيرة','عين النحالة','عين تالوت','عين غرابة','عين فزة','عين فتاح','عين يوسف','فلاوسن','مرسى بن مهيدي','مسيردة الفواقة','مغنية','منصورة','ندرومة','هنين','وادي الخضر'],
+        '14':['الرحوية','الرشايقة','السبت','السبعين','السوقر','الفايجة','الناظورة','النعيمة','بوقرة','تاقدمت','تخمرت','توسنينة','تيارت','تيدة','جبيلات الرصفاء','جيلالي بن عمار','حمادية','دحموني','زمالة الأمير عبد القادر','سرغين','سي عبد الغني','سيدي بختي','سيدي حسني','سيدي عبد الرحمن','سيدي علي ملال','شحيمة','عين الحديد','عين الذهب','عين بوشقيف','عين دزاريت','عين كرمس','فرندة','قرطوفة','قصر الشلالة','مادنة','مدروسة','مدريسة','مشرع الصفا','مغيلة','ملاكو','مهدية','وادي ليلي'],
+        '15':['أبي يوسف','أزفون','أسي يوسف','أغريب','أقرو','أقني قغران','أيت أومالو','أيت بوادو','أيت بومهدي','أيت تودرت','أيت خليلي','أيت شافع','أيت عقواشة','أيت عيسى ميمون','أيت محمود','أيت يحي موسى','أيت يحيى','إبودرارن','إعكورن','إفرحونان','إفليسن','إمسوحال','إيجار','إيرجن','إيفيغاء','إيلولة أومالو','اقبيل','الأربعاء ناث إيراثن','بني زمنزار','بني دوالة','بني زيكي','بني عيسي','بني يني','بوجيمة','بوزقن','بوغني','بونوح','تادمايت','تيرمتين','تيزي راشد','تيزي غنيف','تيزي نثلاثة','تيزي وزو','تيقزيرت','تيميزار','ذراع الميزان','ذراع بن خدة','زكري','سوق الإثنين','سيدي نعمان','صوامع','عزازقة','عين الحمام','عين الزاوية','فريحة','فريقات','ماكودة','مشطراس','معاتقة','مقلع','مكيرة','ميزرانة','واسيف','واضية','واقنون','يطافن'],
+        '16':['ابن عكنون','الابيار','الجزائر الوسطى','الحراش','الحمامات','الخرايسية','الدار البيضاء','الدرارية','الدويرة','الرايس حميدو','الرحمانية','الرويبة','السحاولة','الشراقة','العاشور','القبة','القصبة','الكاليتوس','المحمدية','المدنية','المرادية','المرسى','المعالمة','المغارية','اولاد شبل','اولاد فايت','بئر توتة','بئر خادم','بئر مراد رايس','باب الزوار','باب الوادي','بابا حسن','باش جراح','براقي','برج البحري','برج الكيفان','بني مسوس','بوروبة','بوزريعة','بولوغين بن زيري','تسالة المرجة','جسر قسنطينة','حسين داي','حيدرة','دالي ابراهيم','رغاية','زرالدة','سطاوالي','سويدانية','سيدي امحمد','سيدي موسى','عين بنيان','عين طاية','محمد بلوزداد','هراوة','وادي السمار','وادي قريش'],
+        '17':['أم العظام','الادريسية','الجلفة','الخميس','الشارف','القديد','بن يعقوب','بنهار','بويرة الأحداب','بيرين','تعظميت','حاسي العش','حاسي بحبح','حاسي فدول','حد الصحاري','دار الشيوخ','دلدول','دويس','زعفران','زكار','سد الرحال','سلمانة','سيدي بايزيد','سيدي لعجال','عمورة','عين الإبل','عين الشهداء','عين فقه','عين معبد','عين وسارة','فيض البطمة','قرنيني','قطارة','مجبارة','مسعد','مليليحة'],
+        '18':['أراقن سويسي','أولاد رابح','أولاد يحيى خدروش','الامير عبد القادر','الجمعة بني حبيبي','السطارة','الشحنة','الشقفة','الطاهير','العنصر','العوانة','القنار نشفي','الميلية','برج الطهر','بودريعة بني ياجيس','بوراوي بلهادف','بوسيف أولاد عسكر','تاكسنة','جيجل','جيملة','خيري واد عجول','زيامة منصورية','سلمى بن زيادة','سيدي عبد العزيز','سيدي معروف','غبالة','قاوس','وجانة'],
+        '19':['أوريسيا','أولاد تبان','أولاد سي أحمد','أولاد صابر','أولاد عدوان','أيت نوال مزادة','التلة','الحامة','الدهامشة','الرصفة','الطاية','العلمة','الولجة','ايت تيزي','بئر العرش','بئر حدادة','بابور','بازر سكرة','بلاعة','بني شبانة','بني عزيز','بني فودة','بني موحلي','بني ورتيلان','بني وسين','بوسلام','بوطالب','بوعنداس','بوقاعة','بيضاء برج','تاشودة','تالا إيفاسن','تيزي نبشار','جميلة','حربيل','حمام السخنة','حمام قرقور','ذراع قبيلة','سرج الغول','سطيف','صالح باي','عموشة','عين أرنات','عين أزال','عين الحجر','عين الروى','عين السبت','عين الكبيرة','عين عباسة','عين لقراج','عين ولمان','قجال','قصر الابطال','قلال','قلتة زرقاء','قنزات','ماوكلان','مزلوق','معاوية','واد البارد'],
+        '20':['أولاد إبراهيم','أولاد خالد','الحساسنة','المعمورة','تيرسين','دوي ثابت','سعيدة','سيدي احمد','سيدي بوبكر','سيدي عمر','عين الحجر','عين السخونة','عين السلطان','مولاي العربي','هونت','يوب'],
+        '21':['أم الطوب','أولاد حبابة','أولاد عطية','الحدائق','الحروش','الزيتونة','السبت','الشرايع','الغدير','القل','الكركرة','المرسى','الولجة بولبلوط','بكوش لخضر','بن عزوز','بني بشير','بني زيد','بني ولبان','بوشطاطة','بين الويدان','تمالوس','جندل سعدي محمد','حمادي كرومة','خناق مايو','رمضان جمال','زردازة','سكيكدة','سيدي مزغيش','صالح بو الشعور','عزابة','عين بوزيان','عين زويت','عين شرشار','عين قشرة','فلفلة','قنواع','مجاز الدشيش','وادي الزهور'],
+        '22':['الحصيبة','السهالة الثورة','الضاية','العمارنة','بئر الحمام','بضرابين المقراني','بلعربي','بن باديس','بن عشيبة شلية','بوجبهة البرج','بوخنفيس','تاودموت','تسالة','تغاليمت','تفسور','تلاغ','تلموني','تنيرة','حاسي دحو','حاسي زهانة','رأس الماء','رجم دموش','زروالة','سفيزف','سيدي ابراهيم','سيدي بلعباس','سيدي حمادوش','سيدي خالد','سيدي دحو الزاير','سيدي شعيب','سيدي علي بن يوب','سيدي علي بوسيدي','سيدي لحسن','سيدي يعقوب','شيطوان البلايلة','طابية','عين أدن','عين البرد','عين الثريد','عين تندمين','عين قادة','لمطار','مرحوم','مرين','مزاورو','مسيد','مصطفى بن ابراهيم','مكدرة','مولاي سليسن','وادي السبع','وادي تاوريرة','وادي سفيون'],
+        '23':['البوني','التريعات','الحجار','الشرفة','العلمة','برحال','سرايدي','سيدي عمار','شطايبي','عنابة','عين الباردة','واد العنب'],
+        '24':['الدهوارة','الركنية','الفجوج','برج صباط','بلخير','بن جراح','بني مزلين','بوحشانة','بوحمدان','بوشقوف','بوعاتي محمود','بومهرة أحمد','تاملوكة','جبالة الخميسي','حمام النبايل','حمام دباغ','رأس العقبة','سلاوة عنونة','عين العربي','عين بن بيضاء','عين رقادة','عين صندل','عين مخلوف','قالمة','قلعة بوصبع','لخزارة','مجاز الصفاء','مجاز عمار','نشماية','هواري بومدين','هيليوبوليس','وادي الزناتي','وادي الشحم','وادي فراغة'],
+        '25':['أبن باديس الهرية','أولاد رحمون','ابن زياد','الخروب','بني حميدان','بوجريو مسعود','حامة بوزيان','ديدوش مراد','زيغود يوسف','عين السمارة','عين عبيد','قسنطينة'],
+        '26':['أم الجليل','أولاد إبراهيم','أولاد امعرف','أولاد بوعشرة','أولاد دايد','أولاد عنتر','أولاد هلال','البرواقية','الحمدانية','الحوضان','الربعية','الزبيرية','السانق','السواقي','الشهبونية','العزيزية','العمارية','العوينات','العيساوية','القلب الكبير','الكاف الاخضر','المدية','بئر بن عابد','بعطة','بن شكاو','بني سليمان','بوسكن','بوشراحيل','بوعيش','بوعيشون','بوغار','بوغزول','تابلاط','تفراوت','تمسقيدة','تيزي مهدي','ثلاث دوائر','جواب','حناشة','خمس جوامع','دراق','ذراع السمار','سدراية','سغوان','سي المحجوب','سيدي الربيع','سيدي دامد','سيدي زهار','سيدي زيان','سيدي نعمان','شلالة العذاورة','شنيقل','عزيز','عوامري','عين اقصير','عين بوسيف','قصر البخاري','مجبر','مزغنة','مغراوة','مفاتحة','ميهوب','وادي حربيل','وزرة'],
+        '27':['أولد بوغالم','أولد مع الله','الحسيان بني ياحي','السوافلية','الطواهرية','بن عبد المالك رمضان','بوقيراط','تزقايت','حاسي ماماش','حجاج','خضرة','خير الدين','ستيدية','سور','سيدي بلعطار','سيدي علي','سيدي لخضر','سيرات','صفصاف','صيادة','عين بودينار','عين تادلس','عين سيدي الشريف','عين نويسي','فرناقة','ماسرة','مزغران','مستغانم','منصورة','نكمارية','وادي الخير'],
+        '28':['أولاد دراج','أولاد سليمان','أولاد سيدي ابراهيم','أولاد عدي لقبالة','أولاد ماضي','أولاد منصور','الحوامد','السوامع','المسيلة','المطارفة','المعاضيد','الهامل','امجدل','بئر فضة','برهوم','بلعايبة','بن زوه','بن سرور','بني يلمان','بوسعادة','بوطي السايح','تارمونت','تامسة','جبل مساعد','حمام الضلعة','خبانة','خطوطي سد الجير','دهاهنة','زرزور','سليم','سيدي امحمد','سيدي عامر','سيدي عيسى','سيدي هجرس','شلال','عين الحجل','عين الخضراء','عين الريش','عين الملح','عين فارس','محمد بوضياف','مسيف','معاريف','مقرة','مناعة','ولتام','ونوغة'],
+        '29':['البرج','الحشم','السهايلية','الشرفاء','العلايمية','الغمري','القرط','القطنة','القعدة','المأمونية','المحمدية','المطمور','المنور','بنيان','بوحنيفية','بوهني','تيزي','تيغنيف','حسين','خلوية','رأس عين عميروش','زلامطة','زهانة','سجرارة','سيدي بوسعيد','سيدي عبد الجبار','سيدي عبد المومن','سيدي قادة','سيق','عقاز','عوف','عين أفرص','عين فارس','عين فراح','عين فكان','غروس','غريس','فراقيق','فروحة','قرجوم','ماقضة','ماوسة','معسكر','مقطع الدوز','نسمط','وادي الأبطال','وادي التاغية'],
+        '30':['البرمة','الرويسات','انقوسة','حاسي بن عبد الله','حاسي مسعود','سيدي خويلد','عين البيضاء','ورقلة'],
+        '31':['أرزيو','البراية','السانية','العنصر','الكرمة','المرسى الكبير','بئر الجير','بطيوة','بن فريحة','بوتليليس','بوسفر','بوفاتيس','حاسي بن عقبة','حاسي بونيف','حاسي مفسوخ','سيدي الشحمي','سيدي بن يبقى','طفراوي','عين البية','عين الترك','عين الكرمة','قديل','مرسى الحجاج','مسرغين','وادي تليلات','وهران'],
+        '32':['اربوات','الأبيض سيدي الشيخ','البنود','البيض','الخيثر','الشقيق','الغاسول','الكاف الأحمر','المحرة','بريزينة','بوسمغون','بوعلام','بوقطب','توسمولين','رقاصة','ستيتن','سيدي سليمان','سيدي طيفور','سيدي عامر','شلالة','عين العراك','كراكدة'],
+        '33':['إن أمناس','إيليزي','برج عمر إدريس','دبداب'],
+        '34':['أولاد أبراهم','أولاد دحمان','أولاد سيدي ابراهيم','الحمادية','الرابطة','العش','العناصر','القصور','القلة','الماين','المنصورة','المهير','الياشير','بئر قاصد علي','برج الغدير','برج بوعريريج','برج زمورة','بليمور','بن داود','تسامرت','تفرق','تقلعيت','تيكستار','ثنية النصر','جعافرة','حرازة','حسناوة','خليل','رأس الوادي','سيدي أمبارك','عين تاغروت','عين تسرة','غيلاسة','مجانة'],
+        '35':['أعفير','أولاد عيسى','أولاد موسى','أولاد هداج','الاربعطاش','الثنية','الخروبة','الناصرية','برج منايل','بغلية','بن شود','بني عمران','بودواو','بودواو البحري','بوزقزة قدارة','بومرداس','تاورقة','تيجلابين','تيمزريت','جنات','حمادي','خميس الخشنة','دلس','زموري','سوق الحد','سي مصطفى','سيدي داود','شعبة العامر','عمال','قورصو','لقاطة','يسر'],
+        '36':['البسباس','الذرعان','الزيتونة','السوارخ','الشافية','الشط','الطارف','العيون','القالة','بحيرة الطيور','بريحان','بن مهيدي','بوثلجة','بوحجار','بوقوس','حمام بني صالح','رمل السوق','زريزر','شبيطة مختار','شحاني','عصفور','عين العسل','عين الكرمة','وادي الزيتون'],
+        '37':['أم العسل','تندوف'],
+        '38':['أولاد بسام','الأربعاء','الأزهرية','العيون','المعاصم','الملعب','اليوسفية','برج الأمير عبد القادر','برج بونعامة','بني شعيب','بني لحسن','بوقائد','تملاحت','تيسمسيلت','ثنية الاحد','خميستي','سيدي العنتري','سيدي بوتوشنت','سيدي سليمان','سيدي عابد','عماري','لرجام'],
+        '39':['البياضة','الحمراية','الدبيلة','الرباح','الرقيبة','الطالب العربي','الطريفاوي','العقلة','المقرن','النخلة','الوادي','اميه وانسة','بن قشة','تغزوت','حاسي خليفة','حساني عبد الكريم','دوار الماء','سيدي عون','قمار','كوينين','وادي العلندة','ورماس'],
+        '40':['أولاد رشاش','الحامة','الرميلة','المحمل','الولجة','انسيغة','بابار','بغاي','بوحمامة','تاوزيانت','جلال','خنشلة','خيران','ششار','شلية','طامزة','عين الطويلة','قايس','متوسة','مصارة','يابوس'],
+        '41':['أم العظايم','أولاد إدريس','أولاد مومن','الحدادة','الحنانشة','الخضارة','الدريعة','الراقوبة','الزعرورية','الزوابي','المراهنة','المشروحة','بئر بوحوش','تاورة','ترقالت','تيفاش','خميسة','سافل الويدان','سدراتة','سوق أهراس','سيدي فرج','عين الزانة','عين سلطان','مداوروش','وادي الكبريت','ويلان'],
+        '42':['أحمر العين','أغبال','الأرهاط','الداموس','الشعيبة','القليعة','الناظور','بني ميلك','بواسماعيل','بورقيقة','بوهارون','تيبازة','حجرة النص','حجوط','خميستي','دواودة','سيدي راشد','سيدي سميان','سيدي عامر','سيدي غيلاس','شرشال','عين تاقورايت','فوكة','قوراية','مراد','مسلمون','مناصر'],
+        '43':['عين البيضاء أحريش','أحمد راشدي','أولاد اخلوف','اعميرة اراس','التلاغمة','الرواشد','الشيقارة','العياضي برباس','القرارم قوقة','بن يحي عبد الرحمن','بوحاتم','تاجنانت','ترعي باينان','تسالة لمطاعي','تسدان حدادة','تيبرقنت','حمالة','دراحي بوصلاح','زغاية','سيدي خليفة','سيدي مروان','شلغوم العيد','عين التين','عين الملوك','فرجيوة','مشيرة','ميلة','مينار زارزة','وادي العثمانية','وادي النجاء','وادي سقان','يحي بني قشة'],
+        '44':['الحسانية','الحسينية','الروينة','العامرة','العبادية','العطاف','الماين','المخاطرية','بئر ولد خليفة','بربوش','برج الأمير خالد','بطحية','بلعاص','بن علال','بوراشد','بومدفع','تاشتة زقاغة','تبركانين','جليدة','جمعة أولاد الشيخ','جندل','حمام ريغة','خميس مليانة','زدين','سيدي الأخضر','طارق بن زياد','عريب','عين الاشياخ','عين البنيان','عين التركي','عين الدفلى','عين السلطان','عين بويحيى','مليانة','واد الجمعة','وادي الشرفاء'],
+        '45':['البيوض','القصدير','المشرية','النعامة','تيوت','جنين بورزق','سفيسيفة','عسلة','عين الصفراء','عين بن خليل','مغرار','مكمن بن عمار'],
+        '46':['أغلال','أولاد الكيحل','أولاد بوجمعة','الأمير عبد القادر','الحساسنة','العامرية','المالح','المساعيد','بني صاف','بوزجار','تارقة','تامزورة','حاسي الغلة','حمام بوحجر','سيدي بن عدة','سيدي بومدين','سيدي صافي','سيدي ورياش','شعبة اللحم','شنتوف','عقب الليل','عين الأربعاء','عين الطلبة','عين الكيحل','عين تموشنت','وادي الصباح','وادي برقش','ولهاصة الغرابة'],
+        '47':['العطف','القرارة','المنصورة','بريان','بونورة','زلفانة','سبسب','ضاية بن ضحوة','غرداية','متليلي'],
+        '48':['أولاد سيدي الميهوب','أولاد يعيش','الحاسي','الحمادنة','الرمكة','القطار','القلعة','المطمر','الولجة','بلعسل بوزقزة','بن داود','بني درقن','بني زنطيس','جديوية','حد الشكالة','حمري','دار بن عبد الله','زمورة','سوق الحد','سيدي خطاب','سيدي أمحمد بن علي','سيدي امحمد بن عودة','سيدي سعادة','سيدي لزرق','عمي موسى','عين الرحمة','عين طارق','غليزان','لحلاف','مازونة','مديونة','مرجة سيدي عابد','منداس','وادي الجمعة','وادي السلام','وادي رهيو','واريزان','يلل'],
+        '49':['أوقروت','أولاد السعيد','أولاد عيسى','المطارفة','تنركوك','تيميمون','دلدول','شروين','طالمين','قصر قدور'],
+        '50':['برج باجي مختار','تيمياوين'],
+        '51':['أولاد جلال','الدوسن','الشعيبة','بسباس','رأس الميعاد','سيدي خالد'],
+        '52':['أولاد خضير','إقلي','القصابي','الواتة','بن يخلف','بني عباس','تامترت','تيمودي','كرزاز'],
+        '53':['إينغر','عين صالح','فقارة الزوى'],
+        '54':['تين زواتين','عين قزام'],
+        '55':['الحجيرة','الزاوية العابدية','الطيبات','العالية','المقارين','المنقر','النزلة','بلدة اعمر','بن ناصر','تبسبست','تقرت','تماسين','سيدي سليمان'],
+        '56':['برج الحواس','جانت'],
+        '57':['أم الطيور','المرارة','المغير','تندلة','جامعة','سطيل','سيدي خليل','سيدي عمران'],
+        '58':['المنيعة','حاسي الفحل','حاسي القارة']
+    };
 
 // ─── FORM EVENTS ──────────────────────────────────────────────────────────────
-document.getElementById('wilaya').addEventListener('change', function() {
-  const val = this.value;
-  const bEl = document.getElementById('baladiya');
-  bEl.innerHTML = '<option value="">-- اختر البلدية --</option>';
-  if (val && communes[val]) {
-    communes[val].sort().forEach(c => { const o = document.createElement('option'); o.value = c; o.textContent = c; bEl.appendChild(o); });
-    bEl.disabled = false;
-    const opt = this.options[this.selectedIndex];
-    homePrice = parseInt(opt.dataset.home) || 0;
+document.getElementById('wilaya').addEventListener('change',function(){
+  const val=this.value, bEl=document.getElementById('baladiya');
+  bEl.innerHTML='<option value="">-- اختر البلدية --</option>';
+  if(val&&communes[val]){
+    communes[val].sort().forEach(c=>{const o=document.createElement('option');o.value=c;o.textContent=c;bEl.appendChild(o);});
+    bEl.disabled=false;
+    homePrice=parseInt(this.options[this.selectedIndex].dataset.home)||0;
     updateUI();
-    this.classList.add('valid'); this.classList.remove('error');
+    this.classList.add('valid');this.classList.remove('error');
     document.getElementById('wilayaErr').classList.remove('show');
   } else {
-    bEl.disabled = true; bEl.innerHTML = '<option value="">-- اختر الولاية أولاّ --</option>';
-    homePrice = 0; updateUI();
+    bEl.disabled=true;bEl.innerHTML='<option value="">-- اختر الولاية أولاّ --</option>';
+    homePrice=0;updateUI();
   }
 });
-document.getElementById('baladiya').addEventListener('change', function() {
-  if (this.value) { this.classList.add('valid'); this.classList.remove('error'); document.getElementById('baladiyaErr').classList.remove('show'); }
+document.getElementById('baladiya').addEventListener('change',function(){
+  if(this.value){this.classList.add('valid');this.classList.remove('error');document.getElementById('baladiyaErr').classList.remove('show');}
 });
-document.getElementById('cardVertMili').addEventListener('click', function() {
-  selectedColor = 'Vert Militaire';
+document.getElementById('cardVertMili').addEventListener('click',function(){
+  selectedColor='Vert Militaire';
   document.getElementById('cardVertMili').classList.add('active');
   document.getElementById('cardVertEau').classList.remove('active');
-  document.getElementById('cardVertMili').querySelector('input').checked = true;
+  document.querySelector('input[value="Vert Militaire"]').checked=true;
   document.getElementById('colorErr').classList.remove('show');
 });
-document.getElementById('cardVertEau').addEventListener('click', function() {
-  selectedColor = "Vert D'eau";
+document.getElementById('cardVertEau').addEventListener('click',function(){
+  selectedColor="Vert D'eau";
   document.getElementById('cardVertEau').classList.add('active');
   document.getElementById('cardVertMili').classList.remove('active');
-  document.getElementById('cardVertEau').querySelector('input').checked = true;
+  document.querySelector('input[value="Vert D\'eau"]').checked=true;
   document.getElementById('colorErr').classList.remove('show');
 });
-document.querySelectorAll('.size-btn').forEach(btn => {
-  btn.addEventListener('click', function() {
-    document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
-    this.classList.add('active'); selectedSize = this.dataset.size;
-    document.getElementById('selectedSize').value = selectedSize;
+document.querySelectorAll('.size-btn').forEach(btn=>{
+  btn.addEventListener('click',function(){
+    document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
+    this.classList.add('active');selectedSize=this.dataset.size;
+    document.getElementById('selectedSize').value=selectedSize;
     document.getElementById('sizeErr').classList.remove('show');
   });
 });
-function changeQty(delta) {
-  const n = Math.max(1, Math.min(10, currentQty + delta));
-  if (n !== currentQty) { currentQty = n; updateUI(); ttqFireAddToCart(currentQty); }
+function changeQty(delta){
+  const n=Math.max(1,Math.min(10,currentQty+delta));
+  if(n!==currentQty){currentQty=n;updateUI();ttqFireAddToCart(currentQty);}
 }
-document.getElementById('phone').addEventListener('input', function() { this.value = this.value.replace(/[^0-9]/g, ''); });
-document.getElementById('phone').addEventListener('blur', function() {
-  const phone = this.value.trim();
-  if (/^(05|06|07)\d{8}$/.test(phone)) {
-    const name = document.getElementById('fullName').value.trim();
-    const wEl = document.getElementById('wilaya');
-    const wTxt = wEl.options[wEl.selectedIndex] ? wEl.options[wEl.selectedIndex].text : '';
-    const bal = document.getElementById('baladiya').value;
-    ttqIdentify(name, phone, wTxt, bal);
+document.getElementById('phone').addEventListener('input',function(){this.value=this.value.replace(/[^0-9]/g,'');});
+document.getElementById('phone').addEventListener('blur',function(){
+  const phone=this.value.trim();
+  if(/^(05|06|07)\d{8}$/.test(phone)){
+    const name=document.getElementById('fullName').value.trim();
+    const wEl=document.getElementById('wilaya');
+    const wTxt=wEl.options[wEl.selectedIndex]?wEl.options[wEl.selectedIndex].text:'';
+    const bal=document.getElementById('baladiya').value;
+    ttqIdentify(name,phone,wTxt,bal);
   }
 });
 
 // ─── VALIDATION ───────────────────────────────────────────────────────────────
-function validate() {
-  let ok = true;
-  const name = document.getElementById('fullName').value.trim();
-  const phone = document.getElementById('phone').value.trim();
-  const wilaya = document.getElementById('wilaya').value;
-  const baladiya = document.getElementById('baladiya').value;
-
-  const setField = (inputId, errId, valid) => {
-    const el = document.getElementById(inputId);
-    const err = document.getElementById(errId);
-    if (valid) { el.classList.remove('error'); el.classList.add('valid'); err.classList.remove('show'); }
-    else { el.classList.add('error'); el.classList.remove('valid'); err.classList.add('show'); ok = false; }
+function validate(){
+  let ok=true;
+  const name=document.getElementById('fullName').value.trim();
+  const phone=document.getElementById('phone').value.trim();
+  const wilaya=document.getElementById('wilaya').value;
+  const baladiya=document.getElementById('baladiya').value;
+  const setField=(iid,eid,valid)=>{
+    const el=document.getElementById(iid),err=document.getElementById(eid);
+    if(valid){el.classList.remove('error');el.classList.add('valid');err.classList.remove('show');}
+    else{el.classList.add('error');el.classList.remove('valid');err.classList.add('show');ok=false;}
   };
-
-  setField('fullName', 'nameErr', name.length > 0);
-  setField('phone', 'phoneErr', /^(05|06|07)\d{8}$/.test(phone));
-  setField('wilaya', 'wilayaErr', wilaya !== '');
-  setField('baladiya', 'baladiyaErr', baladiya !== '');
+  setField('fullName','nameErr',name.length>0);
+  setField('phone','phoneErr',/^(05|06|07)\d{8}$/.test(phone));
+  setField('wilaya','wilayaErr',wilaya!=='');
+  setField('baladiya','baladiyaErr',baladiya!=='');
   return ok;
 }
 
 // ─── ORDER SUBMISSION ─────────────────────────────────────────────────────────
-async function submitOrder() {
-  if (!validate()) {
-    document.querySelector('.cod-form').scrollIntoView({ behavior: 'smooth', block: 'start' });
-    return;
-  }
-
-  const btn = document.getElementById('submitBtn');
-  const btnText = document.getElementById('submitBtnText');
-  btn.disabled = true;
-  btnText.textContent = '⏳ جارٍ إرسال الطلب...';
-
-  const customerName  = document.getElementById('fullName').value.trim();
-  const customerPhone = document.getElementById('phone').value.trim();
-  const wEl           = document.getElementById('wilaya');
-  const wilayaText    = wEl.options[wEl.selectedIndex].text;
-  const baladiya      = document.getElementById('baladiya').value;
-  const effDel        = getEffDelivery(currentQty, currentDeliveryPrice);
-  const total         = getTotalPrice(currentQty, currentDeliveryPrice);
-  const productPrice  = getProductPrice(currentQty);
-  const now           = new Date();
-  const dateStr       = now.toLocaleDateString('fr-DZ') + ' ' + now.toLocaleTimeString('fr-DZ');
-  const sku           = getSKU(selectedColor, selectedSize);
-  const orderId       = generateOrderID();
-
-  // Fire browser pixels for InitiateCheckout
-  metaTrackInitiateCheckout(currentQty, currentDeliveryPrice);
-  ttqFireInitiateCheckout(currentQty, currentDeliveryPrice);
-
-  // ── HASH CUSTOMER PII ──────────────────────────────────────────────────────
-  const e164  = phoneToE164(customerPhone);
-  const parts = String(customerName).trim().split(/\s+/).filter(Boolean);
-  const extId = getOrCreateExternalId();
-  
-  // Strip number prefix from wilaya before hashing (e.g., "01 - أدرار" → "أدرار")
-  const cleanWilaya = String(wilayaText || '').replace(/^\d+\s*-\s*/, '').toLowerCase().trim();
-  const cleanBaladiya = String(baladiya || '').toLowerCase().trim();
-
-  const [hp, hf, hl, hc, hs, hco] = await Promise.all([
-    sha256(e164),
-    sha256(parts[0] || ''),
-    sha256(parts.slice(1).join(' ')),
-    sha256(cleanBaladiya),  // city = baladiya
-    sha256(cleanWilaya),    // state = wilaya (WITHOUT prefix)
-    sha256('dz'),
-  ]);
-    const hashedCustomer = {
-    hashed_phone_number: hp,
-    hashed_first_name:   hf,
-    hashed_last_name:    hl,
-    hashed_city:         hc,
-    hashed_state:        hs,
-    hashed_country:      hco,
-    external_id:         extId,   // ← RAW, do NOT hash
-  };
-  const orderData = {
-    orderId, qty: currentQty, delivery: currentDeliveryPrice,
-    name: customerName, phone: customerPhone, wilayaText, baladiya,
-  };
-
-  // ── TIKTOK CAPI — send first, await both ──────────────────────────────────
-  const capiResults = await Promise.allSettled([
-    sendCAPIEvent('Purchase', orderData, hashedCustomer),
-    sendCAPIEvent('PlaceAnOrder', orderData, hashedCustomer),
-  ]);
-  console.log('[CAPI] Results:', capiResults);
-
-  // ── GOOGLE SHEETS — send as JSON (more reliable than URL-encoded) ──────────
-  const sheetPayload = {
-    order_id:        orderId,
-    date:            dateStr,
-    nom:             customerName,
-    phone:           customerPhone,
-    wilaya:          wilayaText,
-    commune:         baladiya,
-    produit:         "Ensemble D'ete 2026",
-    variante:        selectedColor + ' / ' + selectedSize,
-    sku:             sku,
-    livraison:       'A Domicile',
-    offre:           currentQty >= 2 ? 'Livraison Gratuite' : 'Aucune',
-    quantite:        String(currentQty),
-    prix_produit:    String(productPrice),
-    prix_livraison:  String(effDel),
-    prix_total:      String(total),
-  };
-
-  // ── TELEGRAM MESSAGE ───────────────────────────────────────────────────────
-  const message = `🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n` +
-    `👤 <b>الاسم:</b> ${customerName}\n📱 <b>الهاتف:</b> ${customerPhone}\n` +
-    `📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n` +
-    `🎨 <b>اللون / المقاس:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n` +
-    `📦 <b>الكمية:</b> ${currentQty}\n💰 <b>المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n` +
-    `🚚 <b>التوصيل:</b> ${currentQty >= 2 ? '✅ مجاني' : effDel.toLocaleString('fr-DZ') + ' دج'}\n` +
-    `💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>التاريخ:</b> ${dateStr}`;
-
-  const BOT = { token: '8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08', chat: '6405258861' };
-
-  // Fire Telegram + Sheets in background (non-blocking)
+async function submitOrder(){
+  if(!validate()){document.querySelector('.cod-form').scrollIntoView({behavior:'smooth',block:'start'});return;}
+  const btn=document.getElementById('submitBtn'),btnText=document.getElementById('submitBtnText');
+  btn.disabled=true;btnText.textContent='⏳ جارٍ إرسال الطلب...';
+  const customerName=document.getElementById('fullName').value.trim();
+  const customerPhone=document.getElementById('phone').value.trim();
+  const wEl=document.getElementById('wilaya');
+  const wilayaText=wEl.options[wEl.selectedIndex].text;
+  const baladiya=document.getElementById('baladiya').value;
+  const effDel=getEffDelivery(currentQty,currentDeliveryPrice);
+  const total=getTotalPrice(currentQty,currentDeliveryPrice);
+  const productPrice=getProductPrice(currentQty);
+  const now=new Date();
+  const dateStr=now.toLocaleDateString('fr-DZ')+' '+now.toLocaleTimeString('fr-DZ');
+  const sku=getSKU(selectedColor,selectedSize);
+  const orderId=generateOrderID();
+  metaTrackInitiateCheckout(currentQty,currentDeliveryPrice);
+  ttqFireInitiateCheckout(currentQty,currentDeliveryPrice);
+  const e164=phoneToE164(customerPhone);
+  const parts=String(customerName).trim().split(/\s+/).filter(Boolean);
+  const extId=getOrCreateExternalId();
+  const cW=String(wilayaText||'').replace(/^\d+\s*-\s*/,'').toLowerCase().trim();
+  const cB=String(baladiya||'').toLowerCase().trim();
+  const [hp,hf,hl,hc,hs,hco]=await Promise.all([sha256(e164),sha256(parts[0]||''),sha256(parts.slice(1).join(' ')),sha256(cB),sha256(cW),sha256('dz')]);
+  const hashedCustomer={hashed_phone_number:hp,hashed_first_name:hf,hashed_last_name:hl,hashed_city:hc,hashed_state:hs,hashed_country:hco,external_id:extId};
+  const orderData={orderId,qty:currentQty,delivery:currentDeliveryPrice,name:customerName,phone:customerPhone,wilayaText,baladiya};
+  await Promise.allSettled([sendCAPIEvent('Purchase',orderData,hashedCustomer),sendCAPIEvent('PlaceAnOrder',orderData,hashedCustomer)]);
+  const sheetPayload={order_id:orderId,date:dateStr,nom:customerName,phone:customerPhone,wilaya:wilayaText,commune:baladiya,produit:"Ensemble D'ete 2026",variante:selectedColor+' / '+selectedSize,sku,livraison:'A Domicile',offre:currentQty>=2?'Livraison Gratuite':'Aucune',quantite:String(currentQty),prix_produit:String(productPrice),prix_livraison:String(effDel),prix_total:String(total)};
+  const message=`🛒 <b>طلب جديد — Ensemble été 2026</b>\n\n👤 <b>الاسم:</b> ${customerName}\n📱 <b>الهاتف:</b> ${customerPhone}\n📍 <b>الولاية:</b> ${wilayaText}\n🏘️ <b>البلدية:</b> ${baladiya}\n🎨 <b>اللون / المقاس:</b> ${selectedColor} / ${selectedSize}\n🏷️ <b>SKU:</b> ${sku}\n📦 <b>الكمية:</b> ${currentQty}\n💰 <b>المنتج:</b> ${productPrice.toLocaleString('fr-DZ')} دج\n🚚 <b>التوصيل:</b> ${currentQty>=2?'✅ مجاني':effDel.toLocaleString('fr-DZ')+' دج'}\n💵 <b>المجموع:</b> ${total.toLocaleString('fr-DZ')} دج\n📅 <b>التاريخ:</b> ${dateStr}`;
+  const BOT={token:'8671482276:AAEo1-ukI0DhkkogouHFmXNS5Vw4Pwtqb08',chat:'6405258861'};
   Promise.allSettled([
-    fetch(`https://api.telegram.org/bot${BOT.token}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ chat_id: BOT.chat, text: message, parse_mode: 'HTML' }),
-    }).then(r => r.json()).then(d => console.log('[Telegram]', d)).catch(e => console.warn('[Telegram] error:', e.message)),
-
-    fetch(APPS_SCRIPT_URL, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(sheetPayload),
-      // NOTE: Apps Script blocks CORS — mode:no-cors means we can't read response
-      // but the POST still reaches the server. Use Logs sheet to verify.
-      mode: 'no-cors',
-      keepalive: true,
-    }).catch(e => console.warn('[Sheets] error:', e.message)),
+    fetch(`https://api.telegram.org/bot${BOT.token}/sendMessage`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({chat_id:BOT.chat,text:message,parse_mode:'HTML'})}).then(r=>r.json()).catch(()=>{}),
+    fetch(APPS_SCRIPT_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(sheetPayload),mode:'no-cors',keepalive:true}).catch(()=>{}),
   ]);
-
-  // Browser pixels — Purchase
-  metaTrackPurchase(currentQty, effDel);
-  ttqFirePurchase(currentQty, effDel, customerName, customerPhone, wilayaText, baladiya).catch(() => {});
-
-  // Show success
+  metaTrackPurchase(currentQty,effDel);
+  ttqFirePurchase(currentQty,effDel,customerName,customerPhone,wilayaText,baladiya).catch(()=>{});
   showSuccess();
-  btn.disabled = false;
-  btnText.textContent = '✅ أتمم طلبي الآن';
+  btn.disabled=false;btnText.textContent='✅ أتمم طلبي الآن';
 }
 
 // ─── SUCCESS POPUP ────────────────────────────────────────────────────────────
-function showSuccess() {
+function showSuccess(){
   document.getElementById('successPopup').classList.add('active');
   document.getElementById('orderForm').reset();
-  currentQty = 1; currentDeliveryPrice = 0; homePrice = 0;
-  selectedColor = 'Vert Militaire'; selectedSize = 'M';
-  document.getElementById('qtyDisplay').textContent = '1';
-  document.getElementById('baladiya').disabled = true;
-  document.getElementById('baladiya').innerHTML = '<option value="">-- اختر الولاية أولاّ --</option>';
-  document.querySelectorAll('.form-input,.form-select').forEach(el => el.classList.remove('valid', 'error'));
+  currentQty=1;currentDeliveryPrice=0;homePrice=0;
+  selectedColor='Vert Militaire';selectedSize='M';
+  document.getElementById('qtyDisplay').textContent='1';
+  document.getElementById('baladiya').disabled=true;
+  document.getElementById('baladiya').innerHTML='<option value="">-- اختر الولاية أولاّ --</option>';
+  document.querySelectorAll('.form-input,.form-select').forEach(el=>el.classList.remove('valid','error'));
   document.getElementById('cardVertMili').classList.add('active');
   document.getElementById('cardVertEau').classList.remove('active');
-  document.querySelector('input[name="color"][value="Vert Militaire"]').checked = true;
-  document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+  document.querySelector('input[name="color"][value="Vert Militaire"]').checked=true;
+  document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
   document.querySelector('.size-btn[data-size="M"]').classList.add('active');
-  document.getElementById('selectedSize').value = 'M';
+  document.getElementById('selectedSize').value='M';
   updateUI();
 }
-function closePopup() { document.getElementById('successPopup').classList.remove('active'); }
-document.getElementById('successPopup').addEventListener('click', function(e) { if (e.target === this) closePopup(); });
+function closePopup(){document.getElementById('successPopup').classList.remove('active');}
+document.getElementById('successPopup').addEventListener('click',function(e){if(e.target===this)closePopup();});
 
-// ─── CAROUSEL ────────────────────────────────────────────────────────────────
-let CAROUSEL_IMAGES = [], currentSlide = 0, touchStartX = 0, touchEndX = 0, isAnimating = false;
+// ─── CAROUSEL ─────────────────────────────────────────────────────────────────
+let CAROUSEL_IMAGES=[],currentSlide=0,touchStartX=0,touchEndX=0,isAnimating=false;
 
-async function loadRealPhotos() {
-  try {
-    const ctrl = new AbortController();
-    setTimeout(() => ctrl.abort(), 5000);
-    const res = await fetch('real-photos.json', { signal: ctrl.signal });
-    if (!res.ok) throw new Error('HTTP ' + res.status);
-    const files = await res.json();
-    if (!Array.isArray(files) || files.length === 0) throw new Error('empty');
-    CAROUSEL_IMAGES = files
-      .filter(f => /\.(jpg|jpeg|png|webp|gif|avif)$/i.test(f))
-      .sort((a, b) => {
-        const nA = parseInt(a.match(/^(\d+)/)?.[1] || '0', 10);
-        const nB = parseInt(b.match(/^(\d+)/)?.[1] || '0', 10);
-        return nA - nB;
+async function loadRealPhotos(){
+  try{
+    const ctrl=new AbortController();setTimeout(()=>ctrl.abort(),5000);
+    const res=await fetch('real-photos.json',{signal:ctrl.signal});
+    if(!res.ok) throw new Error('HTTP '+res.status);
+    const files=await res.json();
+    if(!Array.isArray(files)||files.length===0) throw new Error('empty');
+    CAROUSEL_IMAGES=files
+      .filter(f=>/\.(jpg|jpeg|png|webp|gif|avif)$/i.test(f))
+      .sort((a,b)=>{
+        const nA=parseInt(a.match(/^(\d+)/)?.[1]||'0',10);
+        const nB=parseInt(b.match(/^(\d+)/)?.[1]||'0',10);
+        return nA-nB;
       });
-    if (CAROUSEL_IMAGES.length === 0) throw new Error('no images');
-  } catch (err) {
-    console.warn('[Carousel] real-photos.json not loaded:', err.message);
-    CAROUSEL_IMAGES = [];
-  }
+    if(!CAROUSEL_IMAGES.length) throw new Error('no images');
+  }catch(err){console.warn('[Carousel]',err.message);CAROUSEL_IMAGES=[];}
   initCarousel();
 }
-function initCarousel() {
-  const track = document.getElementById('carouselTrack');
-  const dots = document.getElementById('carouselDots');
-  const counter = document.getElementById('carouselCounter');
-  const btnNext = document.getElementById('btnNext');
-  const btnPrev = document.getElementById('btnPrev');
-  if (!CAROUSEL_IMAGES.length) {
-    track.innerHTML = `<div class="carousel-placeholder"><span>📷</span><p style="font-family:'Cairo',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.5);text-align:center;padding:0 20px;">أضف صور المنتج في ملف real-photos.json</p></div>`;
-    dots.innerHTML = ''; if (counter) counter.style.display = 'none';
-    if (btnNext) btnNext.style.display = 'none'; if (btnPrev) btnPrev.style.display = 'none';
+
+function initCarousel(){
+  const track=document.getElementById('carouselTrack');
+  const dots=document.getElementById('carouselDots');
+  const counter=document.getElementById('carouselCounter');
+  const btnNext=document.getElementById('btnNext');
+  const btnPrev=document.getElementById('btnPrev');
+  if(!CAROUSEL_IMAGES.length){
+    track.innerHTML=`<div class="carousel-placeholder"><span>📷</span><p style="font-family:'Cairo',sans-serif;font-size:0.88rem;color:rgba(255,255,255,0.4);text-align:center;padding:0 24px;">أضف صور المنتج في ملف real-photos.json</p></div>`;
+    dots.innerHTML='';if(counter) counter.style.display='none';
+    if(btnNext) btnNext.style.display='none';if(btnPrev) btnPrev.style.display='none';
     return;
   }
-  track.innerHTML = CAROUSEL_IMAGES.map((src, i) =>
-    `<div class="carousel-slide" data-index="${i}" style="transform:translateX(${(0 - i) * 100}%)"><img src="${src}" alt="صورة ${i + 1}" ${i === 0 ? 'fetchpriority="high"' : 'loading="lazy"'} draggable="false" onerror="this.parentElement.style.background='#0d2040';this.style.display='none'"/></div>`
+  // Build slides
+  track.innerHTML=CAROUSEL_IMAGES.map((src,i)=>
+    `<div class="carousel-slide" data-index="${i}" style="transform:translateX(${(0-i)*100}%)">
+      <img src="${src}" alt="صورة ${i+1}" ${i===0?'fetchpriority="high"':'loading="lazy"'} draggable="false"
+           onerror="this.parentElement.style.background='#0d2040';this.style.display='none'"/>
+     </div>`
   ).join('');
-  dots.innerHTML = CAROUSEL_IMAGES.map((_, i) =>
-    `<button class="carousel-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})" aria-label="صورة ${i + 1}"></button>`
+  // Dots
+  dots.innerHTML=CAROUSEL_IMAGES.map((_,i)=>
+    `<button class="carousel-dot ${i===0?'active':''}" onclick="goToSlide(${i})" aria-label="صورة ${i+1}"></button>`
   ).join('');
-  if (counter) counter.style.display = 'block';
-  if (btnNext) btnNext.style.display = 'flex'; if (btnPrev) btnPrev.style.display = 'flex';
+  if(counter) counter.style.display='block';
+  if(btnNext) btnNext.style.display='flex';
+  if(btnPrev) btnPrev.style.display='flex';
   updateCarousel();
-  const vp = document.getElementById('carouselViewport');
-  if (vp) {
-    vp.addEventListener('touchstart', e => { touchStartX = e.changedTouches[0].screenX; }, { passive: true });
-    vp.addEventListener('touchend', e => {
-      touchEndX = e.changedTouches[0].screenX;
-      if (Math.abs(touchEndX - touchStartX) > 50) moveCarousel(touchEndX < touchStartX ? 1 : -1);
-    }, { passive: true });
+
+  // Touch swipe — RTL: swipe left = next (positive dir)
+  const vp=document.getElementById('carouselViewport');
+  if(vp){
+    vp.addEventListener('touchstart',e=>{touchStartX=e.changedTouches[0].screenX;},{passive:true});
+    vp.addEventListener('touchend',e=>{
+      touchEndX=e.changedTouches[0].screenX;
+      const delta=touchStartX-touchEndX; // positive = swipe left = next
+      if(Math.abs(delta)>45) moveCarousel(delta>0?1:-1);
+    },{passive:true});
   }
-  if (CAROUSEL_IMAGES[1]) { const p = new Image(); p.src = CAROUSEL_IMAGES[1]; }
+  // Preload next
+  if(CAROUSEL_IMAGES[1]){const p=new Image();p.src=CAROUSEL_IMAGES[1];}
 }
-function updateCarousel() {
-  document.querySelectorAll('.carousel-slide').forEach((s, i) => { s.style.transform = `translateX(${(currentSlide - i) * 100}%)`; });
-  document.querySelectorAll('.carousel-dot').forEach((d, i) => d.classList.toggle('active', i === currentSlide));
-  const c = document.getElementById('carouselCounter'); if (c) c.textContent = (currentSlide + 1) + ' / ' + CAROUSEL_IMAGES.length;
+
+function updateCarousel(){
+  document.querySelectorAll('.carousel-slide').forEach((s,i)=>{
+    s.style.transform=`translateX(${(currentSlide-i)*100}%)`;
+  });
+  document.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===currentSlide));
+  const c=document.getElementById('carouselCounter');if(c) c.textContent=(currentSlide+1)+' / '+CAROUSEL_IMAGES.length;
 }
-function moveCarousel(dir) {
-  if (isAnimating) return;
-  const n = currentSlide + dir;
-  if (n < 0 || n >= CAROUSEL_IMAGES.length) return;
-  isAnimating = true; currentSlide = n; updateCarousel();
-  setTimeout(() => { isAnimating = false; }, 450);
+
+/* moveCarousel(1) = forward/next, moveCarousel(-1) = back/prev
+   In RTL: swiping LEFT (finger goes left) = going to next = dir +1
+   Arrow on RIGHT side (❯) = next = calls moveCarousel(1)  ← wait, no:
+   In an RTL carousel the "next" item is conceptually to the LEFT visually.
+   User swipes left (finger moves left) → dir = 1 = show next.
+   The chevron ❯ on the RIGHT side = previous (go back).
+   The chevron ❮ on the LEFT side = next (go forward).
+   This matches Arabic reading direction. */
+function moveCarousel(dir){
+  if(isAnimating) return;
+  const n=currentSlide+dir;
+  if(n<0||n>=CAROUSEL_IMAGES.length) return;
+  isAnimating=true;currentSlide=n;updateCarousel();
+  setTimeout(()=>{isAnimating=false;},420);
 }
-function goToSlide(index) {
-  if (isAnimating || index < 0 || index >= CAROUSEL_IMAGES.length) return;
-  currentSlide = index; updateCarousel();
+function goToSlide(index){
+  if(isAnimating||index<0||index>=CAROUSEL_IMAGES.length) return;
+  currentSlide=index;updateCarousel();
 }
-document.addEventListener('keydown', e => {
-  if (e.key === 'ArrowLeft') moveCarousel(1);
-  if (e.key === 'ArrowRight') moveCarousel(-1);
+// Keyboard: ArrowLeft in RTL = forward
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft') moveCarousel(1);
+  if(e.key==='ArrowRight') moveCarousel(-1);
 });
 
 // ─── BOOT ─────────────────────────────────────────────────────────────────────
