@@ -621,10 +621,20 @@ async function ttqIdentify(name, phone, wilaya, baladiya) {
   if (typeof ttq === 'undefined') return;
   try {
     const e164 = phoneToE164(phone);
-    const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
-    const extId = getOrCreateExternalId();
-      const [hp, hf, hl, hc, hs, hco] = await Promise.all([
-    sha256(e164), sha256(parts[0] || ''), sha256(parts.slice(1).join(' ')),
+      const parts = String(customerName || '').trim().split(/\s+/).filter(Boolean);
+  const extId = getOrCreateExternalId();
+
+  // TikTok rejects Arabic/short names — only hash Latin names with 2+ chars
+  const isLatinName = (str) => /^[a-zA-Z\s]{2,}$/.test(str);
+  const firstNameRaw = parts[0] || '';
+  const lastNameRaw = parts.slice(1).join(' ') || '';
+  const firstName = isLatinName(firstNameRaw) ? firstNameRaw.toLowerCase().trim() : '';
+  const lastName = isLatinName(lastNameRaw) ? lastNameRaw.toLowerCase().trim() : '';
+
+  const [hp, hf, hl, hc, hs, hco] = await Promise.all([
+    sha256(e164),
+    firstName ? sha256(firstName) : Promise.resolve(''),
+    lastName ? sha256(lastName) : Promise.resolve(''),
     sha256((baladiya || '').toLowerCase().trim()),
     sha256((wilayaText || '').toLowerCase().trim()),
     sha256('dz'),
