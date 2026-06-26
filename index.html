@@ -624,17 +624,19 @@ async function ttqIdentify(name, phone, wilaya, baladiya) {
     const parts = String(name || '').trim().split(/\s+/).filter(Boolean);
     const extId = getOrCreateExternalId();
 
-    // ✅ Send ALL names (Arabic or Latin). TikTok matching may be lower for Arabic 
-    // but it will NOT cause errors. The isLatinName filter was blocking everything.
     const firstNameRaw = parts[0] || '';
     const lastNameRaw = parts.slice(1).join(' ') || '';
+
+    // Strip number prefix from wilaya before hashing
+    const cleanWilaya = String(wilaya || '').replace(/^\d+\s*-\s*/, '').toLowerCase().trim();
+    const cleanBaladiya = String(baladiya || '').toLowerCase().trim();
 
     const [hp, hf, hl, hc, hs, hco] = await Promise.all([
       sha256(e164),
       firstNameRaw ? sha256(firstNameRaw.toLowerCase().trim()) : Promise.resolve(''),
       lastNameRaw ? sha256(lastNameRaw.toLowerCase().trim()) : Promise.resolve(''),
-      sha256((baladiya || '').toLowerCase().trim()),
-      sha256((wilaya || '').toLowerCase().trim()),
+      sha256(cleanBaladiya),
+      sha256(cleanWilaya),
       sha256('dz'),
     ]);
 
@@ -645,7 +647,7 @@ async function ttqIdentify(name, phone, wilaya, baladiya) {
     if (hc) id.city = hc;
     if (hs) id.state = hs;
     if (hco) id.country = hco;
-    id.external_id = extId; // raw string, NOT hashed
+    id.external_id = extId;
 
     console.log('[TTQ] identify:', id);
     ttq.identify(id);
@@ -955,7 +957,7 @@ async function submitOrder() {
   const [hp, hf, hl, hc, hs, hco, he] = await Promise.all([
     sha256(e164), sha256(parts[0] || ''), sha256(parts.slice(1).join(' ')),
     sha256((baladiya || '').toLowerCase().trim()),
-    sha256((wilayaText || '').replace(/^\d+\s*-\s*/, '').toLowerCase().trim()),    sha256('dz'),
+    sha256((wilayaText || '').replace(/^\d+\s*-\s*/, '').toLowerCase().trim()),
     sha256(extId),
   ]);
     const hashedCustomer = {
