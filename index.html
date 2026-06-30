@@ -12,11 +12,11 @@
   <link rel="preconnect" href="https://graph.facebook.com" crossorigin/>
   <link rel="dns-prefetch" href="https://connect.facebook.net"/>
   <link rel="dns-prefetch" href="https://analytics.tiktok.com"/>
-  <!-- Preload first visible image for instant render -->
+  <!-- Preload first visible images for instant render -->
   <link rel="preload" href="benefits.jpg" as="image" fetchpriority="high"/>
-  <link rel="preload" href="hero.jpg" as="image" fetchpriority="high"/>
+  <link rel="preload" href="offer.jpg" as="image" fetchpriority="high"/>
   <link rel="preload" href="reviews.jpg" as="image" fetchpriority="high"/>
-  <link rel="preload" href="tailles.jpg" as="image" fetchpriority="high"/>
+  <link rel="preload" href="tailles.jpg" as="image" fetchpriority="low"/>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet" media="print" onload="this.media='all'"/>
   <noscript><link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet"/></noscript>
 
@@ -67,29 +67,17 @@ body{font-family:'Cairo',sans-serif,system-ui,-apple-system;background:var(--nav
 
 /* ── IMAGE SECTIONS ── */
 .img-section{width:100%;background:var(--navy);display:block;line-height:0;font-size:0;position:relative;margin:0;padding:0;}
-.fullscreen-img{width:100%;max-width:600px;height:auto;display:block;object-fit:contain;margin:0 auto;transition:filter 0.35s ease,opacity 0.25s ease;image-rendering:auto;}
+.fullscreen-img{width:100%;max-width:600px;height:auto;display:block;object-fit:contain;margin:0 auto;transition:filter 0.2s ease,opacity 0.15s ease;image-rendering:auto;}
 @media(max-width:600px){.fullscreen-img{max-width:100%;}}
 
 /* Progressive loading */
-.img-section.loading .fullscreen-img{min-height:200px;background:linear-gradient(90deg,#0d1e36 25%,#162c50 50%,#0d1e36 75%);background-size:200% 100%;animation:shimmer 1.4s infinite;}
+.img-section.loading .fullscreen-img{min-height:180px;background:linear-gradient(90deg,#0d1e36 25%,#162c50 50%,#0d1e36 75%);background-size:200% 100%;animation:shimmer 1.2s infinite;}
 .img-section.loaded .fullscreen-img{animation:none;background:none;}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
-.img-blur-up{filter:blur(10px) brightness(0.92);}
+.img-blur-up{filter:blur(5px) brightness(0.95);}
 .img-blur-up.sharp{filter:none;}
-/* fade-in for loaded images */
-.fullscreen-img.fade-in{animation:imgFadeIn 0.3s ease forwards;}
-@keyframes imgFadeIn{from{opacity:0.3}to{opacity:1}}
-
-/* ── SCROLL ARROW ── */
-.scroll-arrow{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%);z-index:10;width:56px;height:56px;pointer-events:none;}
-.scroll-arrow svg{width:56px;height:56px;overflow:visible;filter:drop-shadow(0 0 12px rgba(245,197,24,0.65));}
-.sa-ring{fill:none;stroke:rgba(245,197,24,0.28);stroke-width:1.5;animation:sa-ring-pulse 2.2s ease-in-out infinite;transform-origin:28px 28px;}
-@keyframes sa-ring-pulse{0%,100%{r:26;opacity:0.5;}50%{r:32;opacity:0;}}
-.sa-circle{fill:rgba(10,22,40,0.92);stroke:var(--gold);stroke-width:2.2;}
-.sa-chevron{stroke:var(--gold);stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round;fill:none;animation:sa-bounce 1.9s ease-in-out infinite;}
-@keyframes sa-bounce{0%,100%{transform:translateY(0);}50%{transform:translateY(5px);}}
-.sa-chevron2{animation-delay:0.2s;opacity:0.45;}
-.img-section:not(:last-of-type){padding-bottom:28px;}
+.fullscreen-img.fade-in{animation:imgFadeIn 0.2s ease forwards;}
+@keyframes imgFadeIn{from{opacity:0.4}to{opacity:1}}
 
 /* ── FLOATING CTA ── */
 .float-btn{
@@ -214,12 +202,9 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
 .footer-divider{border-color:rgba(255,255,255,0.1);margin:22px 0;}
 .footer-copy{font-size:0.8rem;opacity:0.4;}
 
-/* ── DEBUG ── */
-#debugBadge{position:fixed;bottom:80px;right:12px;background:rgba(10,22,40,0.95);border:1px solid var(--gold);color:var(--gold);font-size:0.65rem;padding:4px 10px;border-radius:8px;z-index:998;display:none;font-family:monospace;pointer-events:none;max-width:200px;word-break:break-all;}
-
 /* ── REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
-  .scroll-arrow,.float-btn,.carousel-slide{animation:none;transition:none;}
+  .float-btn,.carousel-slide{animation:none;transition:none;}
 }
 
 @media(max-width:480px){
@@ -233,8 +218,6 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
 </style>
 </head>
 <body>
-
-<div id="debugBadge"></div>
 
 <!-- ══ FLOATING CTA ══ -->
 <a class="float-btn" id="floatBtn" onclick="handleFloatBtn(event)" href="#cod-form">
@@ -262,32 +245,23 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
   </div>
 </section>
 
-<!-- ══ IMAGE SECTIONS (hero + problem removed) ══ -->
+<!-- ══ IMAGE SECTIONS ══ -->
 <div class="img-section loading" data-section="benefits">
   <img class="fullscreen-img" data-src="benefits.jpg" src="" alt="المميزات" fetchpriority="high" decoding="async"/>
   <span class="fb-price" data-price="4500">4500 دج</span>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
 </div>
 
 <div class="img-section loading" data-section="offer">
-  <img class="fullscreen-img" data-src="offer.jpg" src="" alt="العرض" decoding="async"/>
+  <img class="fullscreen-img" data-src="offer.jpg" src="" alt="العرض" fetchpriority="high" decoding="async"/>
   <span class="fb-price" data-price="4500">4500 دج</span>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
 </div>
 
 <div class="img-section loading" data-section="reviews">
-  <img class="fullscreen-img" data-src="reviews.jpg" src="" alt="آراء العملاء" decoding="async"/>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg"><circle class="sa-ring" cx="28" cy="28" r="26"/><circle class="sa-circle" cx="28" cy="28" r="22"/><polyline class="sa-chevron" points="18,23 28,33 38,23"/><polyline class="sa-chevron sa-chevron2" points="18,28 28,38 38,28"/></svg></div>
+  <img class="fullscreen-img" data-src="reviews.jpg" src="" alt="آراء العملاء" fetchpriority="high" decoding="async"/>
 </div>
 
-<div class="img-section loading" data-section="tailles" style="padding-bottom:28px;">
-  <img class="fullscreen-img" data-src="tailles.jpg" src="" alt="دليل المقاسات" decoding="async"/>
-  <div class="scroll-arrow" aria-hidden="true"><svg viewBox="0 0 56 56" xmlns="http://www.w3.org/2000/svg">
-    <circle cx="28" cy="28" r="26" fill="none" stroke="rgba(232,19,42,0.28)" stroke-width="1.5" style="animation:sa-ring-pulse 2.2s ease-in-out infinite;transform-origin:28px 28px;"/>
-    <circle cx="28" cy="28" r="22" fill="rgba(232,19,42,0.9)" stroke="#E8132A" stroke-width="2.2"/>
-    <polyline points="18,23 28,33 38,23" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" style="animation:sa-bounce 1.9s ease-in-out infinite;"/>
-    <polyline points="18,28 28,38 38,28" stroke="#fff" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round" fill="none" style="animation:sa-bounce 1.9s ease-in-out infinite;animation-delay:0.2s;opacity:0.45;"/>
-  </svg></div>
+<div class="img-section loading" data-section="tailles">
+  <img class="fullscreen-img" data-src="tailles.jpg" src="" alt="دليل المقاسات" fetchpriority="low" decoding="async"/>
 </div>
 
 <!-- ══ COD FORM ══ -->
@@ -509,12 +483,12 @@ let currentDeliveryPrice = 0;
 let homePrice            = 0;
 let selectedColor        = 'Vert Militaire';
 let selectedSize         = 'M';
-let partialCustomer      = { country: 'dz' };   // accumulate data as user fills form
+let partialCustomer      = { country: 'dz' };
 let _pageLoadTime        = Date.now();
 
 /* ── Price helpers (no free shipping) ── */
 const getProductPrice = q     => PRODUCT_BASE * q;
-const getEffDelivery  = (q,d) => d;              // always pay delivery
+const getEffDelivery  = (q,d) => d;
 const getTotalPrice   = (q,d) => getProductPrice(q) + getEffDelivery(q,d);
 const getSKU          = (c,s) => 'PRD4TRKN-' + (c==='Vert Militaire'?'VERT-MILITAIRE':'VERT-DEAU') + '-' + s;
 const generateOrderID = ()    => '#' + Math.floor(100000 + Math.random() * 900000);
@@ -584,14 +558,9 @@ function getCurrentSection() {
   return cur;
 }
 
+/* DEBUG DISABLED — no on-screen messages for clients */
 function dbg(msg, ok) {
-  const el = document.getElementById('debugBadge'); if(!el) return;
-  el.style.display='block';
-  el.style.borderColor = ok===false?'#E8132A':ok===true?'#28A745':'#F5C518';
-  el.style.color       = ok===false?'#ff6b6b':ok===true?'#6bff6b':'#F5C518';
-  el.textContent = msg;
-  clearTimeout(el._t);
-  el._t = setTimeout(()=>{ el.style.display='none'; }, 6000);
+  // console.log('[DBG]', msg, ok);
 }
 
 /* ════════════════════════════════════════════════════════
@@ -650,10 +619,8 @@ async function sendMetaCAPIEvent(eventName, customData, extraParams) {
       body: JSON.stringify({ data:[payload] }), keepalive:true
     });
     const data = await res.json();
-    dbg('CAPI ' + eventName + ' ' + (data.events_received>0?'✓':'✗'), data.events_received>0);
     return data;
   } catch(e) {
-    dbg('CAPI ' + eventName + ' error', false);
     return null;
   }
 }
@@ -793,7 +760,7 @@ document.addEventListener('click', e => {
   }, 600);
 });
 
-/* Text selection — signals high interest */
+/* Text selection */
 document.addEventListener('selectionchange', () => {
   const sel = window.getSelection ? window.getSelection().toString().trim() : '';
   if (sel.length > 5) gaTrack('text_selected', { length:sel.length, section:getCurrentSection() });
@@ -913,9 +880,8 @@ async function sendTikTokCAPIEvent(eventType, orderData, hashedCustomer) {
     });
     clearTimeout(timer);
     const data = await res.json();
-    dbg('TTQ CAPI ' + eventType + ' ' + (data&&data.success?'✓':'✗'), data&&data.success);
     return data;
-  } catch(e) { dbg('TTQ CAPI err', false); return null; }
+  } catch(e) { return null; }
 }
 
 /* ════════════════════════════════════════════════════════
@@ -949,20 +915,20 @@ async function sendTikTokCAPIEvent(eventType, orderData, hashedCustomer) {
     });
   }
 
-  const rootMargin = { fast:'1500px', mid:'700px', slow:'150px' }[quality] || '700px';
+  const rootMargin = { fast:'1200px', mid:'600px', slow:'100px' }[quality] || '600px';
 
-  /* Preload first 2 images immediately (above-fold priority) */
+  /* Preload first 3 images immediately (above-fold priority) */
   const firstSections = document.querySelectorAll('.img-section');
-  [0,1].forEach(i => {
+  [0,1,2].forEach(i => {
     const sec = firstSections[i]; if (!sec) return;
     const img = sec.querySelector('img.fullscreen-img'); if (!img||!img.dataset.src) return;
     if (quality === 'slow') img.classList.add('img-blur-up');
     img.fetchPriority = 'high';
+    img.decoding = 'async';
     img.onload = () => {
       img.classList.add('sharp','fade-in');
       sec.classList.replace('loading','loaded');
       img.dataset.loaded = '1';
-      /* Preload next image after this loads */
       preloadNext(sec);
     };
     img.onerror = () => sec.classList.replace('loading','loaded');
@@ -993,7 +959,7 @@ async function sendTikTokCAPIEvent(eventType, orderData, hashedCustomer) {
   }, { rootMargin, threshold:0 });
 
   document.querySelectorAll('.img-section').forEach((sec, i) => {
-    if (i >= 2) obs.observe(sec); /* first 2 handled above */
+    if (i >= 3) obs.observe(sec);
   });
 
   function preloadNext(currentSec) {
@@ -1004,6 +970,7 @@ async function sendTikTokCAPIEvent(eventType, orderData, hashedCustomer) {
     const nextImg = nextSec && nextSec.querySelector('img.fullscreen-img');
     if (nextImg && !nextImg.src && nextImg.dataset.src) {
       const pre = new Image();
+      pre.decoding = 'async';
       pre.src = nextImg.dataset.src;
     }
   }
@@ -1103,7 +1070,7 @@ function initCarousel() {
 
   track.innerHTML = CAROUSEL_IMAGES.map((src,i)=>
     '<div class="carousel-slide" data-index="'+i+'" style="transform:translateX('+((0-i)*100)+'%)">' +
-    '<img src="'+src+'" alt="صورة '+(i+1)+'" '+(i===0?'fetchpriority="high"':'loading="lazy"')+' draggable="false"' +
+    '<img src="'+src+'" alt="صورة '+(i+1)+'" '+(i===0?'fetchpriority="high"':'loading="lazy"')+' decoding="async" draggable="false"' +
     ' onerror="this.parentElement.style.background=\'#0d2040\';this.style.display=\'none\'"/>' +
     '</div>'
   ).join('');
@@ -1129,7 +1096,7 @@ function initCarousel() {
       }
     },{ passive:true });
   }
-  if (CAROUSEL_IMAGES[1]) { const p=new Image(); p.src=CAROUSEL_IMAGES[1]; }
+  if (CAROUSEL_IMAGES[1]) { const p=new Image(); p.decoding='async'; p.src=CAROUSEL_IMAGES[1]; }
 }
 
 function updateCarousel() {
@@ -1209,12 +1176,10 @@ document.getElementById('wilaya').addEventListener('change', function() {
   homePrice = parseInt(sel ? sel.dataset.home : '0') || 0;
   this.classList.add('valid'); this.classList.remove('error');
   document.getElementById('wilayaErr').classList.remove('show');
-  /* Store in partialCustomer for CAPI */
   partialCustomer.state = wilayaText.replace(/^\d+\s*-\s*/,'').trim();
   partialCustomer.country = 'dz';
   updateUI();
   gaTrack('form_wilaya_select', { wilaya_code:this.value, wilaya_name:wilayaText });
-  /* Fire CAPI Form event with state data */
   sendMetaCAPIEvent('Form', { wilaya:wilayaText });
 });
 
@@ -1280,7 +1245,6 @@ document.getElementById('phone').addEventListener('blur', function() {
     partialCustomer.firstName = parts[0]||'';
     partialCustomer.lastName  = parts.slice(1).join(' ')||'';
     ttqIdentify(name, phone, wilayaTxt);
-    /* Fire Form CAPI with phone data */
     sendMetaCAPIEvent('Form', {});
   }
 });
@@ -1343,7 +1307,6 @@ async function submitOrder() {
   const sku           = getSKU(selectedColor, selectedSize);
   const orderId       = generateOrderID();
 
-  /* Update partialCustomer with full data before events */
   const nameParts = customerName.split(/\s+/).filter(Boolean);
   partialCustomer.phone     = customerPhone;
   partialCustomer.firstName = nameParts[0]||'';
@@ -1414,25 +1377,20 @@ async function submitOrder() {
   };
 
   Promise.allSettled([
-    /* Bot 1 */
     fetch('https://api.telegram.org/bot'+BOT1.token+'/sendMessage',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({ chat_id:BOT1.chat, text:message, parse_mode:'HTML' })
     }),
-    /* Bot 2 */
     fetch('https://api.telegram.org/bot'+BOT2.token+'/sendMessage',{
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify({ chat_id:BOT2.chat, text:message, parse_mode:'HTML' })
     }),
-    /* Google Sheets */
     fetch(APPS_SCRIPT_URL,{
       method:'POST', headers:{'Content-Type':'application/json'},
       body:JSON.stringify(sheetPayload), mode:'no-cors', keepalive:true
     }),
-    /* TikTok CAPI */
     sendTikTokCAPIEvent('Purchase', orderDataForTTQ, hashedCustomer),
     sendTikTokCAPIEvent('PlaceAnOrder', orderDataForTTQ, hashedCustomer),
-    /* TikTok Pixel */
     ttqFirePurchase(currentQty, effDel, customerName, customerPhone, wilayaText),
   ]);
 
@@ -1467,14 +1425,10 @@ document.getElementById('successPopup').addEventListener('click', function(e){ i
    PAGE INIT — fire all initial tracking events
 ════════════════════════════════════════════════════════ */
 function initTracking() {
-  /* Meta Pixel */
   metaViewContent();
-  /* Meta CAPI */
   capiPageView();
   capiViewContent();
-  /* TikTok */
   if (typeof ttq !== 'undefined' && typeof ttq.page === 'function') { ttq.page(); ttqFireViewContent(); }
-  /* GA */
   gaTrack('page_fully_interactive', { time_ms: Date.now() - _pageLoadTime });
 }
 
