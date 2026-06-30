@@ -170,6 +170,110 @@ body{font-family:'Cairo',sans-serif,system-ui,-apple-system;background:var(--nav
 .total-price-wrap{background:linear-gradient(135deg,#fafbff,#f0f4ff);border-radius:14px;padding:18px 20px;border:2px dashed var(--gold);text-align:center;margin-top:6px;}
 .total-price-wrap .label{font-size:0.85rem;color:var(--gray);font-weight:600;display:block;margin-bottom:6px;}
 #totalPriceCanvas{display:block;margin:0 auto;max-width:100%;height:auto;border-radius:8px;background:transparent;}
+
+/* ── CONTACT US (CALL / WHATSAPP) ── */
+.contact-us-wrap{
+  margin-top:18px;
+  background:linear-gradient(135deg,#0d2040,#0A1628);
+  border-radius:18px;
+  padding:22px 18px;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  border:1px solid rgba(245,197,24,0.25);
+}
+.contact-us-wrap::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(circle at 50% 0%,rgba(37,211,102,0.18),transparent 60%);
+  pointer-events:none;
+}
+.contact-us-title{
+  color:var(--gold);
+  font-size:1.02rem;
+  font-weight:900;
+  margin-bottom:4px;
+  position:relative;
+  text-shadow:0 0 14px rgba(245,197,24,0.45);
+}
+.contact-us-sub{
+  color:rgba(255,255,255,0.78);
+  font-size:0.88rem;
+  font-weight:600;
+  margin-bottom:16px;
+  position:relative;
+  line-height:1.7;
+}
+.contact-btns{
+  display:flex;
+  gap:14px;
+  justify-content:center;
+  flex-wrap:wrap;
+  position:relative;
+}
+.contact-btn{
+  flex:1 1 160px;
+  max-width:220px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  padding:14px 16px;
+  border-radius:50px;
+  font-family:'Cairo',sans-serif;
+  font-weight:900;
+  font-size:0.98rem;
+  text-decoration:none;
+  color:white;
+  border:none;
+  cursor:pointer;
+  transition:transform 0.25s cubic-bezier(0.34,1.56,0.64,1),box-shadow 0.25s ease;
+  position:relative;
+}
+.contact-btn .contact-icon{
+  width:22px;height:22px;
+  flex-shrink:0;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+}
+.contact-btn .contact-icon svg{width:100%;height:100%;display:block;}
+.whatsapp-btn{
+  background:linear-gradient(135deg,#25D366,#128C7E);
+  box-shadow:0 0 16px rgba(37,211,102,0.55),0 8px 20px rgba(0,0,0,0.3);
+  animation:glow-whatsapp 1.8s ease-in-out infinite;
+}
+.call-btn{
+  background:linear-gradient(135deg,#2E9EFF,#0A5CD1);
+  box-shadow:0 0 16px rgba(46,158,255,0.55),0 8px 20px rgba(0,0,0,0.3);
+  animation:glow-call 1.8s ease-in-out infinite;
+}
+.contact-btn:hover{transform:translateY(-3px) scale(1.04);}
+.whatsapp-btn:hover{box-shadow:0 0 26px rgba(37,211,102,0.85),0 10px 26px rgba(0,0,0,0.35);}
+.call-btn:hover{box-shadow:0 0 26px rgba(46,158,255,0.85),0 10px 26px rgba(0,0,0,0.35);}
+@keyframes glow-whatsapp{
+  0%,100%{box-shadow:0 0 14px rgba(37,211,102,0.5),0 8px 20px rgba(0,0,0,0.3);}
+  50%{box-shadow:0 0 30px rgba(37,211,102,0.95),0 8px 20px rgba(0,0,0,0.3);}
+}
+@keyframes glow-call{
+  0%,100%{box-shadow:0 0 14px rgba(46,158,255,0.5),0 8px 20px rgba(0,0,0,0.3);}
+  50%{box-shadow:0 0 30px rgba(46,158,255,0.95),0 8px 20px rgba(0,0,0,0.3);}
+}
+.contact-phone-num{
+  direction:ltr;
+  display:inline-block;
+  margin-top:14px;
+  color:var(--gold);
+  font-weight:800;
+  font-size:0.95rem;
+  letter-spacing:0.5px;
+  position:relative;
+  text-shadow:0 0 10px rgba(245,197,24,0.4);
+}
+@media(max-width:420px){
+  .contact-btns{gap:10px;}
+  .contact-btn{font-size:0.9rem;padding:13px 10px;}
+}
+
 .submit-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--red),#c0001f);color:white;border:none;border-radius:14px;font-family:'Cairo',sans-serif;font-size:1.2rem;font-weight:900;cursor:pointer;box-shadow:0 8px 25px rgba(232,19,42,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px;}
 .submit-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(232,19,42,0.6);}
 .submit-btn:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
@@ -203,7 +307,7 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
 
 /* ── REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
-  .float-btn,.carousel-slide{animation:none;transition:none;}
+  .float-btn,.carousel-slide,.whatsapp-btn,.call-btn{animation:none;transition:none;}
 }
 
 @media(max-width:480px){
@@ -411,6 +515,27 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
         <div class="total-price-wrap">
           <span class="label">💰 المجموع الكامل (المنتج + التوصيل)</span>
           <canvas id="totalPriceCanvas" width="400" height="72"></canvas>
+        </div>
+
+        <!-- ══ CONTACT US — CALL / WHATSAPP ══ -->
+        <div class="contact-us-wrap">
+          <div class="contact-us-title">📞 عندك سؤال أو تحب تطلب مباشرة؟</div>
+          <div class="contact-us-sub">تواصل معنا الآن عبر واتساب أو اتصل بنا مباشرة، فريقنا جاهز للرد عليك في أي وقت ✨</div>
+          <div class="contact-btns">
+            <a class="contact-btn whatsapp-btn" href="https://wa.me/213665017371?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%B9%D9%86%D8%AF%D9%8A%20%D8%B3%D8%A4%D8%A7%D9%84%20%D8%AD%D9%88%D9%84%20%D9%85%D9%86%D8%AA%D8%AC%20Ensemble%20%C3%A9t%C3%A9%202026" target="_blank" rel="noopener" onclick="gaTrack('contact_whatsapp_click',{section:'total_price'});capiSubscribedButtonClick();">
+              <span class="contact-icon">
+                <svg viewBox="0 0 32 32" fill="white"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.49.756 4.804 2.05 6.727L4 29l7.46-1.96A11.94 11.94 0 0 0 16.001 27C22.628 27 28 21.627 28 15S22.628 3 16.001 3Zm0 21.7a9.66 9.66 0 0 1-4.93-1.35l-.353-.21-4.43 1.163 1.183-4.32-.23-.364A9.65 9.65 0 0 1 6.3 15c0-5.347 4.353-9.7 9.701-9.7 5.347 0 9.7 4.353 9.7 9.7 0 5.348-4.353 9.7-9.7 9.7Zm5.32-7.262c-.29-.146-1.722-.85-1.989-.946-.267-.097-.461-.146-.655.146-.194.291-.752.945-.922 1.14-.17.194-.34.218-.63.073-.291-.146-1.227-.452-2.337-1.44-.864-.77-1.448-1.72-1.617-2.012-.17-.291-.018-.448.128-.593.131-.13.291-.34.437-.51.146-.17.194-.291.291-.485.097-.194.049-.364-.024-.51-.073-.146-.655-1.578-.898-2.162-.237-.568-.478-.491-.655-.5l-.558-.01c-.194 0-.51.073-.777.364-.267.291-1.018.995-1.018 2.427 0 1.432 1.042 2.816 1.187 3.01.146.194 2.052 3.133 4.97 4.394.694.3 1.236.479 1.658.613.696.221 1.33.19 1.83.115.558-.083 1.722-.704 1.965-1.384.243-.68.243-1.262.17-1.384-.073-.122-.267-.194-.558-.34Z"/></svg>
+              </span>
+              واتساب
+            </a>
+            <a class="contact-btn call-btn" href="tel:" onclick="gaTrack('contact_call_click',{section:'total_price'});capiSubscribedButtonClick();">
+              <span class="contact-icon">
+                <svg viewBox="0 0 24 24" fill="white"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.32.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.26.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2Z"/></svg>
+              </span>
+              اتصل بنا
+            </a>
+          </div>
+          <div class="contact-phone-num">+213 665 017 371</div>
         </div>
       </div>
 
@@ -1389,7 +1514,7 @@ async function submitOrder() {
   ]);
 
   showSuccess();
-  btn.disabled=false; btnText.textContent='✅ أتمم طلبي الآن';
+  btn.disabled=false; btnText.textContent='✅ إضغط هنا لإرسال طلبك';
 }
 
 /* ════════════════════════════════════════════════════════
