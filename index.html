@@ -13,6 +13,7 @@
   <link rel="dns-prefetch" href="https://connect.facebook.net"/>
   <link rel="dns-prefetch" href="https://analytics.tiktok.com"/>
   <!-- Preload first visible images for instant render -->
+  <link rel="preload" href="real.jpg" as="image" fetchpriority="high"/>
   <link rel="preload" href="benefits.jpg" as="image" fetchpriority="high"/>
   <link rel="preload" href="reviews.jpg" as="image" fetchpriority="high"/>
   <link rel="preload" href="tailles.jpg" as="image" fetchpriority="low"/>
@@ -97,27 +98,13 @@ body{font-family:'Cairo',sans-serif,system-ui,-apple-system;background:var(--nav
 @keyframes float-pulse{0%,100%{box-shadow:0 8px 28px rgba(232,19,42,0.5);}50%{box-shadow:0 8px 50px rgba(232,19,42,0.8);}}
 @media(max-width:768px){.float-btn{padding:14px 22px;font-size:0.95rem;width:calc(100% - 32px);justify-content:center;}.float-btn.scroll-hint{font-size:0.88rem;}}
 
-/* ── CAROUSEL ── */
-.real-photos-section{background:var(--navy);padding:0;margin:0;position:relative;overflow:hidden;}
-.carousel-header{padding:32px 20px 0;text-align:center;}
-.section-title{color:var(--gold);font-size:clamp(1.45rem,3.5vw,2rem);font-weight:900;text-shadow:0 2px 10px rgba(245,197,24,0.18);margin:0;letter-spacing:-0.01em;}
-.carousel-container{position:relative;width:100%;max-width:480px;margin:0 auto;touch-action:pan-y;user-select:none;padding-top:16px;}
-.carousel-viewport{position:relative;width:100%;aspect-ratio:9/16;overflow:hidden;border-radius:18px;background:#060d1a;box-shadow:0 24px 64px rgba(0,0,0,0.55);}
-@media(max-width:600px){.carousel-container{max-width:100%;padding-top:12px;}.carousel-viewport{border-radius:0;}}
-.carousel-track{position:relative;width:100%;height:100%;}
-.carousel-slide{position:absolute;top:0;left:0;width:100%;height:100%;transition:transform 0.38s cubic-bezier(0.25,1,0.5,1);will-change:transform;}
-.carousel-slide img{width:100%;height:100%;object-fit:cover;object-position:center;display:block;pointer-events:none;}
-.carousel-arrow{position:absolute;top:50%;transform:translateY(-50%);width:48px;height:48px;border-radius:50%;background:rgba(10,22,40,0.88);border:2px solid rgba(245,197,24,0.8);color:var(--gold);font-size:1rem;cursor:pointer;z-index:10;display:flex;align-items:center;justify-content:center;transition:all 0.2s ease;backdrop-filter:blur(6px);box-shadow:0 4px 16px rgba(0,0,0,0.4);}
-.carousel-arrow:hover{background:var(--gold);color:var(--navy);transform:translateY(-50%) scale(1.08);}
-.carousel-prev{left:14px;}.carousel-next{right:14px;}
-.carousel-dots{display:flex;justify-content:center;gap:8px;padding:14px 0 24px;flex-wrap:wrap;}
-.carousel-dot{width:8px;height:8px;border-radius:50%;border:none;background:rgba(255,255,255,0.22);cursor:pointer;transition:all 0.28s;padding:0;}
-.carousel-dot.active{background:var(--gold);width:26px;border-radius:4px;}
-.carousel-counter{position:absolute;top:14px;left:50%;transform:translateX(-50%);background:rgba(10,22,40,0.82);color:var(--gold);padding:5px 16px;border-radius:20px;font-size:0.82rem;font-weight:700;z-index:10;border:1px solid rgba(245,197,24,0.2);direction:ltr;backdrop-filter:blur(4px);}
-.carousel-placeholder{display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;height:100%;color:rgba(255,255,255,0.35);font-family:'Cairo',sans-serif;font-size:0.9rem;gap:12px;}
-.carousel-placeholder span{font-size:2.5rem;}
+.submit-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--red),#c0001f);color:white;border:none;border-radius:14px;font-family:'Cairo',sans-serif;font-size:1.2rem;font-weight:900;cursor:pointer;box-shadow:0 8px 25px rgba(232,19,42,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px;}
+.submit-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(232,19,42,0.6);}
+.submit-btn:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
+.trust-badges{display:flex;justify-content:center;gap:24px;margin-top:24px;flex-wrap:wrap;}
+.trust-item{display:flex;align-items:center;gap:6px;font-size:0.82rem;color:rgba(255,255,255,0.7);}
+.fb-price{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;color:transparent;font-size:0.001px;pointer-events:none;}
 
-/* ── COD FORM ── */
 .cod-section{background:linear-gradient(135deg,var(--navy) 0%,#0d2040 100%);padding:64px 20px 110px;}
 .form-header{text-align:center;margin-bottom:40px;}
 .form-header h2{color:white;font-size:clamp(1.7rem,4vw,2.5rem);font-weight:900;margin-bottom:10px;}
@@ -274,13 +261,6 @@ body{font-family:'Cairo',sans-serif,system-ui,-apple-system;background:var(--nav
   .contact-btn{font-size:0.9rem;padding:13px 10px;}
 }
 
-.submit-btn{width:100%;padding:18px;background:linear-gradient(135deg,var(--red),#c0001f);color:white;border:none;border-radius:14px;font-family:'Cairo',sans-serif;font-size:1.2rem;font-weight:900;cursor:pointer;box-shadow:0 8px 25px rgba(232,19,42,0.4);transition:all 0.3s;display:flex;align-items:center;justify-content:center;gap:10px;}
-.submit-btn:hover{transform:translateY(-2px);box-shadow:0 12px 35px rgba(232,19,42,0.6);}
-.submit-btn:disabled{opacity:0.7;cursor:not-allowed;transform:none;}
-.trust-badges{display:flex;justify-content:center;gap:24px;margin-top:24px;flex-wrap:wrap;}
-.trust-item{display:flex;align-items:center;gap:6px;font-size:0.82rem;color:rgba(255,255,255,0.7);}
-.fb-price{position:absolute;left:0;top:0;width:1px;height:1px;overflow:hidden;opacity:0;color:transparent;font-size:0.001px;pointer-events:none;}
-
 /* ── SUCCESS POPUP ── */
 .popup-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:10000;display:none;align-items:center;justify-content:center;padding:20px;}
 .popup-overlay.active{display:flex;}
@@ -307,7 +287,8 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
 
 /* ── REDUCED MOTION ── */
 @media(prefers-reduced-motion:reduce){
-  .float-btn,.carousel-slide,.whatsapp-btn,.call-btn{animation:none;transition:none;}
+  .float-btn{animation:none;transition:none;}
+  .whatsapp-btn,.call-btn{animation:none;transition:none;}
 }
 
 @media(max-width:480px){
@@ -327,28 +308,11 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
   <span id="floatBtnText">إسحب إلى الأسفل لتجد كل التفاصيل</span>
 </a>
 
-<!-- ══ CAROUSEL ══ -->
-<section class="real-photos-section" id="realPhotos">
-  <div class="carousel-header">
-    <h2 class="section-title">📸 صور حقيقية للمنتج</h2>
-  </div>
-  <div class="carousel-container">
-    <div class="carousel-viewport" id="carouselViewport">
-      <div class="carousel-track" id="carouselTrack">
-        <div class="carousel-placeholder">
-          <span>📷</span>
-          <p style="font-family:'Cairo',sans-serif;font-size:0.9rem;color:rgba(255,255,255,0.45);">جارٍ تحميل الصور...</p>
-        </div>
-      </div>
-      <div class="carousel-counter" id="carouselCounter" style="display:none">1 / 1</div>
-      <button class="carousel-arrow carousel-next" id="btnNext" onclick="moveCarousel(-1)" aria-label="التالية" style="display:none">❯</button>
-      <button class="carousel-arrow carousel-prev" id="btnPrev" onclick="moveCarousel(1)" aria-label="السابقة" style="display:none">❮</button>
-    </div>
-    <div class="carousel-dots" id="carouselDots"></div>
-  </div>
-</section>
-
 <!-- ══ IMAGE SECTIONS ══ -->
+<div class="img-section loading" data-section="real">
+  <img class="fullscreen-img" data-src="real.jpg" src="" alt="صور حقيقية للمنتج" fetchpriority="high" decoding="async"/>
+</div>
+
 <div class="img-section loading" data-section="benefits">
   <img class="fullscreen-img" data-src="benefits.jpg" src="" alt="المميزات" fetchpriority="high" decoding="async"/>
   <span class="fb-price" data-price="4500">4500 دج</span>
@@ -535,7 +499,7 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
               اتصل بنا
             </a>
           </div>
-          <div class="contact-phone-num">+213 665 017 371</div>
+          <div class="contact-phone-num"></div>
         </div>
       </div>
 
@@ -668,7 +632,7 @@ function getTtclid() {
 }
 
 function getCurrentSection() {
-  const all = document.querySelectorAll('.img-section,.cod-section,.real-photos-section');
+  const all = document.querySelectorAll('.img-section,.cod-section');
   let cur = 'top';
   all.forEach(s => {
     const r = s.getBoundingClientRect();
@@ -853,7 +817,7 @@ const _sectionObs = new IntersectionObserver(entries => {
     _sectionObs.unobserve(e.target);
   });
 }, { threshold:0.4 });
-document.querySelectorAll('.img-section,#realPhotos,#cod-form').forEach(el => _sectionObs.observe(el));
+document.querySelectorAll('.img-section,#cod-form').forEach(el => _sectionObs.observe(el));
 
 /* Time on page milestones */
 [10,30,60,120,180,300,600].forEach(s => {
@@ -1147,106 +1111,6 @@ window.addEventListener('scroll', () => {
   if (!_rafPending) { _rafPending=true; requestAnimationFrame(updateFloatBtn); }
 }, { passive:true });
 updateFloatBtn();
-
-/* ════════════════════════════════════════════════════════
-   CAROUSEL
-════════════════════════════════════════════════════════ */
-let CAROUSEL_IMAGES=[], currentSlide=0, _touchStartX=0, _touchEndX=0, _isAnimating=false;
-
-async function loadRealPhotos() {
-  try {
-    const ctrl = new AbortController();
-    setTimeout(()=>ctrl.abort(), 5000);
-    const res = await fetch('real-photos.json',{signal:ctrl.signal});
-    if (!res.ok) throw new Error('HTTP '+res.status);
-    const files = await res.json();
-    if (!Array.isArray(files)||!files.length) throw new Error('empty');
-    CAROUSEL_IMAGES = files
-      .filter(f=>/\.(jpg|jpeg|png|webp|gif|avif)$/i.test(f))
-      .sort((a,b)=>{
-        const nA=parseInt(a.match(/^(\d+)/)?.[1]||'0',10);
-        const nB=parseInt(b.match(/^(\d+)/)?.[1]||'0',10);
-        return nA-nB;
-      });
-    if (!CAROUSEL_IMAGES.length) throw new Error('no images');
-  } catch(err) { CAROUSEL_IMAGES=[]; }
-  initCarousel();
-}
-
-function initCarousel() {
-  const track=document.getElementById('carouselTrack');
-  const dots=document.getElementById('carouselDots');
-  const counter=document.getElementById('carouselCounter');
-  const btnNext=document.getElementById('btnNext');
-  const btnPrev=document.getElementById('btnPrev');
-
-  if (!CAROUSEL_IMAGES.length) {
-    track.innerHTML = '<div class="carousel-placeholder"><span>📷</span><p style="font-family:Cairo,sans-serif;font-size:0.88rem;color:rgba(255,255,255,0.4);text-align:center;padding:0 24px;">أضف صور المنتج في real-photos.json</p></div>';
-    dots.innerHTML=''; if(counter) counter.style.display='none';
-    if(btnNext) btnNext.style.display='none'; if(btnPrev) btnPrev.style.display='none';
-    return;
-  }
-
-  track.innerHTML = CAROUSEL_IMAGES.map((src,i)=>
-    '<div class="carousel-slide" data-index="'+i+'" style="transform:translateX('+((0-i)*100)+'%)">' +
-    '<img src="'+src+'" alt="صورة '+(i+1)+'" '+(i===0?'fetchpriority="high"':'loading="lazy"')+' decoding="async" draggable="false"' +
-    ' onerror="this.parentElement.style.background=\'#0d2040\';this.style.display=\'none\'"/>' +
-    '</div>'
-  ).join('');
-
-  dots.innerHTML = CAROUSEL_IMAGES.map((_,i)=>
-    '<button class="carousel-dot '+(i===0?'active':'')+'" onclick="goToSlide('+i+')" aria-label="صورة '+(i+1)+'"></button>'
-  ).join('');
-
-  if(counter) counter.style.display='block';
-  if(btnNext) btnNext.style.display='flex';
-  if(btnPrev) btnPrev.style.display='flex';
-  updateCarousel();
-
-  const vp = document.getElementById('carouselViewport');
-  if (vp) {
-    vp.addEventListener('touchstart',e=>{ _touchStartX=e.changedTouches[0].screenX; },{ passive:true });
-    vp.addEventListener('touchend',e=>{
-      _touchEndX=e.changedTouches[0].screenX;
-      const delta=_touchStartX-_touchEndX;
-      if (Math.abs(delta)>45) {
-        moveCarousel(delta>0?1:-1);
-        gaTrack('carousel_swipe',{ direction:delta>0?'left':'right', slide:currentSlide+1 });
-      }
-    },{ passive:true });
-  }
-  if (CAROUSEL_IMAGES[1]) { const p=new Image(); p.decoding='async'; p.src=CAROUSEL_IMAGES[1]; }
-}
-
-function updateCarousel() {
-  document.querySelectorAll('.carousel-slide').forEach((s,i)=>{
-    s.style.transform='translateX('+(currentSlide-i)*100+'%)';
-  });
-  document.querySelectorAll('.carousel-dot').forEach((d,i)=>d.classList.toggle('active',i===currentSlide));
-  const c=document.getElementById('carouselCounter');
-  if(c) c.textContent=(currentSlide+1)+' / '+CAROUSEL_IMAGES.length;
-}
-
-function moveCarousel(dir) {
-  if (_isAnimating) return;
-  const n=currentSlide+dir;
-  if (n<0||n>=CAROUSEL_IMAGES.length) return;
-  _isAnimating=true; currentSlide=n; updateCarousel();
-  gaTrack('carousel_slide_change',{ slide:n+1, total:CAROUSEL_IMAGES.length, via:'arrow' });
-  setTimeout(()=>{ _isAnimating=false; }, 420);
-}
-
-function goToSlide(index) {
-  if (_isAnimating||index<0||index>=CAROUSEL_IMAGES.length) return;
-  _isAnimating=true; currentSlide=index; updateCarousel();
-  gaTrack('carousel_dot_click',{ slide:index+1 });
-  setTimeout(()=>{ _isAnimating=false; }, 420);
-}
-
-document.addEventListener('keydown', e=>{
-  if (e.key==='ArrowLeft')  moveCarousel(1);
-  if (e.key==='ArrowRight') moveCarousel(-1);
-});
 
 /* ════════════════════════════════════════════════════════
    CANVAS TOTAL PRICE
@@ -1552,10 +1416,9 @@ function initTracking() {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', ()=>{ updateUI(); loadRealPhotos(); initTracking(); });
+  document.addEventListener('DOMContentLoaded', ()=>{ updateUI(); initTracking(); });
 } else {
   updateUI();
-  loadRealPhotos();
   initTracking();
 }
 </script>
