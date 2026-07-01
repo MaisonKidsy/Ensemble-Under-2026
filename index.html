@@ -486,13 +486,13 @@ footer{background:#060d1a;color:rgba(255,255,255,0.7);padding:36px 20px;text-ali
           <div class="contact-us-title">📞 عندك سؤال أو تحب تطلب مباشرة؟</div>
           <div class="contact-us-sub">تواصل معنا الآن عبر واتساب أو اتصل بنا مباشرة، فريقنا جاهز للرد عليك في أي وقت ✨</div>
           <div class="contact-btns">
-            <a class="contact-btn whatsapp-btn" href="https://wa.me/213665017371?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%B9%D9%86%D8%AF%D9%8A%20%D8%B3%D8%A4%D8%A7%D9%84%20%D8%AD%D9%88%D9%84%20%D9%85%D9%86%D8%AA%D8%AC%20Ensemble%20%C3%A9t%C3%A9%202026" target="_blank" rel="noopener" onclick="gaTrack('contact_whatsapp_click',{section:'total_price'});capiSubscribedButtonClick();">
+            <a class="contact-btn whatsapp-btn" href="https://wa.me/213665017371?text=%D9%85%D8%B1%D8%AD%D8%A8%D8%A7%D8%8C%20%D8%B9%D9%86%D8%AF%D9%8A%20%D8%B3%D8%A4%D8%A7%D9%84%20%D8%AD%D9%88%D9%84%20%D9%85%D9%86%D8%AA%D8%AC%20Ensemble%20%C3%A9t%C3%A9%202026" target="_blank" rel="noopener" onclick="gaTrack('contact_whatsapp_click',{section:getCurrentSection(),time_ms:Date.now()-_pageLoadTime,form_started:_formStarted});capiSubscribedButtonClick();">
               <span class="contact-icon">
                 <svg viewBox="0 0 32 32" fill="white"><path d="M16.001 3C9.373 3 4 8.373 4 15c0 2.49.756 4.804 2.05 6.727L4 29l7.46-1.96A11.94 11.94 0 0 0 16.001 27C22.628 27 28 21.627 28 15S22.628 3 16.001 3Zm0 21.7a9.66 9.66 0 0 1-4.93-1.35l-.353-.21-4.43 1.163 1.183-4.32-.23-.364A9.65 9.65 0 0 1 6.3 15c0-5.347 4.353-9.7 9.701-9.7 5.347 0 9.7 4.353 9.7 9.7 0 5.348-4.353 9.7-9.7 9.7Zm5.32-7.262c-.29-.146-1.722-.85-1.989-.946-.267-.097-.461-.146-.655.146-.194.291-.752.945-.922 1.14-.17.194-.34.218-.63.073-.291-.146-1.227-.452-2.337-1.44-.864-.77-1.448-1.72-1.617-2.012-.17-.291-.018-.448.128-.593.131-.13.291-.34.437-.51.146-.17.194-.291.291-.485.097-.194.049-.364-.024-.51-.073-.146-.655-1.578-.898-2.162-.237-.568-.478-.491-.655-.5l-.558-.01c-.194 0-.51.073-.777.364-.267.291-1.018.995-1.018 2.427 0 1.432 1.042 2.816 1.187 3.01.146.194 2.052 3.133 4.97 4.394.694.3 1.236.479 1.658.613.696.221 1.33.19 1.83.115.558-.083 1.722-.704 1.965-1.384.243-.68.243-1.262.17-1.384-.073-.122-.267-.194-.558-.34Z"/></svg>
               </span>
               واتساب
             </a>
-            <a class="contact-btn call-btn" href="tel:" onclick="gaTrack('contact_call_click',{section:'total_price'});capiSubscribedButtonClick();">
+            <a class="contact-btn call-btn" href="tel:" onclick="gaTrack('contact_call_click',{section:getCurrentSection(),time_ms:Date.now()-_pageLoadTime,form_started:_formStarted});capiSubscribedButtonClick();">
               <span class="contact-icon">
                 <svg viewBox="0 0 24 24" fill="white"><path d="M6.62 10.79a15.05 15.05 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.12.37 2.32.57 3.58.57a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.4 21 3 13.6 3 4.5a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.26.2 2.46.57 3.58a1 1 0 0 1-.25 1.01l-2.2 2.2Z"/></svg>
               </span>
@@ -621,6 +621,17 @@ function getOrCreateExternalId() {
     return e;
   } catch(_) { return 'MKDZ-'+Date.now().toString(36); }
 }
+
+/* ── Per-session unique ID for stitching every GA event to ONE visitor in reports ── */
+function getOrCreateSessionId() {
+  try {
+    let s = sessionStorage.getItem('_mk_session_id');
+    if (!s) { s = 'SESS-'+Date.now().toString(36)+'-'+Math.random().toString(36).slice(2,8); sessionStorage.setItem('_mk_session_id', s); }
+    return s;
+  } catch(_) { return 'SESS-'+Date.now().toString(36); }
+}
+const SESSION_ID = getOrCreateSessionId();
+const VISITOR_ID = getOrCreateExternalId();
 
 function getTtclid() {
   try {
@@ -787,70 +798,225 @@ function metaForm(data) {
 }
 
 /* ════════════════════════════════════════════════════════
-   GOOGLE ANALYTICS — DEEP LEAD TRACKING
+   GOOGLE ANALYTICS — DEEP PER-USER EVENT TRACKING LAYER
+   Every event below is stamped with visitor_id + session_id
+   so, in GA4 Explore / BigQuery export, you can filter to
+   ONE visitor and see literally everything they did in order.
 ════════════════════════════════════════════════════════ */
 function gaTrack(name, params) {
   if (typeof gtag !== 'function') return;
-  gtag('event', name, params || {});
+  const base = {
+    visitor_id: VISITOR_ID,
+    session_id: SESSION_ID,
+    t_ms: Date.now() - _pageLoadTime,
+    page_section: (typeof getCurrentSection === 'function') ? getCurrentSection() : ''
+  };
+  gtag('event', name, Object.assign(base, params || {}));
 }
 
-/* Scroll depth */
+/* ── 1. Device / environment snapshot (once per load — non-PII) ── */
+function trackDeviceInfo() {
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  const p = new URLSearchParams(window.location.search);
+  gaTrack('session_start_detail', {
+    screen_w: window.screen.width,
+    screen_h: window.screen.height,
+    viewport_w: window.innerWidth,
+    viewport_h: window.innerHeight,
+    dpr: window.devicePixelRatio || 1,
+    lang: navigator.language || '',
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone || '',
+    conn_type: conn ? conn.effectiveType : 'unknown',
+    downlink: conn ? conn.downlink : null,
+    rtt: conn ? conn.rtt : null,
+    referrer: document.referrer || 'direct',
+    utm_source: p.get('utm_source') || '',
+    utm_medium: p.get('utm_medium') || '',
+    utm_campaign: p.get('utm_campaign') || '',
+    has_fbclid: !!p.get('fbclid'),
+    has_ttclid: !!p.get('ttclid'),
+    platform: navigator.platform || '',
+    touch: ('ontouchstart' in window) || navigator.maxTouchPoints>0
+  });
+}
+
+/* ── 2. Active-engagement + idle heartbeat (real second-by-second signal) ──
+   Fires every 5s. Tags whether user is actively engaged or idle-but-open,
+   so you can see exactly how many seconds each visitor spent truly engaged
+   vs sitting idle with the tab open. */
+let _lastActivity = Date.now();
+let _engagedMs = 0;
+let _idleMs = 0;
+let _tickCount = 0;
+['mousemove','touchstart','touchmove','keydown','scroll','click','wheel'].forEach(evt =>
+  window.addEventListener(evt, () => { _lastActivity = Date.now(); }, { passive:true })
+);
+setInterval(() => {
+  _tickCount++;
+  const visible = document.visibilityState === 'visible';
+  const idleFor = Date.now() - _lastActivity;
+  const active = visible && idleFor < 12000;
+  if (active) _engagedMs += 5000; else if (visible) _idleMs += 5000;
+
+  gaTrack(active ? 'engagement_tick' : (visible ? 'idle_tick' : 'background_tick'), {
+    tick_no: _tickCount,
+    engaged_seconds_total: Math.round(_engagedMs/1000),
+    idle_seconds_total: Math.round(_idleMs/1000),
+    form_started: _formStarted,
+    color: selectedColor,
+    size: selectedSize,
+    qty: currentQty,
+    wilaya: partialCustomer.state || ''
+  });
+}, 5000);
+
+/* ── 3. Mouse movement sampling (throttled — shows real cursor engagement) ── */
+let _lastMoveTrack = 0;
+document.addEventListener('mousemove', (e) => {
+  const now = Date.now();
+  if (now - _lastMoveTrack < 3000) return; // sample every 3s max
+  _lastMoveTrack = now;
+  gaTrack('pointer_sample', { x: Math.round(e.clientX), y: Math.round(e.clientY), scroll_y: Math.round(window.scrollY) });
+}, { passive:true });
+
+/* ── 4. Generic click delegation — catches EVERY click on the page ── */
+document.addEventListener('click', function(e) {
+  const el = e.target.closest('button,a,input,select,label,.color-card,.size-btn,.delivery-card,.qty-btn');
+  if (!el) return;
+  gaTrack('element_click', {
+    tag: el.tagName.toLowerCase(),
+    id: el.id || '',
+    classes: (el.className || '').toString().slice(0,80),
+    text: (el.innerText || el.value || '').trim().slice(0,40),
+    x: Math.round(e.clientX), y: Math.round(e.clientY)
+  });
+}, { passive:true });
+
+/* ── 5. Scroll depth (fine-grained, every 5%) + max scroll tracking ── */
 const _scrollFired = {};
+let _maxScrollPct = 0;
 window.addEventListener('scroll', () => {
   const docH = document.documentElement.scrollHeight - window.innerHeight;
   if (docH <= 0) return;
   const pct = Math.min(100, Math.round((window.scrollY / docH) * 100));
-  [10,25,50,75,90,100].forEach(p => {
-    if (!_scrollFired[p] && pct >= p) {
-      _scrollFired[p] = true;
-      gaTrack('scroll_depth', { percent_scrolled: p + '%', time_to_scroll_ms: Date.now() - _pageLoadTime });
-    }
-  });
+  _maxScrollPct = Math.max(_maxScrollPct, pct);
+  const bucket = Math.floor(pct/5)*5; // every 5%
+  if (!_scrollFired[bucket] && pct >= bucket) {
+    _scrollFired[bucket] = true;
+    gaTrack('scroll_depth', { percent_scrolled: bucket, time_to_scroll_ms: Date.now() - _pageLoadTime });
+  }
 }, { passive:true });
 
-/* Section visibility */
+/* ── 6. Section visibility (dwell time per section) ── */
+let _sectionEnterTimes = {};
 const _sectionObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
-    if (!e.isIntersecting) return;
     const name = e.target.dataset.section || e.target.id;
-    if (name) gaTrack('section_view', { section_name:name, time_ms: Date.now() - _pageLoadTime });
-    _sectionObs.unobserve(e.target);
+    if (!name) return;
+    if (e.isIntersecting) {
+      _sectionEnterTimes[name] = Date.now();
+      gaTrack('section_enter', { section_name:name });
+    } else if (_sectionEnterTimes[name]) {
+      const dwell = Date.now() - _sectionEnterTimes[name];
+      gaTrack('section_leave', { section_name:name, dwell_ms: dwell });
+      delete _sectionEnterTimes[name];
+    }
   });
 }, { threshold:0.4 });
 document.querySelectorAll('.img-section,#cod-form').forEach(el => _sectionObs.observe(el));
 
-/* Time on page milestones */
-[10,30,60,120,180,300,600].forEach(s => {
+/* ── 7. Time on page milestones ── */
+[5,10,20,30,45,60,90,120,180,300,450,600,900].forEach(s => {
   setTimeout(() => {
-    gaTrack('time_on_page', { seconds:s, section:getCurrentSection() });
+    gaTrack('time_on_page', { seconds:s });
     capiTimeOnPage(s);
   }, s * 1000);
 });
 
-/* Tab visibility */
+/* ── 8. Tab visibility changes ── */
 document.addEventListener('visibilitychange', () => {
-  gaTrack('tab_visibility', { state:document.visibilityState, section:getCurrentSection() });
+  gaTrack('tab_visibility', { state:document.visibilityState });
+  if (document.visibilityState === 'hidden') sendExitSummary();
 });
 
-/* Rage click */
+/* ── 9. Rage click detection ── */
 let _rcCount=0, _rcTimer;
 document.addEventListener('click', e => {
   _rcCount++;
   clearTimeout(_rcTimer);
   _rcTimer = setTimeout(() => {
-    if (_rcCount >= 3) gaTrack('rage_click', { element:e.target.tagName, section:getCurrentSection() });
+    if (_rcCount >= 3) gaTrack('rage_click', { element:e.target.tagName, clicks:_rcCount });
     _rcCount = 0;
   }, 600);
 });
 
-/* Text selection */
+/* ── 10. Text selection (length only — never the actual text, to avoid PII) ── */
 document.addEventListener('selectionchange', () => {
   const sel = window.getSelection ? window.getSelection().toString().trim() : '';
-  if (sel.length > 5) gaTrack('text_selected', { length:sel.length, section:getCurrentSection() });
+  if (sel.length > 3) gaTrack('text_selected', { length: sel.length });
 });
 
-/* Form interactions */
-let _formStarted = false;
+/* ── 11. Copy / paste (never content) ── */
+document.addEventListener('copy', () => gaTrack('text_copied', {}));
+
+/* ── 12. Exit intent (desktop cursor toward top of viewport) ── */
+let _exitIntentFired = false;
+document.addEventListener('mouseout', function(e) {
+  if (_exitIntentFired) return;
+  if (e.clientY < 10 && !e.relatedTarget) {
+    _exitIntentFired = true;
+    gaTrack('exit_intent', { form_started: _formStarted });
+  }
+});
+
+/* ── 13. Orientation / resize ── */
+window.addEventListener('orientationchange', () => gaTrack('orientation_change', { orientation: screen.orientation ? screen.orientation.type : '' }));
+let _resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(() => gaTrack('viewport_resize', { w: window.innerWidth, h: window.innerHeight }), 500);
+});
+
+/* ── 14. Network change ── */
+(function(){
+  const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  if (conn) conn.addEventListener('change', () => gaTrack('network_change', { effective_type: conn.effectiveType, downlink: conn.downlink, rtt: conn.rtt }));
+})();
+
+/* ── 15. JS errors / failed promises (catches broken UX moments) ── */
+window.addEventListener('error', e => gaTrack('js_error', { message: (e.message||'').slice(0,150), source: (e.filename||'').slice(0,80), line: e.lineno||0 }));
+window.addEventListener('unhandledrejection', e => gaTrack('js_promise_error', { message: String(e.reason).slice(0,150) }));
+
+/* ── 16. Full page-exit summary — one clean row per visitor session ── */
+function sendExitSummary() {
+  gaTrack('page_exit_summary', {
+    total_time_ms: Date.now() - _pageLoadTime,
+    engaged_seconds: Math.round(_engagedMs / 1000),
+    idle_seconds: Math.round(_idleMs / 1000),
+    max_scroll_pct: _maxScrollPct,
+    form_started: _formStarted,
+    form_submitted: _formSubmitted,
+    color: selectedColor,
+    size: selectedSize,
+    qty: currentQty,
+    wilaya: partialCustomer.state || '',
+    name_filled: !!document.getElementById('fullName').value.trim(),
+    phone_filled: /^(05|06|07)\d{8}$/.test(document.getElementById('phone').value.trim())
+  });
+}
+window.addEventListener('pagehide', sendExitSummary);
+window.addEventListener('beforeunload', sendExitSummary);
+
+/* ════════════════════════════════════════════════════════
+   FORM-SPECIFIC DEEP TRACKING
+   Time-in-field, keystroke counts (not content), paste,
+   autofill detection, per-field validation, form progress.
+════════════════════════════════════════════════════════ */
+let _formStarted   = false;
+let _formSubmitted = false;
+const _fieldTiming    = {};   // { fieldId: focusStartTs }
+const _fieldKeystrokes = {};  // { fieldId: count }
+
 function markFormStart() {
   if (_formStarted) return;
   _formStarted = true;
@@ -860,14 +1026,74 @@ function markFormStart() {
   metaForm({ time_to_start_ms:tms });
 }
 
-['fullName','phone','wilaya'].forEach(id => {
-  const el = document.getElementById(id); if (!el) return;
-  el.addEventListener('focus',  () => { markFormStart(); gaTrack('form_field_focus', { field:id }); });
-  el.addEventListener('blur',   () => { gaTrack('form_field_blur', { field:id, filled:el.value.trim().length>0 }); });
-  el.addEventListener('change', () => { gaTrack('form_field_change', { field:id }); });
+function computeFormProgress() {
+  let filled = 0, total = 3; // name, phone, wilaya (required text/select fields)
+  if (document.getElementById('fullName').value.trim()) filled++;
+  if (/^(05|06|07)\d{8}$/.test(document.getElementById('phone').value.trim())) filled++;
+  if (document.getElementById('wilaya').value) filled++;
+  return Math.round((filled/total)*100);
+}
+
+function attachFieldTimingAndKeystrokes(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  _fieldKeystrokes[id] = 0;
+
+  el.addEventListener('focus', () => {
+    markFormStart();
+    _fieldTiming[id] = Date.now();
+    gaTrack('form_field_focus', { field:id });
+  });
+
+  el.addEventListener('keydown', (e) => {
+    // Count keystrokes only — never log the actual character/content (PII safety)
+    _fieldKeystrokes[id] = (_fieldKeystrokes[id]||0) + 1;
+    if (e.key === 'Backspace' || e.key === 'Delete') {
+      gaTrack('form_field_correction', { field:id });
+    }
+  });
+
+  el.addEventListener('paste', () => {
+    gaTrack('form_field_paste', { field:id });
+  });
+
+  el.addEventListener('input', () => {
+    gaTrack('form_field_input', {
+      field:id,
+      length: el.value.length,
+      keystrokes_so_far: _fieldKeystrokes[id]||0,
+      form_progress_pct: computeFormProgress()
+    });
+  });
+
+  el.addEventListener('blur', () => {
+    const start = _fieldTiming[id];
+    const timeSpentMs = start ? (Date.now() - start) : 0;
+    gaTrack('form_field_blur', {
+      field:id,
+      filled: el.value.trim().length > 0,
+      time_spent_ms: timeSpentMs,
+      keystrokes: _fieldKeystrokes[id]||0,
+      final_length: el.value.length
+    });
+  });
+
+  el.addEventListener('change', () => {
+    gaTrack('form_field_change', { field:id, form_progress_pct: computeFormProgress() });
+  });
+}
+['fullName','phone','wilaya'].forEach(attachFieldTimingAndKeystrokes);
+
+/* ── Autofill detection (heuristic: value appears with 0 keystrokes right after focus) ── */
+['fullName','phone'].forEach(id => {
+  const el = document.getElementById(id);
+  if (!el) return;
+  el.addEventListener('animationstart', (e) => {
+    if (e.animationName === 'onAutoFillStart') gaTrack('form_field_autofill_detected', { field:id });
+  });
 });
 
-/* ── GA Lead event (main conversion) ── */
+/* ── GA Lead event (main conversion) — never sends raw name/phone ── */
 function gaTrackLead(orderId, total) {
   gaTrack('generate_lead', {
     currency:'DZD', value:total, transaction_id:orderId,
@@ -1013,8 +1239,9 @@ async function sendTikTokCAPIEvent(eventType, orderData, hashedCustomer) {
       sec.classList.replace('loading','loaded');
       img.dataset.loaded = '1';
       preloadNext(sec);
+      gaTrack('image_load', { section:sec.dataset.section, time_ms: Date.now() - _pageLoadTime });
     };
-    img.onerror = () => sec.classList.replace('loading','loaded');
+    img.onerror = () => { sec.classList.replace('loading','loaded'); gaTrack('image_error', { section:sec.dataset.section }); };
     img.src = img.dataset.src;
   });
 
@@ -1035,7 +1262,7 @@ async function sendTikTokCAPIEvent(eventType, orderData, hashedCustomer) {
         preloadNext(sec);
         gaTrack('image_load', { section:sec.dataset.section, time_ms: Date.now() - _pageLoadTime });
       };
-      img.onerror = () => sec.classList.replace('loading','loaded');
+      img.onerror = () => { sec.classList.replace('loading','loaded'); gaTrack('image_error', { section:sec.dataset.section }); };
       img.src = src;
       obs.unobserve(sec);
     });
@@ -1068,7 +1295,7 @@ let _rafPending=false, _hasScrolled=false, _scrollTimer=null;
 
 function handleFloatBtn(e) {
   e.preventDefault();
-  gaTrack('float_cta_click', { section:getCurrentSection() });
+  gaTrack('float_cta_click', {});
   metaSubscribedButtonClick();
   capiSubscribedButtonClick();
   fbq('trackCustom','SubscribedButtonClick',{});
@@ -1150,7 +1377,7 @@ function updateUI() {
 }
 
 /* ════════════════════════════════════════════════════════
-   FORM — WILAYA / COLOR / SIZE / QTY
+   FORM — WILAYA / COLOR / SIZE / QTY / DELIVERY
 ════════════════════════════════════════════════════════ */
 document.getElementById('wilaya').addEventListener('change', function() {
   markFormStart();
@@ -1162,50 +1389,64 @@ document.getElementById('wilaya').addEventListener('change', function() {
   partialCustomer.state = wilayaText.replace(/^\d+\s*-\s*/,'').trim();
   partialCustomer.country = 'dz';
   updateUI();
-  gaTrack('form_wilaya_select', { wilaya_code:this.value, wilaya_name:wilayaText });
+  gaTrack('form_wilaya_select', { wilaya_code:this.value, wilaya_name:wilayaText, home_delivery_price:homePrice });
   sendMetaCAPIEvent('Form', { wilaya:wilayaText });
 });
 
 document.getElementById('cardVertMili').addEventListener('click', function() {
   markFormStart();
+  const prevColor = selectedColor;
   selectedColor='Vert Militaire';
   document.getElementById('cardVertMili').classList.add('active');
   document.getElementById('cardVertEau').classList.remove('active');
   document.querySelector('input[value="Vert Militaire"]').checked=true;
   document.getElementById('colorErr').classList.remove('show');
-  gaTrack('form_color_select',{ color:'Vert Militaire' });
+  gaTrack('form_color_select',{ color:'Vert Militaire', previous_color: prevColor });
   capiAddToCart(currentQty);
 });
 document.getElementById('cardVertEau').addEventListener('click', function() {
   markFormStart();
+  const prevColor = selectedColor;
   selectedColor="Vert D'eau";
   document.getElementById('cardVertEau').classList.add('active');
   document.getElementById('cardVertMili').classList.remove('active');
   document.querySelector("input[value=\"Vert D'eau\"]").checked=true;
   document.getElementById('colorErr').classList.remove('show');
-  gaTrack('form_color_select',{ color:"Vert D'eau" });
+  gaTrack('form_color_select',{ color:"Vert D'eau", previous_color: prevColor });
   capiAddToCart(currentQty);
 });
 
 document.querySelectorAll('.size-btn').forEach(btn=>{
   btn.addEventListener('click', function() {
     markFormStart();
+    const prevSize = selectedSize;
     document.querySelectorAll('.size-btn').forEach(b=>b.classList.remove('active'));
     this.classList.add('active'); selectedSize=this.dataset.size;
     document.getElementById('selectedSize').value=selectedSize;
     document.getElementById('sizeErr').classList.remove('show');
-    gaTrack('form_size_select',{ size:selectedSize });
+    gaTrack('form_size_select',{ size:selectedSize, previous_size: prevSize });
     capiAddToCart(currentQty);
+  });
+});
+
+document.querySelectorAll('#deliveryGrid input[name="deliveryType"]').forEach(inp => {
+  inp.addEventListener('change', function() {
+    markFormStart();
+    gaTrack('form_delivery_select', { delivery_type: this.value });
   });
 });
 
 function changeQty(delta) {
   const n = Math.max(1, Math.min(10, currentQty+delta));
-  if (n === currentQty) return;
+  const prevQty = currentQty;
+  if (n === currentQty) {
+    gaTrack('form_quantity_limit_hit', { attempted_direction: delta>0?'up':'down', current_qty: currentQty });
+    return;
+  }
   markFormStart();
   currentQty = n;
   updateUI();
-  gaTrack('form_quantity_change',{ quantity:currentQty, total:getTotalPrice(currentQty,currentDeliveryPrice) });
+  gaTrack('form_quantity_change',{ quantity:currentQty, previous_qty: prevQty, direction: delta>0?'up':'down', total:getTotalPrice(currentQty,currentDeliveryPrice) });
   metaAddToCart(currentQty);
   capiAddToCart(currentQty);
   ttqFireAddToCart(currentQty);
@@ -1218,7 +1459,7 @@ document.getElementById('phone').addEventListener('blur', function() {
   markFormStart();
   const phone = this.value.trim();
   const valid = /^(05|06|07)\d{8}$/.test(phone);
-  gaTrack('form_phone_input',{ valid });
+  gaTrack('form_phone_input',{ valid, length: phone.length });
   if (valid) {
     partialCustomer.phone = phone;
     const name = document.getElementById('fullName').value.trim();
@@ -1235,7 +1476,7 @@ document.getElementById('fullName').addEventListener('blur', function() {
   markFormStart();
   const name = this.value.trim();
   const valid = name.length > 0;
-  gaTrack('form_name_input',{ valid });
+  gaTrack('form_name_input',{ valid, word_count: name.split(/\s+/).filter(Boolean).length });
   if (valid) {
     const parts = name.split(/\s+/).filter(Boolean);
     partialCustomer.firstName = parts[0]||'';
@@ -1255,7 +1496,7 @@ function validate() {
   const setField = (iid, eid, valid) => {
     const el=document.getElementById(iid), err=document.getElementById(eid);
     if (valid){ el.classList.remove('error');el.classList.add('valid');err.classList.remove('show'); }
-    else      { el.classList.add('error');el.classList.remove('valid');err.classList.add('show');ok=false; }
+    else      { el.classList.add('error');el.classList.remove('valid');err.classList.add('show');ok=false; gaTrack('form_field_validation_error', { field: iid }); }
   };
   setField('fullName','nameErr',  name.length>0);
   setField('phone','phoneErr',    /^(05|06|07)\d{8}$/.test(phone));
@@ -1309,10 +1550,13 @@ async function submitOrder() {
   ]);
 
   /* ── GA Lead & Purchase events ── */
+  _formSubmitted = true;
   gaTrackLead(orderId, total);
   gaTrack('begin_checkout', {
-    currency:'DZD', value:total, items:[{ item_id:sku, item_name:'Ensemble été 2026', price:PIXEL_PRICE_PER_UNIT, quantity:currentQty, item_variant:selectedColor+' / '+selectedSize }]
+    currency:'DZD', value:total, order_id:orderId,
+    items:[{ item_id:sku, item_name:'Ensemble été 2026', price:PIXEL_PRICE_PER_UNIT, quantity:currentQty, item_variant:selectedColor+' / '+selectedSize }]
   });
+  gaTrack('form_submit_success', { order_id: orderId, total, qty: currentQty, color: selectedColor, size: selectedSize, wilaya: partialCustomer.state });
 
   /* ── TikTok CAPI ── */
   const e164  = phoneToE164(customerPhone);
@@ -1385,6 +1629,7 @@ async function submitOrder() {
    SUCCESS POPUP
 ════════════════════════════════════════════════════════ */
 function showSuccess() {
+  gaTrack('success_popup_view', {});
   document.getElementById('successPopup').classList.add('active');
   document.getElementById('orderForm').reset();
   currentQty=1; currentDeliveryPrice=0; homePrice=0;
@@ -1401,7 +1646,10 @@ function showSuccess() {
   _formStarted = false;
   updateUI();
 }
-function closePopup() { document.getElementById('successPopup').classList.remove('active'); }
+function closePopup() {
+  gaTrack('success_popup_close', {});
+  document.getElementById('successPopup').classList.remove('active');
+}
 document.getElementById('successPopup').addEventListener('click', function(e){ if(e.target===this) closePopup(); });
 
 /* ════════════════════════════════════════════════════════
@@ -1412,7 +1660,8 @@ function initTracking() {
   capiPageView();
   capiViewContent();
   if (typeof ttq !== 'undefined' && typeof ttq.page === 'function') { ttq.page(); ttqFireViewContent(); }
-  gaTrack('page_fully_interactive', { time_ms: Date.now() - _pageLoadTime });
+  trackDeviceInfo();
+  gaTrack('page_fully_interactive', {});
 }
 
 if (document.readyState === 'loading') {
