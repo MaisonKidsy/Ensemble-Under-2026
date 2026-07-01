@@ -1002,7 +1002,7 @@ async function sendTikTokCAPIEvent(eventType, orderData, hashedCustomer) {
 
   /* Preload first 3 images immediately (above-fold priority) */
   const firstSections = document.querySelectorAll('.img-section');
-  [0,1,2].forEach(i => {
+  [0,1,2,3].forEach(i => {
     const sec = firstSections[i]; if (!sec) return;
     const img = sec.querySelector('img.fullscreen-img'); if (!img||!img.dataset.src) return;
     if (quality === 'slow') img.classList.add('img-blur-up');
